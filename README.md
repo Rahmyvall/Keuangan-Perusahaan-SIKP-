@@ -14,6 +14,9 @@ _(Tambahkan screenshot dashboard kamu di sini)_
 <p align="center">
  <a><img src="public/assets/mermaid-diagram.svg"><a>
 </p>
+<p align="center">
+ <a><img src="public/assets/1.png"><a>
+</p>
 
 <p align="center">
   <img src="https://img.shields.io/badge/Status-Production%20Ready-success">

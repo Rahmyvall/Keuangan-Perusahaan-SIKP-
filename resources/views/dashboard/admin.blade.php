@@ -1,6 +1,6 @@
 @extends('layouts.app')
 @section('content')
-<h1 class="mb-3 h3">{{ $title }}</h1>
+<h1 class="mb-3 h3">{{ $title ?? 'Dashboard' }}</h1>
 <div class="row">
 						<div class="col-xl-6 col-xxl-5 d-flex">
 							<div class="w-100">

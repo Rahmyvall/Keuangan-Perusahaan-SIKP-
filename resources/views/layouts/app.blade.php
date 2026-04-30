@@ -14,7 +14,7 @@
 
 	<link rel="canonical" href="https://demo-basic.adminkit.io/pages-blank.html" />
 
-	<title>{{ $title }} | SIKP</title>
+	<title>{{ $title ?? 'Dashboard' }} | SIKP</title>
 
 	<link href="{{ asset('admin/static/css/app.css') }}" rel="stylesheet">
 	<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
@@ -148,6 +148,18 @@ a:hover {
 }
 .text-dynamic {
     color: var(--primary);
+}
+.navbar {
+    position: relative;
+    z-index: 1050; /* pastikan di atas content */
+}
+
+.dropdown-menu {
+    z-index: 2000; /* supaya dropdown tidak ketutup */
+}
+
+.navbar-collapse {
+    z-index: 1050;
 }
 	</style>
 </head>
@@ -498,10 +510,11 @@ a:hover {
 							<a class="nav-icon dropdown-toggle d-inline-block d-sm-none" href="#" data-bs-toggle="dropdown">
                 <i class="align-middle" data-feather="settings"></i>
               </a>
-
-							<a class="nav-link dropdown-toggle d-none d-sm-inline-block" href="#" data-bs-toggle="dropdown">
-                <img src="img/avatars/avatar.jpg" class="rounded avatar img-fluid me-1" alt="Charles Hall" /> <span class="text-dark">Charles Hall</span>
-              </a>
+<a class="nav-link dropdown-toggle d-none d-sm-inline-block" href="#" data-bs-toggle="dropdown">
+    <span class="text-dark">
+        {{ auth()->user()->nama_lengkap ?? 'Guest' }}
+    </span>
+</a>
 							<div class="dropdown-menu dropdown-menu-end">
 								<a class="dropdown-item" href="pages-profile.html"><i class="align-middle me-1" data-feather="user"></i> Profile</a>
 								<a class="dropdown-item" href="#"><i class="align-middle me-1" data-feather="pie-chart"></i> Analytics</a>
@@ -509,7 +522,14 @@ a:hover {
 								<a class="dropdown-item" href="index.html"><i class="align-middle me-1" data-feather="settings"></i> Settings & Privacy</a>
 								<a class="dropdown-item" href="#"><i class="align-middle me-1" data-feather="help-circle"></i> Help Center</a>
 								<div class="dropdown-divider"></div>
-								<a class="dropdown-item" href="#">Log out</a>
+								<form id="logout-form" action="{{ route('logout') }}" method="POST" style="display:none;">
+    @csrf
+</form>
+
+<a class="dropdown-item" href="{{ route('logout') }}"
+   onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+    Log out
+</a>
 							</div>
 						</li>
 					</ul>
