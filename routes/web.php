@@ -35,7 +35,7 @@ Route::middleware('auth')->group(function () {
     */
     Route::get('/dashboard', function () {
 
-        $role = auth()->user()?->role;
+        $role = auth()?->role;
 
         return match ($role) {
             'admin'   => redirect()->route('admin.dashboard'),
