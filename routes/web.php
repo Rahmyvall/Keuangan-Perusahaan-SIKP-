@@ -11,9 +11,11 @@ use App\Http\Controllers\LoginController;
 
 Route::middleware('guest')->group(function () {
 
-    Route::get('/', fn() => redirect()->route('login'));
+    Route::get('/', function () {
+        return redirect()->route('login');
+    });
 
-    Route::get('/login', fn() => view('welcome'))
+    Route::get('/login', [LoginController::class, 'showLoginForm'])
         ->name('login');
 
     Route::post('/login', [LoginController::class, 'login'])
@@ -30,7 +32,7 @@ Route::middleware('auth')->group(function () {
 
     /*
     |--------------------------------------------------------------------------
-    | DASHBOARD REDIRECT (PINTU MASUK)
+    | DASHBOARD REDIRECT (AUTO ROLE)
     |--------------------------------------------------------------------------
     */
     Route::get('/dashboard', function () {
@@ -50,44 +52,62 @@ Route::middleware('auth')->group(function () {
 
     /*
     |--------------------------------------------------------------------------
-    | ROLE BASED PAGES
+    | ADMIN
     |--------------------------------------------------------------------------
     */
-
     Route::middleware('role:admin')->group(function () {
-        Route::get('/admin/dashboard', function () {
-            return view('dashboard.admin');
-        })->name('admin.dashboard');
-    });
-
-    Route::middleware('role:akuntan')->group(function () {
-        Route::get('/akuntan/dashboard', function () {
-            return view('dashboard.akuntan');
-        })->name('akuntan.dashboard');
-    });
-
-    Route::middleware('role:manajer')->group(function () {
-        Route::get('/manajer/dashboard', function () {
-            return view('dashboard.manajer');
-        })->name('manajer.dashboard');
-    });
-
-    Route::middleware('role:auditor')->group(function () {
-        Route::get('/auditor/dashboard', function () {
-            return view('dashboard.auditor');
-        })->name('auditor.dashboard');
-    });
-
-    Route::middleware('role:staff')->group(function () {
-        Route::get('/staff/dashboard', function () {
-            return view('dashboard.staff');
-        })->name('staff.dashboard');
+        Route::get('/admin/dashboard', fn() => view('dashboard.admin'))
+            ->name('admin.dashboard');
     });
 
 
     /*
     |--------------------------------------------------------------------------
-    | LOGOUT (HARUS DI AUTH)
+    | AKUNTAN
+    |--------------------------------------------------------------------------
+    */
+    Route::middleware('role:akuntan')->group(function () {
+        Route::get('/akuntan/dashboard', fn() => view('dashboard.akuntan'))
+            ->name('akuntan.dashboard');
+    });
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | MANAJER
+    |--------------------------------------------------------------------------
+    */
+    Route::middleware('role:manajer')->group(function () {
+        Route::get('/manajer/dashboard', fn() => view('dashboard.manajer'))
+            ->name('manajer.dashboard');
+    });
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | AUDITOR
+    |--------------------------------------------------------------------------
+    */
+    Route::middleware('role:auditor')->group(function () {
+        Route::get('/auditor/dashboard', fn() => view('dashboard.auditor'))
+            ->name('auditor.dashboard');
+    });
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | STAFF
+    |--------------------------------------------------------------------------
+    */
+    Route::middleware('role:staff')->group(function () {
+        Route::get('/staff/dashboard', fn() => view('dashboard.staff'))
+            ->name('staff.dashboard');
+    });
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | LOGOUT
     |--------------------------------------------------------------------------
     */
     Route::post('/logout', [LoginController::class, 'logout'])

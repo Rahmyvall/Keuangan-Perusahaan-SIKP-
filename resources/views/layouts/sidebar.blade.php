@@ -25,145 +25,157 @@
               <i class="align-middle" data-feather="sliders"></i> <span class="align-middle">Dashboard</span>
             </a>
 					</li>
-<li class="sidebar-item text-dynamic">
+
+@auth
+@php
+    $role = auth()->user()->role;
+@endphp
+
+{{-- ================= ADMIN ================= --}}
+@if($role === 'admin')
+
+{{-- MASTER DATA --}}
+<li class="sidebar-item">
     <a data-bs-target="#master" data-bs-toggle="collapse" class="sidebar-link collapsed">
-        <i class="align-middle" data-feather="database"></i>
-        <span class="align-middle">Master Data</span>
+        <i data-feather="database" class="me-2"></i>
+        <span>Master Data</span>
     </a>
     <ul id="master" class="sidebar-dropdown list-unstyled collapse">
-        <li class="sidebar-item"><a class="sidebar-link" href="perusahaan.html">Perusahaan</a></li>
-        <li class="sidebar-item"><a class="sidebar-link" href="pengguna.html">Pengguna</a></li>
-        <li class="sidebar-item"><a class="sidebar-link" href="mata-uang.html">Mata Uang</a></li>
-        <li class="sidebar-item"><a class="sidebar-link" href="akun.html">Akun Perkiraan</a></li>
-        <li class="sidebar-item"><a class="sidebar-link" href="periode.html">Periode</a></li>
+        <li><a class="sidebar-link" href="#"><i data-feather="briefcase"></i> Perusahaan</a></li>
+        <li><a class="sidebar-link" href="#"><i data-feather="users"></i> Pengguna</a></li>
+        <li><a class="sidebar-link" href="#"><i data-feather="dollar-sign"></i> Mata Uang</a></li>
+        <li><a class="sidebar-link" href="#"><i data-feather="book"></i> Akun Perkiraan</a></li>
+        <li><a class="sidebar-link" href="#"><i data-feather="calendar"></i> Periode</a></li>
     </ul>
 </li>
 
-
-					<li class="sidebar-item">
+{{-- TRANSAKSI --}}
+<li class="sidebar-item">
     <a data-bs-target="#transaksi" data-bs-toggle="collapse" class="sidebar-link collapsed">
-        <i class="align-middle" data-feather="repeat"></i>
-        <span class="align-middle">Transaksi</span>
+        <i data-feather="repeat" class="me-2"></i>
+        <span>Transaksi</span>
     </a>
-
     <ul id="transaksi" class="sidebar-dropdown list-unstyled collapse">
-        <li class="sidebar-item">
-            <a class="sidebar-link" href="jurnal-umum.html">
-                Jurnal Umum
-            </a>
-        </li>
-
-        <li class="sidebar-item">
-            <a class="sidebar-link" href="jurnal-detail.html">
-                Detail Jurnal
-            </a>
-        </li>
+        <li><a class="sidebar-link" href="#"><i data-feather="edit"></i> Jurnal Umum</a></li>
+        <li><a class="sidebar-link" href="#"><i data-feather="file-text"></i> Detail Jurnal</a></li>
     </ul>
 </li>
 
-					<li class="sidebar-item">
+{{-- PIUTANG --}}
+<li class="sidebar-item">
     <a data-bs-target="#piutang" data-bs-toggle="collapse" class="sidebar-link collapsed">
-        <i class="align-middle" data-feather="dollar-sign"></i>
-        <span class="align-middle">Piutang (AR)</span>
+        <i data-feather="credit-card" class="me-2"></i>
+        <span>Piutang (AR)</span>
     </a>
-
     <ul id="piutang" class="sidebar-dropdown list-unstyled collapse">
-        <li class="sidebar-item">
-            <a class="sidebar-link" href="pelanggan.html">
-                Pelanggan
-            </a>
-        </li>
-
-        <li class="sidebar-item">
-            <a class="sidebar-link" href="faktur-penjualan.html">
-                Faktur Penjualan
-            </a>
-        </li>
-
-        <li class="sidebar-item">
-            <a class="sidebar-link" href="penerimaan-piutang.html">
-                Penerimaan Piutang
-            </a>
-        </li>
+        <li><a class="sidebar-link" href="#"><i data-feather="user"></i> Pelanggan</a></li>
+        <li><a class="sidebar-link" href="#"><i data-feather="file"></i> Faktur Penjualan</a></li>
+        <li><a class="sidebar-link" href="#"><i data-feather="download"></i> Penerimaan Piutang</a></li>
     </ul>
 </li>
 
-					<li class="sidebar-item">
+{{-- HUTANG --}}
+<li class="sidebar-item">
     <a data-bs-target="#hutang" data-bs-toggle="collapse" class="sidebar-link collapsed">
-        <i class="align-middle" data-feather="archive"></i>
-        <span class="align-middle">Hutang (AP)</span>
+        <i data-feather="archive" class="me-2"></i>
+        <span>Hutang (AP)</span>
     </a>
-
     <ul id="hutang" class="sidebar-dropdown list-unstyled collapse">
-        <li class="sidebar-item">
-            <a class="sidebar-link" href="supplier.html">
-                Supplier
-            </a>
-        </li>
-
-        <li class="sidebar-item">
-            <a class="sidebar-link" href="faktur-pembelian.html">
-                Faktur Pembelian
-            </a>
-        </li>
-
-        <li class="sidebar-item">
-            <a class="sidebar-link" href="pembayaran-hutang.html">
-                Pembayaran Hutang
-            </a>
-        </li>
+        <li><a class="sidebar-link" href="#"><i data-feather="truck"></i> Supplier</a></li>
+        <li><a class="sidebar-link" href="#"><i data-feather="shopping-cart"></i> Faktur Pembelian</a></li>
+        <li><a class="sidebar-link" href="#"><i data-feather="send"></i> Pembayaran Hutang</a></li>
     </ul>
 </li>
-				<li class="sidebar-item">
+
+{{-- ASET --}}
+<li class="sidebar-item">
     <a data-bs-target="#aset" data-bs-toggle="collapse" class="sidebar-link collapsed">
-        <i class="align-middle" data-feather="layers"></i>
-        <span class="align-middle">Aset & Kas/Bank</span>
+        <i data-feather="layers" class="me-2"></i>
+        <span>Aset & Kas/Bank</span>
     </a>
-
     <ul id="aset" class="sidebar-dropdown list-unstyled collapse">
-
-        <li class="sidebar-item">
-            <a class="sidebar-link" href="aset-tetap.html">
-                Aset Tetap
-            </a>
-        </li>
-
-        <li class="sidebar-item">
-            <a class="sidebar-link" href="depresiasi.html">
-                Depresiasi
-            </a>
-        </li>
-
-        <li class="sidebar-item">
-            <a class="sidebar-link" href="rekening-bank.html">
-                Rekening Bank
-            </a>
-        </li>
-
+        <li><a class="sidebar-link" href="#"><i data-feather="box"></i> Aset Tetap</a></li>
+        <li><a class="sidebar-link" href="#"><i data-feather="trending-down"></i> Depresiasi</a></li>
+        <li><a class="sidebar-link" href="#"><i data-feather="home"></i> Rekening Bank</a></li>
     </ul>
 </li>
+
+{{-- SALDO --}}
 <li class="sidebar-item">
     <a data-bs-target="#saldo" data-bs-toggle="collapse" class="sidebar-link collapsed">
-        <i class="align-middle" data-feather="database"></i>
-        <span class="align-middle">Saldo Awal</span>
+        <i data-feather="database" class="me-2"></i>
+        <span>Saldo Awal</span>
     </a>
-
     <ul id="saldo" class="sidebar-dropdown list-unstyled collapse">
-
-        <li class="sidebar-item">
-            <a class="sidebar-link" href="saldo-awal.html">
-                Input Saldo Awal
-            </a>
-        </li>
-
-        <li class="sidebar-item">
-            <a class="sidebar-link" href="saldo-akun.html">
-                View Saldo Akun
-            </a>
-        </li>
-
+        <li><a class="sidebar-link" href="#"><i data-feather="edit-3"></i> Input Saldo Awal</a></li>
+        <li><a class="sidebar-link" href="#"><i data-feather="bar-chart-2"></i> View Saldo Akun</a></li>
     </ul>
 </li>
+
+@endif
+
+
+{{-- ================= AKUNTAN ================= --}}
+@if($role === 'akuntan')
+
+<li class="sidebar-item">
+    <a data-bs-target="#transaksi" data-bs-toggle="collapse" class="sidebar-link collapsed">
+        <i data-feather="repeat" class="me-2"></i>
+        <span>Transaksi</span>
+    </a>
+    <ul id="transaksi" class="sidebar-dropdown list-unstyled collapse">
+        <li><a class="sidebar-link" href="#"><i data-feather="edit"></i> Jurnal Umum</a></li>
+        <li><a class="sidebar-link" href="#"><i data-feather="file-text"></i> Detail Jurnal</a></li>
+    </ul>
+</li>
+
+<li class="sidebar-item">
+    <a data-bs-target="#piutang" data-bs-toggle="collapse" class="sidebar-link collapsed">
+        <i data-feather="credit-card" class="me-2"></i>
+        <span>Piutang</span>
+    </a>
+    <ul id="piutang" class="sidebar-dropdown list-unstyled collapse">
+        <li><a class="sidebar-link" href="#"><i data-feather="user"></i> Pelanggan</a></li>
+        <li><a class="sidebar-link" href="#"><i data-feather="file"></i> Faktur</a></li>
+    </ul>
+</li>
+
+@endif
+
+
+{{-- ================= MANAJER ================= --}}
+@if($role === 'manajer')
+
+<li class="sidebar-item">
+    <a data-bs-target="#laporan" data-bs-toggle="collapse" class="sidebar-link collapsed">
+        <i data-feather="bar-chart-2" class="me-2"></i>
+        <span>Monitoring</span>
+    </a>
+    <ul id="laporan" class="sidebar-dropdown list-unstyled collapse">
+        <li><a class="sidebar-link" href="#"><i data-feather="file-text"></i> Detail Jurnal</a></li>
+        <li><a class="sidebar-link" href="#"><i data-feather="bar-chart"></i> Saldo Akun</a></li>
+    </ul>
+</li>
+
+@endif
+
+
+{{-- ================= STAFF ================= --}}
+@if($role === 'staff')
+
+<li class="sidebar-item">
+    <a data-bs-target="#transaksi" data-bs-toggle="collapse" class="sidebar-link collapsed">
+        <i data-feather="edit" class="me-2"></i>
+        <span>Input Data</span>
+    </a>
+    <ul id="transaksi" class="sidebar-dropdown list-unstyled collapse">
+        <li><a class="sidebar-link" href="#"><i data-feather="edit"></i> Jurnal Umum</a></li>
+    </ul>
+</li>
+
+@endif
+
+@endauth
 				</ul>
 
 				<div class="sidebar-cta">

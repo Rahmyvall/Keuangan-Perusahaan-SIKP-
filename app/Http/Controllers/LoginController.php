@@ -7,6 +7,10 @@ use Illuminate\Support\Facades\Auth;
 
 class LoginController extends Controller
 {
+    public function showLoginForm()
+    {
+        return view('welcome'); // atau login.blade.php
+    }
     /*
     |--------------------------------------------------------------------------
     | LOGIN
@@ -14,24 +18,32 @@ class LoginController extends Controller
     */
     public function login(Request $request)
     {
+        // ✅ Validasi input
         $request->validate([
-            'username' => 'required',
-            'password' => 'required',
-            'role' => 'required|in:admin,akuntan,manajer,auditor,staff'
+            'username' => 'required|string',
+            'password' => 'required|string',
+            'role'     => 'required|in:admin,akuntan,manajer,auditor,staff',
         ]);
 
+        // ❗ Ambil hanya credential login
         $credentials = $request->only('username', 'password');
 
+        // ✅ Attempt login
         if (Auth::attempt($credentials, $request->boolean('remember'))) {
 
             $request->session()->regenerate();
 
             $user = Auth::user();
 
-            // 🔒 Validasi role
-            if ($user->role !== $request->role) {
+            // 🔒 Validasi role (lebih aman pakai strict)
+            if ($user->role !== $request->input('role')) {
                 Auth::logout();
-                return back()->with('error', 'Role tidak sesuai');
+
+                return back()
+                    ->withInput($request->only('username', 'role'))
+                    ->withErrors([
+                        'role' => 'Role tidak sesuai dengan akun'
+                    ]);
             }
 
             // 🚀 Redirect sesuai role
@@ -45,7 +57,12 @@ class LoginController extends Controller
             };
         }
 
-        return back()->with('error', 'Username atau password salah');
+        // ❌ Login gagal
+        return back()
+            ->withInput($request->only('username', 'role'))
+            ->withErrors([
+                'login' => 'Username atau password salah'
+            ]);
     }
 
     /*
@@ -55,17 +72,16 @@ class LoginController extends Controller
     */
     public function logout(Request $request)
     {
-        // 🔥 logout user
         Auth::logout();
 
-        // 🔥 hapus session lama
+        // 🔥 invalidate session
         $request->session()->invalidate();
 
-        // 🔥 regenerate CSRF token (WAJIB)
+        // 🔥 regenerate token
         $request->session()->regenerateToken();
 
-        // 🔥 redirect ke login
-        return redirect()->route('login')
+        return redirect()
+            ->route('login')
             ->with('success', 'Berhasil logout');
     }
 }
