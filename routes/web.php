@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\MataUangController;
 use App\Http\Controllers\PenggunaController;
 use App\Http\Controllers\PerusahaanController;
 
@@ -48,6 +49,7 @@ Route::middleware('auth')->group(function () {
 
         Route::resource('perusahaan', PerusahaanController::class);
         Route::resource('pengguna', PenggunaController::class);
+        Route::resource('mata-uang', MataUangController::class);
         Route::get('/perusahaan/by-kota/{kota}', [PerusahaanController::class, 'byCity'])
             ->name('perusahaan.by-kota');
     });

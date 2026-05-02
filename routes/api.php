@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\MataUangApiController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -53,4 +54,19 @@ Route::prefix('pengguna')->group(function () {
 
     // PUBLIC
     Route::get('/', [PenggunaController::class, 'index']);
+});
+
+Route::prefix('mata-uang')->group(function () {
+
+    // PUBLIC
+    Route::get('/', [MataUangApiController::class, 'index']);
+    Route::get('/{id}', [MataUangApiController::class, 'show']);
+
+    // PROTECTED (LOGIN REQUIRED)
+    Route::middleware('auth:sanctum')->group(function () {
+
+        Route::post('/', [MataUangApiController::class, 'store']);
+        Route::put('/{id}', [MataUangApiController::class, 'update']);
+        Route::delete('/{id}', [MataUangApiController::class, 'destroy']);
+    });
 });

@@ -117,68 +117,61 @@
 							</div>
 						</div>
 					</div>
-
-					<div class="row">
-						<div class="order-2 col-12 col-md-6 col-xxl-3 d-flex order-xxl-3">
-							<div class="card flex-fill w-100">
-								<div class="card-header">
-
-									<h5 class="mb-0 card-title">Browser Usage</h5>
-								</div>
-								<div class="card-body d-flex">
-									<div class="align-self-center w-100">
-										<div class="py-3">
-											<div class="chart chart-xs">
-												<canvas id="chartjs-dashboard-pie"></canvas>
-											</div>
-										</div>
-
-										<table class="table mb-0">
-											<tbody>
-												<tr>
-													<td>Chrome</td>
-													<td class="text-end">4306</td>
-												</tr>
-												<tr>
-													<td>Firefox</td>
-													<td class="text-end">3801</td>
-												</tr>
-												<tr>
-													<td>IE</td>
-													<td class="text-end">1689</td>
-												</tr>
-											</tbody>
-										</table>
-									</div>
-								</div>
-							</div>
-						</div>
 						<div class="order-3 col-12 col-md-12 col-xxl-6 d-flex order-xxl-2">
-							<div class="card flex-fill w-100">
-								<div class="card-header">
+    <div class="card flex-fill w-100">
+    <div class="card-header">
+        <h5 class="card-title mb-0">Statistik Mata Uang</h5>
+    </div>
 
-									<h5 class="mb-0 card-title">Real-Time</h5>
-								</div>
-								<div class="px-4 card-body">
-									<div id="world_map" style="height:350px;"></div>
-								</div>
-							</div>
-						</div>
-						<div class="order-1 col-12 col-md-6 col-xxl-3 d-flex order-xxl-1">
-							<div class="card flex-fill">
-								<div class="card-header">
+    <div class="card-body px-4">
 
-									<h5 class="mb-0 card-title">Calendar</h5>
-								</div>
-								<div class="card-body d-flex">
-									<div class="align-self-center w-100">
-										<div class="chart">
-											<div id="datetimepicker-dashboard"></div>
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
+        {{-- TOTAL --}}
+        <div class="d-flex justify-content-between mb-3">
+            <div>
+                <small class="text-muted">Total Mata Uang</small>
+                <h4 class="fw-bold">{{ $total_mata_uang ?? 0 }}</h4>
+            </div>
+
+            <div class="bg-light rounded p-3">
+                <i data-feather="dollar-sign"></i>
+            </div>
+        </div>
+
+        <hr>
+
+        {{-- LIST SAMPLE --}}
+       <div class="card border-0 shadow-sm rounded-4 mt-3">
+    <div class="card-body p-3">
+
+        <div class="d-flex justify-content-between mb-2">
+            <small class="text-muted">Currencies</small>
+            <small class="text-primary">View all</small>
+        </div>
+
+        @foreach($mata_uang_terbaru ?? [] as $item)
+        <div class="d-flex align-items-center justify-content-between py-2 currency-row">
+
+            <div class="d-flex align-items-center gap-2">
+                <div class="currency-icon">
+                    💵
+                </div>
+                <div>
+                    <div class="fw-semibold">{{ $item->kode }}</div>
+                    <small class="text-muted">{{ $item->nama }}</small>
+                </div>
+            </div>
+
+            <div class="fw-bold text-dark">
+                {{ $item->simbol ?? '-' }}
+            </div>
+
+        </div>
+        @endforeach
+
+    </div>
+</div>
+    </div>
+</div>
 					</div>
 <!-- GRAFIK PERUSAHAAN PER KOTA -->
 <div class="row">
@@ -267,74 +260,6 @@
 						}]
 					}
 				}
-			});
-		});
-	</script>
-
-	<script>
-		document.addEventListener("DOMContentLoaded", function() {
-			var markers = [{
-					coords: [31.230391, 121.473701],
-					name: "Shanghai"
-				},
-				{
-					coords: [28.704060, 77.102493],
-					name: "Delhi"
-				},
-				{
-					coords: [6.524379, 3.379206],
-					name: "Lagos"
-				},
-				{
-					coords: [35.689487, 139.691711],
-					name: "Tokyo"
-				},
-				{
-					coords: [23.129110, 113.264381],
-					name: "Guangzhou"
-				},
-				{
-					coords: [40.7127837, -74.0059413],
-					name: "New York"
-				},
-				{
-					coords: [34.052235, -118.243683],
-					name: "Los Angeles"
-				},
-				{
-					coords: [41.878113, -87.629799],
-					name: "Chicago"
-				},
-				{
-					coords: [51.507351, -0.127758],
-					name: "London"
-				},
-				{
-					coords: [40.416775, -3.703790],
-					name: "Madrid "
-				}
-			];
-			var map = new jsVectorMap({
-				map: "world",
-				selector: "#world_map",
-				zoomButtons: true,
-				markers: markers,
-				markerStyle: {
-					initial: {
-						r: 9,
-						strokeWidth: 7,
-						stokeOpacity: .4,
-						fill: window.theme.primary
-					},
-					hover: {
-						fill: window.theme.primary,
-						stroke: window.theme.primary
-					}
-				},
-				zoomOnScroll: false
-			});
-			window.addEventListener("resize", () => {
-				map.updateSize();
 			});
 		});
 	</script>
