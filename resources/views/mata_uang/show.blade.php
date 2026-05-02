@@ -1,53 +1,122 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container">
 
-    <div class="card border-0 shadow-sm rounded-4 text-center">
-        <div class="card-body p-5">
+<style>
+    body {
+        background: #f1f5f9;
+    }
 
-            {{-- Icon --}}
-            <div class="mb-3">
-                <div class="bg-light rounded-circle d-flex align-items-center justify-content-center mx-auto"
-                     style="width:80px;height:80px;">
+    .page-wrapper {
+        padding: 30px;
+    }
+
+    .content-box {
+        background: #fff;
+        border-radius: 16px;
+        padding: 30px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+    }
+
+    .currency-icon {
+        width: 90px;
+        height: 90px;
+        border-radius: 50%;
+        background: #f8fafc;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .label {
+        font-size: 13px;
+        color: #64748b;
+    }
+
+    .value {
+        font-weight: 600;
+        font-size: 18px;
+    }
+
+    .symbol-big {
+        font-size: 40px;
+        font-weight: bold;
+        color: #f59e0b;
+    }
+
+    .btn-modern {
+        border-radius: 999px;
+        padding: 8px 18px;
+    }
+</style>
+
+<div class="container-fluid page-wrapper">
+
+    {{-- HEADER --}}
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h3 class="mb-1 fw-bold">Detail Mata Uang</h3>
+            <small class="text-muted">Informasi lengkap mata uang</small>
+        </div>
+
+        <div class="d-flex gap-2">
+            <a href="{{ route('mata-uang.edit', $mataUang->id_mata_uang) }}"
+               class="btn btn-warning text-white btn-modern">
+                <i data-feather="edit"></i> Edit
+            </a>
+
+            <a href="{{ route('mata-uang.index') }}"
+               class="btn btn-light btn-modern">
+                ← Kembali
+            </a>
+        </div>
+    </div>
+
+    {{-- CONTENT --}}
+    <div class="content-box">
+
+        <div class="row align-items-center">
+
+            {{-- ICON --}}
+            <div class="col-md-2 text-center mb-4 mb-md-0">
+                <div class="currency-icon mx-auto">
                     <i data-feather="dollar-sign"></i>
                 </div>
             </div>
 
-            {{-- Kode --}}
-            <h4 class="fw-bold">
-                <span class="badge bg-dark px-4 py-2 rounded-pill">
-                    {{ $mataUang->kode }}
-                </span>
-            </h4>
+            {{-- INFO --}}
+            <div class="col-md-7">
 
-            {{-- Nama --}}
-            <h5 class="mt-3">{{ $mataUang->nama }}</h5>
+                <div class="mb-3">
+                    <div class="label">Kode</div>
+                    <div class="value">
+                        <span class="badge bg-dark px-3 py-2 rounded-pill">
+                            {{ $mataUang->kode }}
+                        </span>
+                    </div>
+                </div>
 
-            {{-- Simbol --}}
-            <div class="display-5 text-primary fw-bold mt-3">
-                {{ $mataUang->simbol ?? '-' }}
+                <div class="mb-3">
+                    <div class="label">Nama Mata Uang</div>
+                    <div class="value">{{ $mataUang->nama }}</div>
+                </div>
+
             </div>
 
-            {{-- Actions --}}
-            <div class="mt-4 d-flex justify-content-center gap-2">
-
-                <a href="{{ route('mata-uang.edit', $mataUang->id_mata_uang) }}"
-                   class="btn btn-warning text-white">
-                    <i data-feather="edit"></i> Edit
-                </a>
-
-                <a href="{{ route('mata-uang.index') }}"
-                   class="btn btn-light">
-                    Kembali
-                </a>
-
+            {{-- SYMBOL --}}
+            <div class="col-md-3 text-md-end text-center mt-4 mt-md-0">
+                <div class="label">Simbol</div>
+                <div class="symbol-big">
+                    {{ $mataUang->simbol ?? '-' }}
+                </div>
             </div>
 
         </div>
+
     </div>
 
 </div>
+
 @endsection
 
 @push('scripts')
