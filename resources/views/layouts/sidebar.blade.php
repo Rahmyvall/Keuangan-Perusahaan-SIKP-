@@ -47,7 +47,11 @@
         <span>Perusahaan</span>
     </a>
 </li>
-        <li><a class="sidebar-link" href="#"><i data-feather="users"></i> Pengguna</a></li>
+        <li>
+    <a class="sidebar-link" href="{{ route('pengguna.index') }}">
+        <i data-feather="users"></i> Pengguna
+    </a>
+</li>
         <li><a class="sidebar-link" href="#"><i data-feather="dollar-sign"></i> Mata Uang</a></li>
         <li><a class="sidebar-link" href="#"><i data-feather="book"></i> Akun Perkiraan</a></li>
         <li><a class="sidebar-link" href="#"><i data-feather="calendar"></i> Periode</a></li>

@@ -2,7 +2,9 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+
 use App\Http\Controllers\Api\PerusahaanController;
+use App\Http\Controllers\Api\PenggunaController;
 
 /*
 |--------------------------------------------------------------------------
@@ -27,27 +29,28 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 Route::prefix('perusahaan')->group(function () {
 
-    // GET semua data (public)
+    // PUBLIC
     Route::get('/', [PerusahaanController::class, 'index']);
-
-    // GET detail (public)
     Route::get('/{id}', [PerusahaanController::class, 'show']);
 
-    /*
-    |--------------------------------------------------------------------------
-    | PROTECTED ROUTES (butuh login Sanctum)
-    |--------------------------------------------------------------------------
-    */
-
+    // PROTECTED (LOGIN REQUIRED)
     Route::middleware('auth:sanctum')->group(function () {
 
-        // create perusahaan
         Route::post('/', [PerusahaanController::class, 'store']);
-
-        // update perusahaan
         Route::put('/{id}', [PerusahaanController::class, 'update']);
-
-        // delete perusahaan
         Route::delete('/{id}', [PerusahaanController::class, 'destroy']);
     });
+});
+
+
+/*
+|--------------------------------------------------------------------------
+| PENGGUNA API ROUTES
+|--------------------------------------------------------------------------
+*/
+
+Route::prefix('pengguna')->group(function () {
+
+    // PUBLIC
+    Route::get('/', [PenggunaController::class, 'index']);
 });
