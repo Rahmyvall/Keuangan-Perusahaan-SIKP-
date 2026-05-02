@@ -12,7 +12,7 @@ class Pengguna extends Authenticatable
     protected $table = 'pengguna';
     protected $primaryKey = 'id_pengguna';
 
-    public $timestamps = true; // pastikan tabel punya created_at & updated_at
+    public $timestamps = true;
 
     protected $fillable = [
         'id_perusahaan',
@@ -26,13 +26,23 @@ class Pengguna extends Authenticatable
 
     protected $hidden = [
         'password_hash',
-        'remember_token',
     ];
 
     /*
-    |--------------------------------------------------------------------------
-    | CUSTOM PASSWORD FIELD
-    |--------------------------------------------------------------------------
+    |--------------------------------------
+    | CASTING
+    |--------------------------------------
+    */
+    protected $casts = [
+        'is_active' => 'boolean',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
+    ];
+
+    /*
+    |--------------------------------------
+    | AUTH PASSWORD FIELD
+    |--------------------------------------
     */
     public function getAuthPassword()
     {
@@ -40,42 +50,52 @@ class Pengguna extends Authenticatable
     }
 
     /*
-    |--------------------------------------------------------------------------
-    | USERNAME LOGIN FIELD (PENTING)
-    |--------------------------------------------------------------------------
+    |--------------------------------------
+    | RELASI PERUSAHAAN
+    |--------------------------------------
     */
-    public function getAuthIdentifierName()
+    public function perusahaan()
     {
-        return 'username';
+        return $this->belongsTo(Perusahaan::class, 'id_perusahaan');
     }
 
     /*
-    |--------------------------------------------------------------------------
-    | CEK USER AKTIF
-    |--------------------------------------------------------------------------
+    |--------------------------------------
+    | HELPER STATUS
+    |--------------------------------------
     */
     public function isActive()
     {
-        return $this->is_active == 1;
+        return (bool) $this->is_active;
     }
 
     /*
-    |--------------------------------------------------------------------------
-    | HELPER ROLE
-    |--------------------------------------------------------------------------
+    |--------------------------------------
+    | ROLE CHECK (SESUAI DATABASE)
+    |--------------------------------------
     */
     public function isAdmin()
     {
         return $this->role === 'admin';
     }
 
+    public function isAkuntan()
+    {
+        return $this->role === 'akuntan';
+    }
+
+    public function isManajer()
+    {
+        return $this->role === 'manajer';
+    }
+
+    public function isAuditor()
+    {
+        return $this->role === 'auditor';
+    }
+
     public function isStaff()
     {
         return $this->role === 'staff';
-    }
-
-    public function isManager()
-    {
-        return $this->role === 'manager';
     }
 }

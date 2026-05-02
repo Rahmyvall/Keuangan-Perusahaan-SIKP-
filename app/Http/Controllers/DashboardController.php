@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Auth;
 use App\Models\Perusahaan;
+use App\Models\Pengguna;
 
 class DashboardController extends Controller
 {
@@ -29,18 +30,34 @@ class DashboardController extends Controller
             ->get();
 
         // =========================
-        // PREPARE DATA (ANTI NULL ERROR)
+        // DATA PENGGUNA (BARU DITAMBAHKAN)
+        // =========================
+        $pengguna = Pengguna::with('perusahaan')->get();
+
+        $totalPengguna = Pengguna::count();
+        $penggunaAktif = Pengguna::where('is_active', 1)->count();
+        $penggunaNonAktif = Pengguna::where('is_active', 0)->count();
+
+        // =========================
+        // PREPARE DATA
         // =========================
         $data = [
             'user'  => $user,
             'title' => 'Dashboard',
 
+            // kota chart
             'kota_labels' => $kotaData->pluck('kota')->values() ?? collect([]),
             'kota_data'   => $kotaData->pluck('total')->values() ?? collect([]),
+
+            // pengguna (BARU)
+            'pengguna' => $pengguna,
+            'total_pengguna' => $totalPengguna,
+            'pengguna_aktif' => $penggunaAktif,
+            'pengguna_nonaktif' => $penggunaNonAktif,
         ];
 
         // =========================
-        // ROLE VIEW (SAFE SWITCH)
+        // ROLE VIEW
         // =========================
         $role = $user->role ?? 'admin';
 

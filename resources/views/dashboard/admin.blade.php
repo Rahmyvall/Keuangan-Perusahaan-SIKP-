@@ -8,23 +8,33 @@
 									<div class="col-sm-6">
 										<div class="card">
 											<div class="card-body">
-												<div class="row">
-													<div class="mt-0 col">
-														<h5 class="card-title">Sales</h5>
-													</div>
 
-													<div class="col-auto">
-														<div class="stat text-primary">
-															<i class="align-middle" data-feather="truck"></i>
-														</div>
-													</div>
-												</div>
-												<h1 class="mt-1 mb-3">2.382</h1>
-												<div class="mb-0">
-													<span class="text-danger">-3.65%</span>
-													<span class="text-muted">Since last week</span>
-												</div>
-											</div>
+    <div class="d-flex justify-content-between align-items-start">
+
+        <!-- LEFT -->
+        <div>
+            <h5 class="card-title">Pengguna</h5>
+
+            <h1 class="mt-2 mb-2">
+                {{ $total_pengguna ?? 0 }}
+            </h1>
+
+            <div class="mb-0">
+                <span class="text-success">
+                    {{ $pengguna_aktif ?? 0 }} aktif
+                </span>
+                <span class="text-muted">/ {{ $pengguna_nonaktif ?? 0 }} nonaktif</span>
+            </div>
+        </div>
+
+        <!-- ICON -->
+        <div class="stat text-primary">
+            <i class="align-middle" data-feather="users"></i>
+        </div>
+
+    </div>
+
+</div>
 										</div>
 										<div class="card">
 											<div class="card-body">
