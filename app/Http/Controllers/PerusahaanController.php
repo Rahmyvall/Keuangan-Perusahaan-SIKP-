@@ -41,7 +41,7 @@ class PerusahaanController extends Controller
             'kota' => 'nullable|string|max:100',
             'telepon' => 'nullable|string|max:30',
             'email' => 'nullable|email|max:100|unique:perusahaan,email',
-            'logo' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            'logo' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
             'status' => 'nullable|in:aktif,nonaktif',
         ]);
 
@@ -90,7 +90,7 @@ class PerusahaanController extends Controller
                 'max:100',
                 Rule::unique('perusahaan', 'email')->ignore($perusahaan->id_perusahaan, 'id_perusahaan'),
             ],
-            'logo' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            'logo' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
             'status' => 'nullable|in:aktif,nonaktif',
         ]);
 
