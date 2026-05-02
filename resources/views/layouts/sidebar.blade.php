@@ -21,7 +21,7 @@
 </li>
 
 					<li class="sidebar-item">
-						<a class="sidebar-link" href="index.html">
+						<a class="sidebar-link" href="{{ route('dashboard') }}">
               <i class="align-middle" data-feather="sliders"></i> <span class="align-middle">Dashboard</span>
             </a>
 					</li>
@@ -41,7 +41,12 @@
         <span>Master Data</span>
     </a>
     <ul id="master" class="sidebar-dropdown list-unstyled collapse">
-        <li><a class="sidebar-link" href="#"><i data-feather="briefcase"></i> Perusahaan</a></li>
+        <li>
+    <a class="sidebar-link" href="{{ route('perusahaan.index') }}">
+        <i data-feather="briefcase"></i>
+        <span>Perusahaan</span>
+    </a>
+</li>
         <li><a class="sidebar-link" href="#"><i data-feather="users"></i> Pengguna</a></li>
         <li><a class="sidebar-link" href="#"><i data-feather="dollar-sign"></i> Mata Uang</a></li>
         <li><a class="sidebar-link" href="#"><i data-feather="book"></i> Akun Perkiraan</a></li>

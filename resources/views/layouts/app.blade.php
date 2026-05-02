@@ -1,6 +1,9 @@
-@include('layouts.header')
-<body>
+<!DOCTYPE html>
+<html lang="en">
 
+@include('layouts.header')
+
+<body>
     <div class="wrapper">
 
         {{-- Sidebar --}}
@@ -9,12 +12,12 @@
         {{-- Main Content --}}
         <div class="main">
 
-            {{-- Navbar / Topbar --}}
+            {{-- Navbar --}}
             @include('layouts.navbar')
 
-            {{-- Page Content --}}
+            {{-- Content --}}
             <main class="content">
-                <div class="p-0 container-fluid">
+                <div class="container-fluid p-3">
                     @yield('content')
                 </div>
             </main>
@@ -25,9 +28,18 @@
         </div>
     </div>
 
-    {{-- Scripts --}}
+    {{-- GLOBAL SCRIPTS --}}
     @include('layouts.scripts')
 
+    {{-- STACK (WAJIB UNTUK DATATABLES DLL) --}}
     @stack('scripts')
+
+    {{-- FEATHER ICON INIT --}}
+    <script>
+        if (typeof feather !== 'undefined') {
+            feather.replace();
+        }
+    </script>
+
 </body>
 </html>

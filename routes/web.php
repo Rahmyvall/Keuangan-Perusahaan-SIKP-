@@ -2,6 +2,8 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LoginController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\PerusahaanController;
 
 /*
 |--------------------------------------------------------------------------
@@ -30,86 +32,65 @@ Route::middleware('guest')->group(function () {
 */
 Route::middleware('auth')->group(function () {
 
-    /*
-    |--------------------------------------------------------------------------
-    | DASHBOARD REDIRECT (AUTO ROLE)
-    |--------------------------------------------------------------------------
-    */
-    Route::get('/dashboard', function () {
-
-        $role = auth()->role;
-
-        return match ($role) {
-            'admin'   => redirect()->route('admin.dashboard'),
-            'akuntan' => redirect()->route('akuntan.dashboard'),
-            'manajer' => redirect()->route('manajer.dashboard'),
-            'auditor' => redirect()->route('auditor.dashboard'),
-            'staff'   => redirect()->route('staff.dashboard'),
-            default   => abort(403),
-        };
-    })->name('dashboard');
-
+    // Dashboard Utama (Redirect otomatis berdasarkan role)
+    Route::get('/dashboard', [DashboardController::class, 'index'])
+        ->name('dashboard');
 
     /*
     |--------------------------------------------------------------------------
     | ADMIN
     |--------------------------------------------------------------------------
     */
-    Route::middleware('role:admin')->group(function () {
-        Route::get('/admin/dashboard', fn() => view('dashboard.admin'))
+    Route::middleware('role:admin')->prefix('admin')->group(function () {
+        Route::get('/dashboard', [DashboardController::class, 'index'])
             ->name('admin.dashboard');
-    });
 
+        Route::resource('perusahaan', PerusahaanController::class);
+        Route::get('/perusahaan/by-kota/{kota}', [PerusahaanController::class, 'byCity'])
+            ->name('perusahaan.by-kota');
+    });
 
     /*
     |--------------------------------------------------------------------------
     | AKUNTAN
     |--------------------------------------------------------------------------
     */
-    Route::middleware('role:akuntan')->group(function () {
-        Route::get('/akuntan/dashboard', fn() => view('dashboard.akuntan'))
+    Route::middleware('role:akuntan')->prefix('akuntan')->group(function () {
+        Route::get('/dashboard', [DashboardController::class, 'index'])
             ->name('akuntan.dashboard');
     });
-
 
     /*
     |--------------------------------------------------------------------------
     | MANAJER
     |--------------------------------------------------------------------------
     */
-    Route::middleware('role:manajer')->group(function () {
-        Route::get('/manajer/dashboard', fn() => view('dashboard.manajer'))
+    Route::middleware('role:manajer')->prefix('manajer')->group(function () {
+        Route::get('/dashboard', [DashboardController::class, 'index'])
             ->name('manajer.dashboard');
     });
-
 
     /*
     |--------------------------------------------------------------------------
     | AUDITOR
     |--------------------------------------------------------------------------
     */
-    Route::middleware('role:auditor')->group(function () {
-        Route::get('/auditor/dashboard', fn() => view('dashboard.auditor'))
+    Route::middleware('role:auditor')->prefix('auditor')->group(function () {
+        Route::get('/dashboard', [DashboardController::class, 'index'])
             ->name('auditor.dashboard');
     });
-
 
     /*
     |--------------------------------------------------------------------------
     | STAFF
     |--------------------------------------------------------------------------
     */
-    Route::middleware('role:staff')->group(function () {
-        Route::get('/staff/dashboard', fn() => view('dashboard.staff'))
+    Route::middleware('role:staff')->prefix('staff')->group(function () {
+        Route::get('/dashboard', [DashboardController::class, 'index'])
             ->name('staff.dashboard');
     });
 
-
-    /*
-    |--------------------------------------------------------------------------
-    | LOGOUT
-    |--------------------------------------------------------------------------
-    */
+    // Logout
     Route::post('/logout', [LoginController::class, 'logout'])
         ->name('logout');
 });
