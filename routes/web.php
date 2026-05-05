@@ -6,13 +6,14 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\MataUangController;
 use App\Http\Controllers\PenggunaController;
 use App\Http\Controllers\PerusahaanController;
+use App\Http\Controllers\AkunController;
+use App\Http\Controllers\LaporanController;
 
 /*
 |--------------------------------------------------------------------------
-| GUEST (BELUM LOGIN)
+| GUEST
 |--------------------------------------------------------------------------
 */
-
 Route::middleware('guest')->group(function () {
 
     Route::get('/', function () {
@@ -29,12 +30,11 @@ Route::middleware('guest')->group(function () {
 
 /*
 |--------------------------------------------------------------------------
-| AUTH (SUDAH LOGIN)
+| AUTH
 |--------------------------------------------------------------------------
 */
 Route::middleware('auth')->group(function () {
 
-    // Dashboard Utama (Redirect otomatis berdasarkan role)
     Route::get('/dashboard', [DashboardController::class, 'index'])
         ->name('dashboard');
 
@@ -44,19 +44,23 @@ Route::middleware('auth')->group(function () {
     |--------------------------------------------------------------------------
     */
     Route::middleware('role:admin')->prefix('admin')->group(function () {
+
         Route::get('/dashboard', [DashboardController::class, 'index'])
             ->name('admin.dashboard');
 
         Route::resource('perusahaan', PerusahaanController::class);
         Route::resource('pengguna', PenggunaController::class);
         Route::resource('mata-uang', MataUangController::class);
+
         Route::get('/perusahaan/by-kota/{kota}', [PerusahaanController::class, 'byCity'])
             ->name('perusahaan.by-kota');
+
+      
     });
 
     /*
     |--------------------------------------------------------------------------
-    | AKUNTAN
+    | ROLE LAIN
     |--------------------------------------------------------------------------
     */
     Route::middleware('role:akuntan')->prefix('akuntan')->group(function () {
@@ -64,37 +68,21 @@ Route::middleware('auth')->group(function () {
             ->name('akuntan.dashboard');
     });
 
-    /*
-    |--------------------------------------------------------------------------
-    | MANAJER
-    |--------------------------------------------------------------------------
-    */
     Route::middleware('role:manajer')->prefix('manajer')->group(function () {
         Route::get('/dashboard', [DashboardController::class, 'index'])
             ->name('manajer.dashboard');
     });
 
-    /*
-    |--------------------------------------------------------------------------
-    | AUDITOR
-    |--------------------------------------------------------------------------
-    */
     Route::middleware('role:auditor')->prefix('auditor')->group(function () {
         Route::get('/dashboard', [DashboardController::class, 'index'])
             ->name('auditor.dashboard');
     });
 
-    /*
-    |--------------------------------------------------------------------------
-    | STAFF
-    |--------------------------------------------------------------------------
-    */
     Route::middleware('role:staff')->prefix('staff')->group(function () {
         Route::get('/dashboard', [DashboardController::class, 'index'])
             ->name('staff.dashboard');
     });
 
-    // Logout
     Route::post('/logout', [LoginController::class, 'logout'])
         ->name('logout');
 });

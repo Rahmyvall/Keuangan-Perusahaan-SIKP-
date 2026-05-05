@@ -191,6 +191,7 @@
     </div>
 </div>
 @endsection
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <!-- Script Grafik Minimal -->
 <script>
 document.addEventListener("DOMContentLoaded", function() {
@@ -298,17 +299,17 @@ document.addEventListener('DOMContentLoaded', function() {
             },
 
             scales: {
-                yAxes: [{
+                y: {
+                    beginAtZero: true,
                     ticks: {
-                        beginAtZero: true,
                         stepSize: 1
                     }
-                }],
-                xAxes: [{
-                    gridLines: {
+                },
+                x: {
+                    grid: {
                         display: false
                     }
-                }]
+                }
             }
         }
     });

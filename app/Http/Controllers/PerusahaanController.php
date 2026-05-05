@@ -22,10 +22,12 @@ class PerusahaanController extends Controller
     }
 
     public function index()
-    {
-        $data = Perusahaan::latest()->paginate(8);
-        return view('perusahaan.index', compact('data'));
-    }
+{
+    $data = Perusahaan::orderBy('created_at', 'desc')
+        ->paginate(10);
+
+    return view('perusahaan.index', compact('data'));
+}
 
     public function create()
     {

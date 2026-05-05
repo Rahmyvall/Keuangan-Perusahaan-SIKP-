@@ -83,18 +83,8 @@ class MataUang extends Model
         return $query->orderBy('id_mata_uang', 'desc');
     }
 
-    // =========================
-    // STATIC HELPER
-    // =========================
-
-    public static function getByKode($kode)
+    public function akun()
     {
-        return self::where('kode', strtoupper($kode))->first();
-    }
-
-    public static function listForSelect()
-    {
-        return self::orderBy('kode')
-            ->pluck('nama', 'kode');
+        return $this->hasMany(Akun::class, 'id_mata_uang', 'id_mata_uang');
     }
 }
