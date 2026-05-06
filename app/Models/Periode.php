@@ -10,22 +10,19 @@ class Periode extends Model
 {
     use HasFactory;
 
-    // Nama tabel (opsional jika mengikuti konvensi Laravel)
     protected $table = 'periode';
-
-    // Primary Key
     protected $primaryKey = 'id_periode';
-
-    // Tipe primary key
     protected $keyType = 'int';
-
-    // Auto increment
     public $incrementing = true;
 
-    // Timestamps (sudah ada di migration)
-    public $timestamps = true;
+    /**
+     * ❗ PENTING:
+     * Ubah ini sesuai kondisi tabel kamu
+     * - false → kalau kolom created_at & updated_at TIDAK ADA
+     * - true  → kalau kolom ADA
+     */
+    public $timestamps = false; // ⬅️ FIX ERROR
 
-    // Kolom yang boleh diisi massal
     protected $fillable = [
         'id_perusahaan',
         'tahun',
@@ -35,18 +32,14 @@ class Periode extends Model
         'status',
     ];
 
-    // Casting tipe data
     protected $casts = [
         'tahun'         => 'integer',
         'bulan'         => 'integer',
         'tanggal_awal'  => 'date',
         'tanggal_akhir' => 'date',
         'status'        => 'string',
-        'created_at'    => 'datetime',
-        'updated_at'    => 'datetime',
     ];
 
-    // Default values
     protected $attributes = [
         'status' => 'Terbuka',
     ];
@@ -55,61 +48,43 @@ class Periode extends Model
     // RELATIONSHIPS
     // =====================================
 
-    /**
-     * Relasi ke Perusahaan
-     */
     public function perusahaan(): BelongsTo
     {
         return $this->belongsTo(Perusahaan::class, 'id_perusahaan', 'id_perusahaan');
     }
 
     // =====================================
-    // SCOPE QUERY
+    // SCOPES
     // =====================================
 
-    /**
-     * Scope untuk periode yang sedang aktif (Terbuka)
-     */
     public function scopeAktif($query)
     {
         return $query->where('status', 'Terbuka');
     }
 
-    /**
-     * Scope untuk perusahaan tertentu
-     */
     public function scopePerusahaan($query, $id_perusahaan)
     {
         return $query->where('id_perusahaan', $id_perusahaan);
     }
 
-    /**
-     * Scope untuk periode saat ini berdasarkan tanggal
-     */
     public function scopeSaatIni($query, $tanggal = null)
     {
         $tanggal = $tanggal ?? now();
 
-        return $query->where('tanggal_awal', '<=', $tanggal)
-                     ->where('tanggal_akhir', '>=', $tanggal);
+        return $query->whereDate('tanggal_awal', '<=', $tanggal)
+                     ->whereDate('tanggal_akhir', '>=', $tanggal);
     }
 
-    /**
-     * Scope urutkan terbaru
-     */
     public function scopeTerbaru($query)
     {
-        return $query->orderBy('tahun', 'desc')
-                     ->orderBy('bulan', 'desc');
+        return $query->orderByDesc('tahun')
+                     ->orderByDesc('bulan');
     }
 
     // =====================================
-    // ACCESSORS & MUTATORS
+    // ACCESSORS
     // =====================================
 
-    /**
-     * Nama Bulan (contoh: Januari, Februari, dst)
-     */
     public function getNamaBulanAttribute(): string
     {
         $bulan = [
@@ -121,17 +96,11 @@ class Periode extends Model
         return $bulan[$this->bulan] ?? '';
     }
 
-    /**
-     * Label Periode (contoh: Januari 2026)
-     */
     public function getLabelAttribute(): string
     {
         return "{$this->nama_bulan} {$this->tahun}";
     }
 
-    /**
-     * Status Badge untuk tampilan
-     */
     public function getStatusBadgeAttribute(): string
     {
         return match($this->status) {
@@ -141,6 +110,5 @@ class Periode extends Model
             default   => '<span class="badge bg-secondary">' . $this->status . '</span>',
         };
     }
-
 
 }

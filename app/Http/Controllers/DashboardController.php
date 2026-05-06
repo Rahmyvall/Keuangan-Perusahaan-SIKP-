@@ -14,7 +14,6 @@ class DashboardController extends Controller
     {
         $user = Auth::user();
 
-        // Redirect jika belum login
         if (!$user) {
             return redirect()->route('login');
         }
@@ -27,7 +26,7 @@ class DashboardController extends Controller
             ->where('kota', '!=', '')
             ->groupBy('kota')
             ->orderByDesc('total')
-            ->limit(10)                    // batasi agar chart tidak terlalu penuh
+            ->limit(10)
             ->get();
 
         // =============================================
@@ -37,9 +36,8 @@ class DashboardController extends Controller
         $penggunaAktif = Pengguna::where('is_active', true)->count();
         $penggunaNonAktif = $totalPengguna - $penggunaAktif;
 
-        // Load pengguna dengan perusahaan (untuk tabel jika diperlukan)
         $pengguna = Pengguna::with('perusahaan')
-            ->latest()
+            ->latest()                    // Model Pengguna punya timestamps
             ->limit(8)
             ->get();
 
@@ -47,10 +45,14 @@ class DashboardController extends Controller
         // DATA MATA UANG
         // =============================================
         $totalMataUang = MataUang::count();
-        $mataUangTerbaru = MataUang::latest()->limit(5)->get();
+
+        // ← PERBAIKAN DISINI
+        $mataUangTerbaru = MataUang::latestData()   // pakai scopeLatestData
+            ->limit(5)
+            ->get();
 
         // =============================================
-        // DATA AKUN (Chart of Account)
+        // DATA AKUN
         // =============================================
         $akunData = Akun::selectRaw('tipe_akun, COUNT(*) as total')
             ->where('is_active', true)
@@ -68,7 +70,7 @@ class DashboardController extends Controller
         $totalAkun = Akun::where('is_active', true)->count();
 
         // =============================================
-        // TOTAL PERUSAHAAN (Tambahan yang berguna)
+        // TOTAL PERUSAHAAN
         // =============================================
         $totalPerusahaan = Perusahaan::count();
 
@@ -79,7 +81,7 @@ class DashboardController extends Controller
             'user'                  => $user,
             'title'                 => 'Dashboard',
 
-            // Perusahaan & Kota
+            // Perusahaan
             'total_perusahaan'      => $totalPerusahaan,
             'kota_labels'           => $kotaData->pluck('kota'),
             'kota_data'             => $kotaData->pluck('total'),
@@ -99,7 +101,6 @@ class DashboardController extends Controller
             'total_akun'            => $totalAkun,
         ];
 
-        // Redirect berdasarkan role
         return match ($user->role) {
             'admin'   => view('dashboard.admin', $data),
             'akuntan' => view('dashboard.akuntan', $data),

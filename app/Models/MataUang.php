@@ -15,7 +15,7 @@ class MataUang extends Model
     protected $table = 'mata_uang';
     protected $primaryKey = 'id_mata_uang';
 
-    // karena tidak ada created_at & updated_at
+    // Tidak pakai timestamps
     public $timestamps = false;
 
     // =========================
@@ -42,17 +42,21 @@ class MataUang extends Model
     ];
 
     // =========================
-    // ACCESSOR
+    // ACCESSOR & MUTATOR
     // =========================
 
-    // label: "USD - US Dollar"
-    public function getLabelAttribute()
+    /**
+     * Label untuk dropdown/select: "USD - US Dollar"
+     */
+    public function getLabelAttribute(): string
     {
         return "{$this->kode} - {$this->nama}";
     }
 
-    // simbol default jika kosong
-    public function getSimbolAttribute($value)
+    /**
+     * Simbol default jika kosong
+     */
+    public function getSimbolAttribute($value): string
     {
         return $value ?: '-';
     }
@@ -61,28 +65,39 @@ class MataUang extends Model
     // QUERY SCOPE
     // =========================
 
-    // scope by kode
-    public function scopeKode($query, $kode)
-    {
-        return $query->where('kode', strtoupper($kode));
-    }
+    // =========================
+// QUERY SCOPE
+// =========================
 
-    // scope search (dipakai di controller)
-    public function scopeSearch($query, $search)
-    {
-        return $query->where(function ($q) use ($search) {
-            $q->where('kode', 'like', "%{$search}%")
-                ->orWhere('nama', 'like', "%{$search}%")
-                ->orWhere('simbol', 'like', "%{$search}%");
-        });
-    }
+public function scopeKode($query, $kode)
+{
+    return $query->where('kode', strtoupper($kode));
+}
 
-    // scope latest (FIX tanpa created_at)
-    public function scopeLatestData($query)
-    {
-        return $query->orderBy('id_mata_uang', 'desc');
-    }
+public function scopeSearch($query, $search)
+{
+    if (empty($search)) return $query;
 
+    return $query->where(function ($q) use ($search) {
+        $q->where('kode', 'like', "%{$search}%")
+          ->orWhere('nama', 'like', "%{$search}%")
+          ->orWhere('simbol', 'like', "%{$search}%");
+    });
+}
+
+// FIX untuk latest()
+public function scopeLatest($query)
+{
+    return $query->orderBy('id_mata_uang', 'desc');
+}
+
+public function scopeLatestData($query)
+{
+    return $query->orderBy('id_mata_uang', 'desc');
+}
+    // =========================
+    // RELATIONSHIP
+    // =========================
     public function akun()
     {
         return $this->hasMany(Akun::class, 'id_mata_uang', 'id_mata_uang');

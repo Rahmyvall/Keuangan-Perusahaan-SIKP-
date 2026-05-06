@@ -12,7 +12,7 @@ class Pengguna extends Authenticatable
     protected $table = 'pengguna';
     protected $primaryKey = 'id_pengguna';
 
-    // TIMESTAMPS DINONAKTIFKAN karena tabel tidak punya kolom created_at & updated_at
+    // Laravel tidak auto-manage created_at / updated_at
     public $timestamps = false;
 
     protected $fillable = [
@@ -22,7 +22,8 @@ class Pengguna extends Authenticatable
         'password_hash',
         'email',
         'role',
-        'is_active'
+        'is_active',
+        'created_at',
     ];
 
     protected $hidden = [
@@ -36,7 +37,7 @@ class Pengguna extends Authenticatable
     */
     protected $casts = [
         'is_active' => 'boolean',
-        // created_at & updated_at dihapus karena kolom tidak ada di tabel
+        'created_at' => 'datetime',
     ];
 
     /*

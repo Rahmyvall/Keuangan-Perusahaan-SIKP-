@@ -70,8 +70,13 @@
                     <span>Transaksi</span>
                 </a>
                 <ul id="transaksi" class="sidebar-dropdown list-unstyled collapse">
-                    <li><a class="sidebar-link" href="#"><i data-feather="edit"></i> Jurnal Umum</a></li>
-                    <li><a class="sidebar-link" href="#"><i data-feather="file-text"></i> Detail Jurnal</a></li>
+                    <li><a class="sidebar-link" href="{{ route('jurnal.index') }}"><i data-feather="edit"></i> Jurnal
+                            Umum</a></li>
+                    <li>
+                        <a class="sidebar-link" href="{{ route('jurnal.details.index') }}">
+                            <i data-feather="file-text"></i> Detail Jurnal
+                        </a>
+                    </li>
                 </ul>
             </li>
 

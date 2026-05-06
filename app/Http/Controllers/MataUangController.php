@@ -9,23 +9,21 @@ use Illuminate\Validation\Rule;
 class MataUangController extends Controller
 {
     /**
-     * List data + search + pagination
+     * Display a listing of the resource.
      */
     public function index(Request $request)
     {
-        $query = MataUang::query();
-
-        if ($request->search) {
-            $query->where('kode', 'like', "%{$request->search}%")
-                ->orWhere('nama', 'like', "%{$request->search}%");
-        }
-
-        $data = $query->orderBy('kode')->paginate(9)->withQueryString();
+        $data = MataUang::query()
+            ->search($request->search)        // pakai scopeSearch dari model
+            ->orderBy('kode')
+            ->paginate(9)
+            ->withQueryString();
 
         return view('mata_uang.index', compact('data'));
     }
+
     /**
-     * Form create
+     * Show the form for creating a new resource.
      */
     public function create()
     {
@@ -33,7 +31,7 @@ class MataUangController extends Controller
     }
 
     /**
-     * Simpan data
+     * Store a newly created resource in storage.
      */
     public function store(Request $request)
     {
@@ -43,11 +41,11 @@ class MataUangController extends Controller
 
         return redirect()
             ->route('mata-uang.index')
-            ->with('success', 'Data mata uang berhasil ditambahkan');
+            ->with('success', 'Data mata uang berhasil ditambahkan.');
     }
 
     /**
-     * Detail
+     * Display the specified resource.
      */
     public function show(MataUang $mataUang)
     {
@@ -55,7 +53,7 @@ class MataUangController extends Controller
     }
 
     /**
-     * Form edit
+     * Show the form for editing the specified resource.
      */
     public function edit(MataUang $mataUang)
     {
@@ -63,7 +61,7 @@ class MataUangController extends Controller
     }
 
     /**
-     * Update data
+     * Update the specified resource in storage.
      */
     public function update(Request $request, MataUang $mataUang)
     {
@@ -73,27 +71,29 @@ class MataUangController extends Controller
 
         return redirect()
             ->route('mata-uang.index')
-            ->with('success', 'Data mata uang berhasil diperbarui');
+            ->with('success', 'Data mata uang berhasil diperbarui.');
     }
 
     /**
-     * Hapus data
+     * Remove the specified resource from storage.
      */
     public function destroy(MataUang $mataUang)
     {
         try {
             $mataUang->delete();
 
-            return redirect()->back()
-                ->with('success', 'Data mata uang berhasil dihapus');
+            return redirect()
+                ->route('mata-uang.index')
+                ->with('success', 'Data mata uang berhasil dihapus.');
         } catch (\Exception $e) {
-            return redirect()->back()
-                ->with('error', 'Gagal menghapus data');
+            return redirect()
+                ->back()
+                ->with('error', 'Gagal menghapus data. Data sedang digunakan.');
         }
     }
 
     /**
-     * 🔥 Reusable validation
+     * Reusable validation rules
      */
     private function validateData(Request $request, $id = null)
     {
@@ -104,7 +104,7 @@ class MataUangController extends Controller
                 'max:3',
                 Rule::unique('mata_uang', 'kode')->ignore($id, 'id_mata_uang'),
             ],
-            'nama' => 'required|string|max:50',
+            'nama'   => 'required|string|max:50',
             'simbol' => 'nullable|string|max:10',
         ]);
     }

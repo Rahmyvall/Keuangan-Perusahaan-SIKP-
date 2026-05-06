@@ -7,6 +7,8 @@ use App\Http\Controllers\MataUangController;
 use App\Http\Controllers\PenggunaController;
 use App\Http\Controllers\PerusahaanController;
 use App\Http\Controllers\AkunController;
+use App\Http\Controllers\JurnalController;
+use App\Http\Controllers\JurnalDetailController;
 use App\Http\Controllers\LaporanController;
 use App\Http\Controllers\PeriodeController;
 
@@ -58,6 +60,24 @@ Route::middleware('auth')->group(function () {
         Route::resource('mata-uang', MataUangController::class);
         Route::resource('akun', AkunController::class);
         Route::resource('periode', PeriodeController::class);
+        Route::resource('jurnal', JurnalController::class);
+
+        // Tambahan route khusus Jurnal
+        Route::post('jurnal/{jurnal}/post', [JurnalController::class, 'post'])->name('jurnal.post');
+        Route::post('jurnal/{jurnal}/unpost', [JurnalController::class, 'unpost'])->name('jurnal.unpost');
+        Route::post('jurnal/{jurnal}/approve', [JurnalController::class, 'approve'])->name('jurnal.approve');
+        Route::post('jurnal/{jurnal}/reject', [JurnalController::class, 'reject'])->name('jurnal.reject');
+
+        /*
+        |----------------------------
+        | JURNAL DETAILS (Nested)
+        |----------------------------
+        */
+        Route::prefix('jurnal')->group(function () {
+            Route::resource('details', JurnalDetailController::class)
+                ->names('jurnal.details');
+                // Tidak pakai except(['index']) agar route index bisa dipakai di sidebar
+        });
 
         /*
         |----------------------------
@@ -80,14 +100,14 @@ Route::middleware('auth')->group(function () {
 
         Route::get('/laporan/laba-rugi', [LaporanController::class, 'labaRugi'])
             ->name('laporan.laba-rugi');
-            // web.php
+
         Route::get('/coa/movement', [AkunController::class, 'index'])->name('coa.movement');
 
-        
+    });
 
     /*
     |--------------------------------------------------------------------------
-    | ROLE AKUNTANSI
+    | ROLE LAINNYA
     |--------------------------------------------------------------------------
     */
     Route::middleware('role:akuntan')->prefix('akuntan')->group(function () {
@@ -117,5 +137,4 @@ Route::middleware('auth')->group(function () {
     */
     Route::post('/logout', [LoginController::class, 'logout'])
         ->name('logout');
-        });
 });
