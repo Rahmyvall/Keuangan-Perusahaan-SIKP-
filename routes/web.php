@@ -8,6 +8,7 @@ use App\Http\Controllers\PenggunaController;
 use App\Http\Controllers\PerusahaanController;
 use App\Http\Controllers\AkunController;
 use App\Http\Controllers\LaporanController;
+use App\Http\Controllers\PeriodeController;
 
 /*
 |--------------------------------------------------------------------------
@@ -26,7 +27,6 @@ Route::middleware('guest')->group(function () {
     Route::post('/login', [LoginController::class, 'login'])
         ->name('login.post');
 });
-
 
 /*
 |--------------------------------------------------------------------------
@@ -48,19 +48,46 @@ Route::middleware('auth')->group(function () {
         Route::get('/dashboard', [DashboardController::class, 'index'])
             ->name('admin.dashboard');
 
+        /*
+        |----------------------------
+        | MASTER DATA
+        |----------------------------
+        */
         Route::resource('perusahaan', PerusahaanController::class);
         Route::resource('pengguna', PenggunaController::class);
         Route::resource('mata-uang', MataUangController::class);
+        Route::resource('akun', AkunController::class);
+        Route::resource('periode', PeriodeController::class);
 
-        Route::get('/perusahaan/by-kota/{kota}', [PerusahaanController::class, 'byCity'])
+        /*
+        |----------------------------
+        | AJAX / SUPPORT DATA
+        |----------------------------
+        */
+        Route::get('/perusahaan/by-kota/{kota}', [PerusahaanController::class, 'byKota'])
             ->name('perusahaan.by-kota');
 
-      
-    });
+        Route::get('/akun/by-tipe/{tipe}', [AkunController::class, 'byTipe'])
+            ->name('akun.by-tipe');
+
+        /*
+        |----------------------------
+        | LAPORAN AKUNTANSI
+        |----------------------------
+        */
+        Route::get('/laporan/neraca', [LaporanController::class, 'neraca'])
+            ->name('laporan.neraca');
+
+        Route::get('/laporan/laba-rugi', [LaporanController::class, 'labaRugi'])
+            ->name('laporan.laba-rugi');
+            // web.php
+        Route::get('/coa/movement', [AkunController::class, 'index'])->name('coa.movement');
+
+        
 
     /*
     |--------------------------------------------------------------------------
-    | ROLE LAIN
+    | ROLE AKUNTANSI
     |--------------------------------------------------------------------------
     */
     Route::middleware('role:akuntan')->prefix('akuntan')->group(function () {
@@ -83,6 +110,12 @@ Route::middleware('auth')->group(function () {
             ->name('staff.dashboard');
     });
 
+    /*
+    |--------------------------------------------------------------------------
+    | LOGOUT
+    |--------------------------------------------------------------------------
+    */
     Route::post('/logout', [LoginController::class, 'logout'])
         ->name('logout');
+        });
 });

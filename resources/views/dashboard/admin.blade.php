@@ -56,6 +56,26 @@
                             </div>
                         </div>
                     </div>
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="mt-0 col">
+                                    <h5 class="card-title">Visitors</h5>
+                                </div>
+
+                                <div class="col-auto">
+                                    <div class="stat text-primary">
+                                        <i class="align-middle" data-feather="users"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <h1 class="mt-1 mb-3">14.212</h1>
+                            <div class="mb-0">
+                                <span class="text-success">5.25%</span>
+                                <span class="text-muted">Since last week</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 <div class="col-sm-6">
                     <div class="card">
@@ -98,22 +118,58 @@
                             </div>
                         </div>
                     </div>
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="mt-0 col">
+                                    <h5 class="card-title">Orders</h5>
+                                </div>
+
+                                <div class="col-auto">
+                                    <div class="stat text-primary">
+                                        <i class="align-middle" data-feather="shopping-cart"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <h1 class="mt-1 mb-3">64</h1>
+                            <div class="mb-0">
+                                <span class="text-danger">-2.25%</span>
+                                <span class="text-muted">Since last week</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
     <div class="col-xl-6 col-xxl-7">
-        <div class="card flex-fill w-100">
-            <div class="card-header">
+        <div class="card flex-fill w-100 shadow-sm border-0 rounded-4">
 
-                <h5 class="mb-0 card-title">Recent Movement</h5>
+            <div class="card-header bg-white border-0">
+                <h5 class="mb-0 fw-bold">Distribusi Akun (COA) per Tipe</h5>
+                <small class="text-muted">Jumlah akun berdasarkan kategori</small>
             </div>
-            <div class="py-3 card-body">
+
+            <div class="card-body">
                 <div class="chart chart-sm">
-                    <canvas id="chartjs-dashboard-line"></canvas>
+                    <canvas id="coaPieChart" width="400" height="300"></canvas>
                 </div>
             </div>
+
+            @if(isset($akun_chart))
+            <div class="card-footer bg-white border-0">
+                <div class="row text-center">
+                    @foreach($akun_chart as $tipe => $jumlah)
+                    <div class="col-6 col-sm-4 col-md-2 mb-2">
+                        <small class="text-muted">{{ $tipe }}</small><br>
+                        <strong class="text-primary">{{ number_format($jumlah) }}</strong>
+                    </div>
+                    @endforeach
+                </div>
+            </div>
+            @endif
+
         </div>
     </div>
 </div>
@@ -191,75 +247,86 @@
     </div>
 </div>
 @endsection
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<!-- Script Grafik Minimal -->
 <script>
-document.addEventListener("DOMContentLoaded", function() {
-    var ctx = document.getElementById("chartjs-dashboard-line").getContext("2d");
-    var gradient = ctx.createLinearGradient(0, 0, 0, 225);
-    gradient.addColorStop(0, "rgba(215, 227, 244, 1)");
-    gradient.addColorStop(1, "rgba(215, 227, 244, 0)");
-    // Line chart
-    new Chart(document.getElementById("chartjs-dashboard-line"), {
-        type: "line",
+document.addEventListener('DOMContentLoaded', function() {
+    const ctx = document.getElementById('coaPieChart'); // Ganti ID jika perlu
+
+    if (!ctx) return;
+
+    new Chart(ctx, {
+        type: 'line',
         data: {
-            labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov",
-                "Dec"
+            labels: [
+                'Aset',
+                'Liabilitas',
+                'Ekuitas',
+                'Pendapatan',
+                'Beban'
             ],
             datasets: [{
-                label: "Sales ($)",
-                fill: true,
-                backgroundColor: gradient,
-                borderColor: window.theme.primary,
+                label: 'Jumlah Akun',
                 data: [
-                    2115,
-                    1562,
-                    1584,
-                    1892,
-                    1587,
-                    1923,
-                    2566,
-                    2448,
-                    2805,
-                    3438,
-                    2917,
-                    3327
-                ]
+                    <?= $akun_chart['Aset'] ?? 0 ?>,
+                    <?= $akun_chart['Liabilitas'] ?? 0 ?>,
+                    <?= $akun_chart['Ekuitas'] ?? 0 ?>,
+                    <?= $akun_chart['Pendapatan'] ?? 0 ?>,
+                    <?= $akun_chart['Beban'] ?? 0 ?>
+                ],
+                borderColor: '#4e73df',
+                backgroundColor: 'rgba(78, 115, 223, 0.1)',
+                borderWidth: 4,
+                tension: 0.4, // Membuat garis melengkung (smooth)
+                pointBackgroundColor: '#fff',
+                pointBorderColor: '#4e73df',
+                pointBorderWidth: 3,
+                pointRadius: 6,
+                pointHoverRadius: 8
             }]
         },
         options: {
+            responsive: true,
             maintainAspectRatio: false,
-            legend: {
-                display: false
-            },
-            tooltips: {
-                intersect: false
-            },
-            hover: {
-                intersect: true
-            },
             plugins: {
-                filler: {
-                    propagate: false
+                legend: {
+                    position: 'top',
+                    labels: {
+                        font: {
+                            size: 14
+                        },
+                        padding: 20
+                    }
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            return context.raw + ' akun';
+                        }
+                    }
                 }
             },
             scales: {
-                xAxes: [{
-                    reverse: true,
-                    gridLines: {
-                        color: "rgba(0,0,0,0.0)"
-                    }
-                }],
-                yAxes: [{
-                    ticks: {
-                        stepSize: 1000
+                y: {
+                    beginAtZero: true,
+                    grid: {
+                        color: 'rgba(0, 0, 0, 0.05)'
                     },
-                    display: true,
-                    borderDash: [3, 3],
-                    gridLines: {
-                        color: "rgba(0,0,0,0.0)"
+                    ticks: {
+                        stepSize: 1, // Karena jumlah akun biasanya integer
+                        font: {
+                            size: 13
+                        }
                     }
-                }]
+                },
+                x: {
+                    grid: {
+                        color: 'rgba(0, 0, 0, 0.05)'
+                    },
+                    ticks: {
+                        font: {
+                            size: 13
+                        }
+                    }
+                }
             }
         }
     });
@@ -271,13 +338,11 @@ document.addEventListener('DOMContentLoaded', function() {
     const canvas = document.getElementById('perusahaanKotaChart');
     if (!canvas) return;
 
-    const ctx = canvas.getContext('2d');
-
-    // Data dari Laravel (aman dari null)
+    // Data dari Laravel (paling aman)
     const labels = @json($kota_labels ?? []);
     const data = @json($kota_data ?? []);
 
-    new Chart(ctx, {
+    new Chart(canvas, { // Bisa langsung pakai canvas (lebih modern)
         type: 'bar',
         data: {
             labels: labels,
@@ -285,7 +350,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 label: 'Jumlah Perusahaan',
                 data: data,
                 backgroundColor: '#0d6efd',
-                borderRadius: 6
+                borderColor: '#0b5ed7',
+                borderWidth: 2,
+                borderRadius: 8,
+                hoverBackgroundColor: '#0b5ed7'
             }]
         },
         options: {
@@ -295,6 +363,16 @@ document.addEventListener('DOMContentLoaded', function() {
             plugins: {
                 legend: {
                     display: false
+                },
+                tooltip: {
+                    backgroundColor: 'rgba(0,0,0,0.8)',
+                    titleFont: {
+                        size: 14
+                    },
+                    bodyFont: {
+                        size: 15
+                    },
+                    displayColors: false
                 }
             },
 
@@ -302,12 +380,25 @@ document.addEventListener('DOMContentLoaded', function() {
                 y: {
                     beginAtZero: true,
                     ticks: {
-                        stepSize: 1
+                        stepSize: 1,
+                        font: {
+                            size: 13
+                        }
+                    },
+                    grid: {
+                        color: 'rgba(0,0,0,0.05)'
                     }
                 },
                 x: {
                     grid: {
                         display: false
+                    },
+                    ticks: {
+                        font: {
+                            size: 13
+                        },
+                        maxRotation: 45, // Agar label kota tidak bertumpuk
+                        minRotation: 0
                     }
                 }
             }

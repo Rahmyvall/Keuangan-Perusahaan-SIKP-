@@ -56,9 +56,10 @@
                             <i data-feather="dollar-sign"></i> Mata Uang
                         </a>
                     </li>
-                    <li><a class="sidebar-link" href="#"><i data-feather="book"></i> Akun
+                    <li><a class="sidebar-link" href="{{ route('akun.index') }}"><i data-feather="book"></i> Akun
                             Perkiraan</a></li>
-                    <li><a class="sidebar-link" href="#"><i data-feather="calendar"></i> Periode</a></li>
+                    <li><a class="sidebar-link" href="{{ route('periode.index') }}"><i data-feather="calendar"></i>
+                            Periode</a></li>
                 </ul>
             </li>
 

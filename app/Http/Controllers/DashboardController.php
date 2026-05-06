@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\Perusahaan;
 use App\Models\Pengguna;
 use App\Models\MataUang;
+use App\Models\Akun;
 
 class DashboardController extends Controller
 {
@@ -13,66 +14,93 @@ class DashboardController extends Controller
     {
         $user = Auth::user();
 
+        // Redirect jika belum login
         if (!$user) {
             return redirect()->route('login');
         }
 
-        // =========================
-        // GRAFIK KOTA
-        // =========================
+        // =============================================
+        // DATA KOTA PERUSAHAAN
+        // =============================================
         $kotaData = Perusahaan::selectRaw('kota, COUNT(*) as total')
             ->whereNotNull('kota')
             ->where('kota', '!=', '')
             ->groupBy('kota')
             ->orderByDesc('total')
+            ->limit(10)                    // batasi agar chart tidak terlalu penuh
             ->get();
 
-        // =========================
+        // =============================================
         // DATA PENGGUNA
-        // =========================
-        $pengguna = Pengguna::with('perusahaan')->get();
-
+        // =============================================
         $totalPengguna = Pengguna::count();
-        $penggunaAktif = Pengguna::where('is_active', 1)->count();
-        $penggunaNonAktif = Pengguna::where('is_active', 0)->count();
+        $penggunaAktif = Pengguna::where('is_active', true)->count();
+        $penggunaNonAktif = $totalPengguna - $penggunaAktif;
 
-        // =========================
-        // DATA MATA UANG (BARU)
-        // =========================
-        $totalMataUang = MataUang::count();
-
-        $mataUangTerbaru = MataUang::latest()
-            ->limit(5)
+        // Load pengguna dengan perusahaan (untuk tabel jika diperlukan)
+        $pengguna = Pengguna::with('perusahaan')
+            ->latest()
+            ->limit(8)
             ->get();
 
-        $mataUangChart = MataUang::select('kode')->get();
+        // =============================================
+        // DATA MATA UANG
+        // =============================================
+        $totalMataUang = MataUang::count();
+        $mataUangTerbaru = MataUang::latest()->limit(5)->get();
 
-        // =========================
-        // PREPARE DATA
-        // =========================
-        $data = [
-            'user'  => $user,
-            'title' => 'Dashboard',
+        // =============================================
+        // DATA AKUN (Chart of Account)
+        // =============================================
+        $akunData = Akun::selectRaw('tipe_akun, COUNT(*) as total')
+            ->where('is_active', true)
+            ->groupBy('tipe_akun')
+            ->pluck('total', 'tipe_akun');
 
-            // kota chart
-            'kota_labels' => $kotaData->pluck('kota')->values(),
-            'kota_data'   => $kotaData->pluck('total')->values(),
-
-            // pengguna
-            'pengguna' => $pengguna,
-            'total_pengguna' => $totalPengguna,
-            'pengguna_aktif' => $penggunaAktif,
-            'pengguna_nonaktif' => $penggunaNonAktif,
-
-            // mata uang
-            'total_mata_uang' => $totalMataUang,
-            'mata_uang_terbaru' => $mataUangTerbaru,
-            'mata_uang_chart' => $mataUangChart,
+        $akunChart = [
+            'Aset'       => $akunData['Aset']       ?? 0,
+            'Liabilitas' => $akunData['Liabilitas'] ?? 0,
+            'Ekuitas'    => $akunData['Ekuitas']    ?? 0,
+            'Pendapatan' => $akunData['Pendapatan'] ?? 0,
+            'Beban'      => $akunData['Beban']      ?? 0,
         ];
 
-        $role = $user->role ?? 'admin';
+        $totalAkun = Akun::where('is_active', true)->count();
 
-        return match ($role) {
+        // =============================================
+        // TOTAL PERUSAHAAN (Tambahan yang berguna)
+        // =============================================
+        $totalPerusahaan = Perusahaan::count();
+
+        // =============================================
+        // KIRIM DATA KE VIEW
+        // =============================================
+        $data = [
+            'user'                  => $user,
+            'title'                 => 'Dashboard',
+
+            // Perusahaan & Kota
+            'total_perusahaan'      => $totalPerusahaan,
+            'kota_labels'           => $kotaData->pluck('kota'),
+            'kota_data'             => $kotaData->pluck('total'),
+
+            // Pengguna
+            'pengguna'              => $pengguna,
+            'total_pengguna'        => $totalPengguna,
+            'pengguna_aktif'        => $penggunaAktif,
+            'pengguna_nonaktif'     => $penggunaNonAktif,
+
+            // Mata Uang
+            'total_mata_uang'       => $totalMataUang,
+            'mata_uang_terbaru'     => $mataUangTerbaru,
+
+            // Akun
+            'akun_chart'            => $akunChart,
+            'total_akun'            => $totalAkun,
+        ];
+
+        // Redirect berdasarkan role
+        return match ($user->role) {
             'admin'   => view('dashboard.admin', $data),
             'akuntan' => view('dashboard.akuntan', $data),
             'manajer' => view('dashboard.manajer', $data),

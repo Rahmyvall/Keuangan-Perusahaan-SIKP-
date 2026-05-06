@@ -12,7 +12,8 @@ class Pengguna extends Authenticatable
     protected $table = 'pengguna';
     protected $primaryKey = 'id_pengguna';
 
-    public $timestamps = true;
+    // TIMESTAMPS DINONAKTIFKAN karena tabel tidak punya kolom created_at & updated_at
+    public $timestamps = false;
 
     protected $fillable = [
         'id_perusahaan',
@@ -35,8 +36,7 @@ class Pengguna extends Authenticatable
     */
     protected $casts = [
         'is_active' => 'boolean',
-        'created_at' => 'datetime',
-        'updated_at' => 'datetime',
+        // created_at & updated_at dihapus karena kolom tidak ada di tabel
     ];
 
     /*
@@ -71,7 +71,7 @@ class Pengguna extends Authenticatable
 
     /*
     |--------------------------------------
-    | ROLE CHECK (SESUAI DATABASE)
+    | ROLE CHECK
     |--------------------------------------
     */
     public function isAdmin()

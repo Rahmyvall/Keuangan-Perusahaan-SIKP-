@@ -78,4 +78,14 @@ class Perusahaan extends Model
             }
         );
     }
+
+    public function periodes()
+    {
+        return $this->hasMany(Periode::class, 'id_perusahaan', 'id_perusahaan');
+    }
+
+    public function periodeAktif()
+    {
+        return $this->periodes()->where('status', 'Terbuka')->latest();
+    }
 }
