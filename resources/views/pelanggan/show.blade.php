@@ -3,87 +3,185 @@
 @section('title', 'Detail Pelanggan')
 
 @section('content')
-<div class="container-fluid py-3">
+<div class="container-fluid py-4">
 
-    <!-- Header Mobile Friendly -->
-    <div
-        class="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center mb-4 no-print gap-3">
+    <!-- Header -->
+    <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-3 mb-4 no-print">
+
         <div>
-            <h1 class="h3 mb-1">Detail Pelanggan</h1>
-            <p class="text-muted mb-0">Informasi lengkap pelanggan</p>
+            <h2 class="fw-bold mb-1 text-dark">
+                Detail Pelanggan
+            </h2>
+            <p class="text-muted mb-0">
+                Informasi lengkap data pelanggan
+            </p>
         </div>
 
-        <div class="btn-group w-100 w-sm-auto">
-            <a href="{{ route('pelanggan.index') }}" class="btn btn-secondary flex-grow-1 flex-sm-grow-0">
-                <i class="fas fa-arrow-left"></i> Kembali
+        <div class="d-flex flex-wrap gap-2">
+            <a href="{{ route('pelanggan.index') }}" class="btn btn-light border shadow-sm">
+                <i class="fas fa-arrow-left me-2"></i>Kembali
             </a>
-            <button onclick="window.print()" class="btn btn-info text-white flex-grow-1 flex-sm-grow-0">
-                <i class="fas fa-print"></i> Cetak
+
+            <a href="{{ route('pelanggan.edit', $pelanggan) }}" class="btn btn-warning shadow-sm">
+                <i class="fas fa-edit me-2"></i>Edit
+            </a>
+
+            <button onclick="window.print()" class="btn btn-primary shadow-sm">
+                <i class="fas fa-print me-2"></i>Cetak
             </button>
-            <a href="{{ route('pelanggan.edit', $pelanggan) }}" class="btn btn-warning flex-grow-1 flex-sm-grow-0">
-                <i class="fas fa-edit"></i> Edit
-            </a>
         </div>
     </div>
 
-    <div class="row justify-content-center">
-        <div class="col-12 col-md-12 col-lg-12">
+    <div class="row g-4">
 
-            <div class="card shadow border-0">
-                <!-- Header Card -->
-                <div class="card-header bg-white py-4">
-                    <div class="d-flex align-items-center">
-                        <div class="bg-primary bg-opacity-10 p-3 rounded-3 me-3">
-                            <i class="fas fa-user fa-2x text-primary"></i>
-                        </div>
-                        <div class="flex-grow-1">
-                            <h4 class="mb-1">{{ $pelanggan->nama_pelanggan }}</h4>
-                            <h5 class="text-primary font-monospace mb-0">{{ $pelanggan->kode_pelanggan }}</h5>
-                        </div>
-                    </div>
-                </div>
+        <!-- Profile Card -->
+        <div class="col-lg-4">
 
-                <div class="card-body p-4 p-sm-5">
+            <div class="card border-0 shadow-lg h-100 customer-card">
 
-                    <div class="row g-4">
-                        <div class="col-6">
-                            <label class="text-muted small">Perusahaan</label>
-                            <p class="fw-semibold">{{ optional($pelanggan->perusahaan)->nama_perusahaan ?? '-' }}</p>
-                        </div>
-                        <div class="col-6">
-                            <label class="text-muted small">Limit Kredit</label>
-                            <p class="fs-5 fw-bold text-success">
-                                Rp {{ number_format($pelanggan->limit_kredit, 0, ',', '.') }}
-                            </p>
-                        </div>
-                        <div class="col-6">
-                            <label class="text-muted small">Telepon</label>
-                            <p class="mb-0">{{ $pelanggan->telepon ?? '<span class="text-muted">—</span>' }}</p>
-                        </div>
-                        <div class="col-6">
-                            <label class="text-muted small">Email</label>
-                            <p class="mb-0">{{ $pelanggan->email ?? '<span class="text-muted">—</span>' }}</p>
-                        </div>
+                <div class="card-body text-center p-4">
+
+                    <div class="customer-avatar mx-auto mb-3">
+                        <i class="fas fa-user"></i>
                     </div>
 
-                    @if($pelanggan->alamat)
-                    <hr>
-                    <label class="text-muted small">Alamat Lengkap</label>
-                    <p class="mb-0">{{ $pelanggan->alamat }}</p>
-                    @endif
+                    <h3 class="fw-bold mb-1">
+                        {{ $pelanggan->nama_pelanggan }}
+                    </h3>
 
-                    <!-- Barcode -->
-                    <hr class="my-5">
-                    <div class="text-center">
-                        <label class="text-muted small d-block mb-3">Barcode Kode Pelanggan</label>
-                        <svg id="barcode" class="mx-auto"></svg>
-                        <small class="text-muted d-block mt-2">{{ $pelanggan->kode_pelanggan }}</small>
+                    <div class="badge bg-primary-subtle text-primary px-3 py-2 rounded-pill fs-6">
+                        {{ $pelanggan->kode_pelanggan }}
+                    </div>
+
+                    <hr class="my-4">
+
+                    <div class="row g-3 text-start">
+
+                        <div class="col-12">
+                            <div class="info-box">
+                                <div class="info-icon bg-success-subtle text-success">
+                                    <i class="fas fa-building"></i>
+                                </div>
+
+                                <div>
+                                    <small class="text-muted d-block">
+                                        Perusahaan
+                                    </small>
+
+                                    <span class="fw-semibold">
+                                        {{ optional($pelanggan->perusahaan)->nama_perusahaan ?? '-' }}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-12">
+                            <div class="info-box">
+                                <div class="info-icon bg-info-subtle text-info">
+                                    <i class="fas fa-phone"></i>
+                                </div>
+
+                                <div>
+                                    <small class="text-muted d-block">
+                                        Telepon
+                                    </small>
+
+                                    <span class="fw-semibold">
+                                        {{ $pelanggan->telepon ?? '-' }}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-12">
+                            <div class="info-box">
+                                <div class="info-icon bg-warning-subtle text-warning">
+                                    <i class="fas fa-envelope"></i>
+                                </div>
+
+                                <div>
+                                    <small class="text-muted d-block">
+                                        Email
+                                    </small>
+
+                                    <span class="fw-semibold">
+                                        {{ $pelanggan->email ?? '-' }}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
 
                 </div>
             </div>
 
         </div>
+
+        <!-- Detail Card -->
+        <div class="col-lg-8">
+
+            <div class="card border-0 shadow-lg h-100">
+
+                <div class="card-body p-4 p-lg-5">
+
+                    <!-- Kredit -->
+                    <div class="credit-box mb-4">
+
+                        <div>
+                            <small class="text-muted">
+                                Limit Kredit
+                            </small>
+
+                            <h2 class="fw-bold text-success mb-0">
+                                Rp {{ number_format($pelanggan->limit_kredit, 0, ',', '.') }}
+                            </h2>
+                        </div>
+
+                        <div class="credit-icon">
+                            <i class="fas fa-wallet"></i>
+                        </div>
+
+                    </div>
+
+                    <!-- Alamat -->
+                    <div class="mb-5">
+
+                        <h5 class="fw-bold mb-3">
+                            <i class="fas fa-map-marker-alt text-danger me-2"></i>
+                            Alamat Lengkap
+                        </h5>
+
+                        <div class="address-box">
+                            {{ $pelanggan->alamat ?: 'Alamat belum tersedia' }}
+                        </div>
+
+                    </div>
+
+                    <!-- Barcode -->
+                    <div class="barcode-wrapper text-center">
+
+                        <small class="text-uppercase text-muted fw-semibold d-block mb-3">
+                            Barcode Pelanggan
+                        </small>
+
+                        <div class="barcode-box">
+                            <svg id="barcode"></svg>
+                        </div>
+
+                        <div class="mt-3">
+                            <span class="badge bg-dark px-3 py-2">
+                                {{ $pelanggan->kode_pelanggan }}
+                            </span>
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+
     </div>
 </div>
 
@@ -92,20 +190,119 @@
 
 <script>
 document.addEventListener("DOMContentLoaded", function() {
+
     JsBarcode("#barcode", "{{ $pelanggan->kode_pelanggan }}", {
         format: "CODE128",
-        lineColor: "#1e3a8a",
-        width: 2.8,
-        height: 85,
+        width: 2.5,
+        height: 80,
         displayValue: true,
-        fontSize: 15,
-        margin: 10
+        fontSize: 16,
+        margin: 10,
+        lineColor: "#111827"
     });
+
 });
 </script>
 
-<!-- Print & Mobile Styles -->
 <style>
+body {
+    background: #f5f7fb;
+}
+
+/* Card */
+.customer-card {
+    overflow: hidden;
+    position: relative;
+}
+
+.customer-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 120px;
+    background: linear-gradient(135deg, #2563eb, #1e40af);
+}
+
+/* Avatar */
+.customer-avatar {
+    width: 95px;
+    height: 95px;
+    border-radius: 50%;
+    background: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 38px;
+    color: #2563eb;
+    position: relative;
+    z-index: 2;
+    margin-top: 30px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, .12);
+}
+
+/* Info Box */
+.info-box {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 14px;
+    border-radius: 14px;
+    background: #f8fafc;
+}
+
+.info-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+}
+
+/* Credit */
+.credit-box {
+    background: linear-gradient(135deg, #16a34a, #15803d);
+    color: white;
+    padding: 28px;
+    border-radius: 22px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 12px 30px rgba(22, 163, 74, .25);
+}
+
+.credit-icon {
+    font-size: 48px;
+    opacity: .25;
+}
+
+/* Address */
+.address-box {
+    background: #f8fafc;
+    border-radius: 18px;
+    padding: 20px;
+    line-height: 1.8;
+    color: #374151;
+}
+
+/* Barcode */
+.barcode-wrapper {
+    border-top: 1px dashed #d1d5db;
+    padding-top: 40px;
+}
+
+.barcode-box {
+    background: white;
+    padding: 25px;
+    border-radius: 20px;
+    display: inline-block;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, .08);
+}
+
+/* Print */
 @media print {
 
     .no-print,
@@ -117,33 +314,40 @@ document.addEventListener("DOMContentLoaded", function() {
 
     body {
         background: white !important;
-        font-family: Arial, Helvetica, sans-serif;
     }
 
     .card {
-        border: 1px solid #ddd !important;
         box-shadow: none !important;
+        border: 1px solid #ddd !important;
     }
 
     @page {
-        margin: 1.5cm;
         size: A4;
+        margin: 1cm;
     }
 }
 
-/* Mobile Optimization */
-@media (max-width: 576px) {
-    .card-body {
-        padding: 1.25rem !important;
+/* Mobile */
+@media(max-width:768px) {
+
+    .customer-avatar {
+        width: 80px;
+        height: 80px;
+        font-size: 30px;
     }
 
-    h4 {
-        font-size: 1.35rem !important;
+    .credit-box {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
     }
 
-    .btn-group .btn {
-        padding: 0.6rem 1rem;
-        font-size: 0.95rem;
+    .credit-icon {
+        display: none;
+    }
+
+    h2 {
+        font-size: 1.5rem;
     }
 }
 </style>
