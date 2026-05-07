@@ -73,7 +73,7 @@
                     <li><a class="sidebar-link" href="{{ route('jurnal.index') }}"><i data-feather="edit"></i> Jurnal
                             Umum</a></li>
                     <li>
-                        <a class="sidebar-link" href="{{ route('jurnal.details.index') }}">
+                        <a class="sidebar-link" href="#">
                             <i data-feather="file-text"></i> Detail Jurnal
                         </a>
                     </li>
@@ -87,7 +87,8 @@
                     <span>Piutang (AR)</span>
                 </a>
                 <ul id="piutang" class="sidebar-dropdown list-unstyled collapse">
-                    <li><a class="sidebar-link" href="#"><i data-feather="user"></i> Pelanggan</a></li>
+                    <li><a class="sidebar-link" href="{{ route('pelanggan.index') }}"><i data-feather="user"></i>
+                            Pelanggan</a></li>
                     <li><a class="sidebar-link" href="#"><i data-feather="file"></i> Faktur Penjualan</a></li>
                     <li><a class="sidebar-link" href="#"><i data-feather="download"></i> Penerimaan Piutang</a></li>
                 </ul>

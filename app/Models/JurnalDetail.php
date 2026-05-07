@@ -10,15 +10,17 @@ class JurnalDetail extends Model
 {
     use HasFactory;
 
-    // ========================================
-    // TABLE CONFIGURATION
-    // ========================================
     protected $table = 'jurnal_detail';
     protected $primaryKey = 'id_detail';
-    public $incrementing = true;           // karena pakai bigint auto-increment
-    protected $keyType = 'int';            // bigint di MySQL/Laravel di-cast sebagai string di PHP, tapi int lebih aman
 
-    // Kolom yang boleh diisi massal
+    public $incrementing = true;
+    protected $keyType = 'int';
+
+    public $timestamps = true;
+
+    /**
+     * Kolom yang boleh diisi massal
+     */
     protected $fillable = [
         'id_jurnal',
         'id_akun',
@@ -27,93 +29,91 @@ class JurnalDetail extends Model
         'keterangan',
         'id_mata_uang',
         'kurs',
+        'created_by',
+        'updated_by',
     ];
 
-    // Casting tipe data
+    /**
+     * Casting tipe data
+     */
     protected $casts = [
-        'id_detail'     => 'integer',
-        'id_jurnal'     => 'integer',
-        'id_akun'       => 'integer',
         'debit'         => 'decimal:2',
         'kredit'        => 'decimal:2',
-        'id_mata_uang'  => 'integer',
         'kurs'          => 'decimal:4',
         'created_at'    => 'datetime',
         'updated_at'    => 'datetime',
     ];
 
-    // ========================================
-    // RELATIONSHIPS
-    // ========================================
-
     /**
-     * Relasi ke Jurnal (header)
+     * RELATIONSHIPS
      */
+
+    // Detail belongs to Jurnal (Header)
     public function jurnal(): BelongsTo
     {
         return $this->belongsTo(Jurnal::class, 'id_jurnal', 'id_jurnal');
     }
 
-    /**
-     * Relasi ke Akun / Chart of Account
-     */
+    // Detail belongs to Akun (Chart of Account)
     public function akun(): BelongsTo
     {
         return $this->belongsTo(Akun::class, 'id_akun', 'id_akun');
     }
 
-    /**
-     * Relasi ke Mata Uang
-     */
+    // Detail belongs to Mata Uang
     public function mataUang(): BelongsTo
     {
         return $this->belongsTo(MataUang::class, 'id_mata_uang', 'id_mata_uang');
     }
 
-    // ========================================
-    // HELPER / ACCESSORS (Opsional tapi sangat berguna)
-    // ========================================
-
     /**
-     * Saldo bersih (debit - kredit)
+     * ACCESSORS & MUTATORS
      */
-    public function getSaldoAttribute(): float
+
+    // Total dalam rupiah (jika multi-currency)
+    public function getNilaiRupiahAttribute(): float
     {
-        return $this->debit - $this->kredit;
+        return ($this->debit - $this->kredit) * $this->kurs;
     }
 
-    /**
-     * Cek apakah baris ini debit
-     */
-    public function isDebit(): bool
+    // Tipe posting (Debit / Kredit)
+    public function getTipeAttribute(): string
     {
-        return $this->debit > 0;
+        if ($this->debit > 0) return 'DEBIT';
+        if ($this->kredit > 0) return 'KREDIT';
+        return 'NETRAL';
     }
 
     /**
-     * Cek apakah baris ini kredit
+     * SCOPE
      */
-    public function isKredit(): bool
-    {
-        return $this->kredit > 0;
-    }
-
-    // ========================================
-    // QUERY SCOPES
-    // ========================================
-
-    public function scopeOfJurnal($query, $idJurnal)
-    {
-        return $query->where('id_jurnal', $idJurnal);
-    }
-
-    public function scopeDebitOnly($query)
+    public function scopeDebit($query)
     {
         return $query->where('debit', '>', 0);
     }
 
-    public function scopeKreditOnly($query)
+    public function scopeKredit($query)
     {
         return $query->where('kredit', '>', 0);
+    }
+
+    /**
+     * METHOD BERGUNA
+     */
+    public function isBalancedRow(): bool
+    {
+        return ($this->debit > 0 && $this->kredit === 0.00) ||
+               ($this->kredit > 0 && $this->debit === 0.00);
+    }
+
+    // FIX: Pastikan kedua relation ini ada
+    public function creator(): BelongsTo
+    {
+        return $this->belongsTo(Pengguna::class, 'created_by', 'id');
+    }
+
+    public function updater(): BelongsTo
+    {
+        return $this->belongsTo(Pengguna::class, 'updated_by', 'id');
     }
 }

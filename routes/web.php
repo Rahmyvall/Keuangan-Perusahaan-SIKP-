@@ -10,6 +10,7 @@ use App\Http\Controllers\AkunController;
 use App\Http\Controllers\JurnalController;
 use App\Http\Controllers\JurnalDetailController;
 use App\Http\Controllers\LaporanController;
+use App\Http\Controllers\PelangganController;
 use App\Http\Controllers\PeriodeController;
 
 /*
@@ -61,6 +62,7 @@ Route::middleware('auth')->group(function () {
         Route::resource('akun', AkunController::class);
         Route::resource('periode', PeriodeController::class);
         Route::resource('jurnal', JurnalController::class);
+        Route::resource('pelanggan', PelangganController::class);
 
         // Tambahan route khusus Jurnal
         Route::post('jurnal/{jurnal}/post', [JurnalController::class, 'post'])->name('jurnal.post');
@@ -69,17 +71,7 @@ Route::middleware('auth')->group(function () {
         Route::post('jurnal/{jurnal}/reject', [JurnalController::class, 'reject'])->name('jurnal.reject');
 
         /*
-        |----------------------------
-        | JURNAL DETAILS (Nested)
-        |----------------------------
-        */
-        Route::prefix('jurnal')->group(function () {
-            Route::resource('details', JurnalDetailController::class)
-                ->names('jurnal.details');
-                // Tidak pakai except(['index']) agar route index bisa dipakai di sidebar
-        });
 
-        /*
         |----------------------------
         | AJAX / SUPPORT DATA
         |----------------------------
