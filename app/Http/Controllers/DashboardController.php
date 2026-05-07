@@ -7,6 +7,7 @@ use App\Models\Perusahaan;
 use App\Models\Pengguna;
 use App\Models\MataUang;
 use App\Models\Akun;
+use App\Models\FakturPenjualan;
 
 class DashboardController extends Controller
 {
@@ -17,6 +18,12 @@ class DashboardController extends Controller
         if (!$user) {
             return redirect()->route('login');
         }
+
+        // Ambil ID Perusahaan dengan aman
+        $idPerusahaan = $user->id_perusahaan
+                     ?? $user->perusahaan_id
+                     ?? $user->perusahaan?->id_perusahaan
+                     ?? null;
 
         // =============================================
         // DATA KOTA PERUSAHAAN
@@ -37,23 +44,16 @@ class DashboardController extends Controller
         $penggunaNonAktif = $totalPengguna - $penggunaAktif;
 
         $pengguna = Pengguna::with('perusahaan')
-            ->latest()                    // Model Pengguna punya timestamps
+            ->latest()
             ->limit(8)
             ->get();
 
         // =============================================
-        // DATA MATA UANG
+        // DATA MATA UANG & AKUN
         // =============================================
         $totalMataUang = MataUang::count();
+        $mataUangTerbaru = MataUang::latestData()->limit(5)->get();
 
-        // ← PERBAIKAN DISINI
-        $mataUangTerbaru = MataUang::latestData()   // pakai scopeLatestData
-            ->limit(5)
-            ->get();
-
-        // =============================================
-        // DATA AKUN
-        // =============================================
         $akunData = Akun::selectRaw('tipe_akun, COUNT(*) as total')
             ->where('is_active', true)
             ->groupBy('tipe_akun')
@@ -68,11 +68,66 @@ class DashboardController extends Controller
         ];
 
         $totalAkun = Akun::where('is_active', true)->count();
+        $totalPerusahaan = Perusahaan::count();
 
         // =============================================
-        // TOTAL PERUSAHAAN
+        // DATA FAKTUR PENJUALAN (Earnings + Transaksi)
         // =============================================
-        $totalPerusahaan = Perusahaan::count();
+        $totalEarnings = 0;
+        $earningsBulanIni = 0;
+        $growthEarnings = 0;
+        $totalTransaksi = 0;
+        $growthTransaksi = 0;
+        $transaksiPending = 0;
+
+        if ($idPerusahaan) {
+            $fakturQuery = FakturPenjualan::where('id_perusahaan', $idPerusahaan);
+
+            // === EARNINGS ===
+            $totalEarnings = $fakturQuery->clone()
+                ->where('status', 'Lunas')
+                ->sum('total');
+
+            $earningsBulanIni = $fakturQuery->clone()
+                ->where('status', 'Lunas')
+                ->whereMonth('tanggal', now()->month)
+                ->whereYear('tanggal', now()->year)
+                ->sum('total');
+
+            $earningsMingguIni = $fakturQuery->clone()
+                ->where('status', 'Lunas')
+                ->where('tanggal', '>=', now()->subDays(7))
+                ->sum('total');
+
+            $earningsMingguLalu = $fakturQuery->clone()
+                ->where('status', 'Lunas')
+                ->whereBetween('tanggal', [now()->subDays(14), now()->subDays(7)])
+                ->sum('total');
+
+            $growthEarnings = $earningsMingguLalu > 0
+                ? round((($earningsMingguIni - $earningsMingguLalu) / $earningsMingguLalu) * 100, 2)
+                : 0;
+
+            // === TRANSAKSI ===
+            $totalTransaksi = $fakturQuery->clone()->count();
+
+            $transaksiMingguIni = $fakturQuery->clone()
+                ->where('tanggal', '>=', now()->subDays(7))
+                ->count();
+
+            $transaksiMingguLalu = $fakturQuery->clone()
+                ->whereBetween('tanggal', [now()->subDays(14), now()->subDays(7)])
+                ->count();
+
+            $growthTransaksi = $transaksiMingguLalu > 0
+                ? round((($transaksiMingguIni - $transaksiMingguLalu) / $transaksiMingguLalu) * 100, 2)
+                : 0;
+
+            // Pending
+            $transaksiPending = $fakturQuery->clone()
+                ->where('status', 'Belum Lunas')
+                ->count();
+        }
 
         // =============================================
         // KIRIM DATA KE VIEW
@@ -92,13 +147,20 @@ class DashboardController extends Controller
             'pengguna_aktif'        => $penggunaAktif,
             'pengguna_nonaktif'     => $penggunaNonAktif,
 
-            // Mata Uang
+            // Mata Uang & Akun
             'total_mata_uang'       => $totalMataUang,
             'mata_uang_terbaru'     => $mataUangTerbaru,
-
-            // Akun
             'akun_chart'            => $akunChart,
             'total_akun'            => $totalAkun,
+
+            // Faktur Penjualan
+            'total_earnings'        => $totalEarnings,
+            'earnings_bulan_ini'    => $earningsBulanIni,
+            'growth_earnings'       => $growthEarnings,
+
+            'total_transaksi'       => $totalTransaksi,
+            'growth_transaksi'      => $growthTransaksi,     // ← Ditambahkan
+            'transaksi_pending'     => $transaksiPending,
         ];
 
         return match ($user->role) {

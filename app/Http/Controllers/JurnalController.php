@@ -11,55 +11,129 @@ use Illuminate\Support\Facades\DB;
 
 class JurnalController extends Controller
 {
+    /*
+    |--------------------------------------------------------------------------
+    | TIPE JURNAL
+    |--------------------------------------------------------------------------
+    */
+    private $tipeJurnal = [
+        'Umum',
+        'Penyesuaian',
+        'Penutup',
+        'Pembalik',
+        'Kas Masuk',
+        'Kas Keluar',
+        'Bank'
+    ];
+
     /**
      * LIST DATA
      */
     public function index(Request $request)
     {
-        $query = Jurnal::with(['periode', 'perusahaan', 'creator', 'approver'])
+        $query = Jurnal::query()
+            ->select([
+                'id_jurnal',
+                'nomor_jurnal',
+                'tanggal',
+                'deskripsi',
+                'tipe_jurnal',
+                'id_periode',
+                'id_perusahaan',
+                'posted',
+                'approved_by',
+                'approved_at',
+                'created_by',
+            ])
+            ->with([
+                'periode:id_periode,nama_periode,tahun',
+                'perusahaan:id_perusahaan,nama_perusahaan',
+                'creator:id_pengguna,nama_pengguna',
+                'approver:id_pengguna,nama_pengguna',
+            ])
             ->orderByDesc('tanggal')
             ->orderByDesc('id_jurnal');
 
-        // Filter periode
+        /*
+        |--------------------------------------------------------------------------
+        | FILTER PERIODE
+        |--------------------------------------------------------------------------
+        */
         if ($request->filled('periode')) {
-            $query->where('id_periode', $request->periode);
+
+            $query->where(
+                'id_periode',
+                $request->periode
+            );
         }
 
-        // Filter tipe jurnal
+        /*
+        |--------------------------------------------------------------------------
+        | FILTER TIPE JURNAL
+        |--------------------------------------------------------------------------
+        */
         if ($request->filled('tipe')) {
-            $query->where('tipe_jurnal', $request->tipe);
+
+            $query->where(
+                'tipe_jurnal',
+                $request->tipe
+            );
         }
 
-        // Filter posted
+        /*
+        |--------------------------------------------------------------------------
+        | FILTER POSTED
+        |--------------------------------------------------------------------------
+        */
         if ($request->filled('posted')) {
-            $query->where('posted', filter_var($request->posted, FILTER_VALIDATE_BOOLEAN));
+
+            $query->where(
+                'posted',
+                filter_var(
+                    $request->posted,
+                    FILTER_VALIDATE_BOOLEAN
+                )
+            );
         }
 
-        // Search
+        /*
+        |--------------------------------------------------------------------------
+        | SEARCH
+        |--------------------------------------------------------------------------
+        */
         if ($request->filled('search')) {
-            $search = $request->search;
+
+            $search = trim($request->search);
 
             $query->where(function ($q) use ($search) {
-                $q->where('nomor_jurnal', 'like', "%{$search}%")
-                  ->orWhere('deskripsi', 'like', "%{$search}%");
+
+                $q->where(
+                    'nomor_jurnal',
+                    'like',
+                    "%{$search}%"
+                )
+                ->orWhere(
+                    'deskripsi',
+                    'like',
+                    "%{$search}%"
+                );
             });
         }
 
-        $jurnals = $query->paginate(15);
+        $jurnals = $query
+            ->paginate(15)
+            ->withQueryString();
 
-        $periodes = Periode::orderByDesc('tahun')->get();
+        $periodes = Periode::orderByDesc('tahun')
+            ->get();
 
-        $tipeJurnal = [
-            'Umum',
-            'Penyesuaian',
-            'Penutup',
-            'Pembalik',
-            'Kas Masuk',
-            'Kas Keluar',
-            'Bank'
-        ];
+        $tipeJurnal = $this->tipeJurnal;
 
-        return view('jurnal.index', compact('jurnals', 'periodes', 'tipeJurnal'));
+        return view('jurnal.index', compact(
+            'jurnals',
+            'periodes',
+            'tipeJurnal'
+        ));
     }
 
     /**
@@ -67,23 +141,25 @@ class JurnalController extends Controller
      */
     public function create()
     {
-        $periodes = Periode::where('is_active', true)
+        $periodes = Periode::where(
+                'is_active',
+                true
+            )
             ->orderByDesc('tahun')
             ->get();
 
-        $perusahaans = Perusahaan::all();
+        $perusahaans = Perusahaan::orderBy(
+                'nama_perusahaan'
+            )
+            ->get();
 
-        $tipeJurnal = [
-            'Umum',
-            'Penyesuaian',
-            'Penutup',
-            'Pembalik',
-            'Kas Masuk',
-            'Kas Keluar',
-            'Bank'
-        ];
+        $tipeJurnal = $this->tipeJurnal;
 
-        return view('jurnal.create', compact('periodes', 'perusahaans', 'tipeJurnal'));
+        return view('jurnal.create', compact(
+            'periodes',
+            'perusahaans',
+            'tipeJurnal'
+        ));
     }
 
     /**
@@ -92,32 +168,57 @@ class JurnalController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'nomor_jurnal'  => 'required|string|max:50|unique:jurnal,nomor_jurnal',
-            'tanggal'       => 'required|date',
-            'deskripsi'     => 'required|string',
-            'tipe_jurnal'   => 'required|in:Umum,Penyesuaian,Penutup,Pembalik,Kas Masuk,Kas Keluar,Bank',
-            'id_periode'    => 'required|exists:periode,id_periode',
-            'id_perusahaan' => 'required|exists:perusahaan,id_perusahaan',
+
+            'nomor_jurnal' =>
+                'required|string|max:50|unique:jurnal,nomor_jurnal',
+
+            'tanggal' =>
+                'required|date',
+
+            'deskripsi' =>
+                'required|string',
+
+            'tipe_jurnal' =>
+                'required|in:' . implode(',', $this->tipeJurnal),
+
+            'id_periode' =>
+                'required|exists:periode,id_periode',
+
+            'id_perusahaan' =>
+                'required|exists:perusahaan,id_perusahaan',
         ]);
 
         $validated['created_by'] = Auth::id();
+
         $validated['posted'] = false;
 
         DB::beginTransaction();
 
         try {
+
             $jurnal = Jurnal::create($validated);
 
             DB::commit();
 
             return redirect()
                 ->route('jurnal.index')
-                ->with('success', 'Jurnal berhasil dibuat: ' . $jurnal->nomor_jurnal);
+                ->with(
+                    'success',
+                    'Jurnal berhasil dibuat: ' .
+                    $jurnal->nomor_jurnal
+                );
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $th) {
+
             DB::rollBack();
 
-            return back()->with('error', 'Gagal menyimpan jurnal: ' . $e->getMessage());
+            return redirect()
+                ->back()
+                ->withInput()
+                ->with(
+                    'error',
+                    'Gagal menyimpan jurnal'
+                );
         }
     }
 
@@ -126,61 +227,131 @@ class JurnalController extends Controller
      */
     public function show(Jurnal $jurnal)
     {
-        $jurnal->load(['periode', 'perusahaan', 'creator', 'approver']);
+        $jurnal->load([
+            'periode',
+            'perusahaan',
+            'creator',
+            'approver',
+            'details.akun'
+        ]);
 
-        return view('jurnal.show', compact('jurnal'));
+        return view(
+            'jurnal.show',
+            compact('jurnal')
+        );
     }
 
     /**
-     * EDIT
+     * FORM EDIT
      */
     public function edit(Jurnal $jurnal)
     {
+        /*
+        |--------------------------------------------------------------------------
+        | VALIDASI POSTED
+        |--------------------------------------------------------------------------
+        */
         if ($jurnal->posted) {
+
             return redirect()
                 ->route('jurnal.index')
-                ->with('error', 'Jurnal yang sudah diposting tidak dapat diedit');
+                ->with(
+                    'error',
+                    'Jurnal yang sudah diposting tidak dapat diedit'
+                );
         }
 
-        $periodes = Periode::orderByDesc('tahun')->get();
-        $perusahaans = Perusahaan::all();
+        $periodes = Periode::orderByDesc('tahun')
+            ->get();
 
-        $tipeJurnal = [
-            'Umum',
-            'Penyesuaian',
-            'Penutup',
-            'Pembalik',
-            'Kas Masuk',
-            'Kas Keluar',
-            'Bank'
-        ];
+        $perusahaans = Perusahaan::orderBy(
+                'nama_perusahaan'
+            )
+            ->get();
 
-        return view('jurnal.edit', compact('jurnal', 'periodes', 'perusahaans', 'tipeJurnal'));
+        $tipeJurnal = $this->tipeJurnal;
+
+        return view('jurnal.edit', compact(
+            'jurnal',
+            'periodes',
+            'perusahaans',
+            'tipeJurnal'
+        ));
     }
 
     /**
      * UPDATE
      */
-    public function update(Request $request, Jurnal $jurnal)
-    {
+    public function update(
+        Request $request,
+        Jurnal $jurnal
+    ) {
+
+        /*
+        |--------------------------------------------------------------------------
+        | VALIDASI POSTED
+        |--------------------------------------------------------------------------
+        */
         if ($jurnal->posted) {
-            return back()->with('error', 'Jurnal yang sudah diposting tidak dapat diubah');
+
+            return redirect()
+                ->back()
+                ->with(
+                    'error',
+                    'Jurnal yang sudah diposting tidak dapat diubah'
+                );
         }
 
         $validated = $request->validate([
-            'nomor_jurnal'  => 'required|string|max:50|unique:jurnal,nomor_jurnal,' . $jurnal->id_jurnal . ',id_jurnal',
-            'tanggal'       => 'required|date',
-            'deskripsi'     => 'required|string',
-            'tipe_jurnal'   => 'required|in:Umum,Penyesuaian,Penutup,Pembalik,Kas Masuk,Kas Keluar,Bank',
-            'id_periode'    => 'required|exists:periode,id_periode',
-            'id_perusahaan' => 'required|exists:perusahaan,id_perusahaan',
+
+            'nomor_jurnal' =>
+                'required|string|max:50|unique:jurnal,nomor_jurnal,' .
+                $jurnal->id_jurnal .
+                ',id_jurnal',
+
+            'tanggal' =>
+                'required|date',
+
+            'deskripsi' =>
+                'required|string',
+
+            'tipe_jurnal' =>
+                'required|in:' . implode(',', $this->tipeJurnal),
+
+            'id_periode' =>
+                'required|exists:periode,id_periode',
+
+            'id_perusahaan' =>
+                'required|exists:perusahaan,id_perusahaan',
         ]);
 
-        $jurnal->update($validated);
+        DB::beginTransaction();
 
-        return redirect()
-            ->route('jurnal.index')
-            ->with('success', 'Jurnal berhasil diperbarui');
+        try {
+
+            $jurnal->update($validated);
+
+            DB::commit();
+
+            return redirect()
+                ->route('jurnal.index')
+                ->with(
+                    'success',
+                    'Jurnal berhasil diperbarui'
+                );
+
+        } catch (\Throwable $th) {
+
+            DB::rollBack();
+
+            return redirect()
+                ->back()
+                ->withInput()
+                ->with(
+                    'error',
+                    'Gagal memperbarui jurnal'
+                );
+        }
     }
 
     /**
@@ -188,36 +359,112 @@ class JurnalController extends Controller
      */
     public function destroy(Jurnal $jurnal)
     {
+        /*
+        |--------------------------------------------------------------------------
+        | VALIDASI POSTED
+        |--------------------------------------------------------------------------
+        */
         if ($jurnal->posted) {
-            return back()->with('error', 'Jurnal yang sudah diposting tidak dapat dihapus');
+
+            return redirect()
+                ->back()
+                ->with(
+                    'error',
+                    'Jurnal yang sudah diposting tidak dapat dihapus'
+                );
         }
 
-        $jurnal->delete();
+        /*
+        |--------------------------------------------------------------------------
+        | VALIDASI RELASI
+        |--------------------------------------------------------------------------
+        */
+        if ($jurnal->fakturPenjualan()->count() > 0) {
 
-        return redirect()
-            ->route('jurnal.index')
-            ->with('success', 'Jurnal berhasil dihapus');
+            return redirect()
+                ->back()
+                ->with(
+                    'error',
+                    'Jurnal sudah digunakan pada faktur penjualan'
+                );
+        }
+
+        DB::beginTransaction();
+
+        try {
+
+            $jurnal->details()->delete();
+
+            $jurnal->delete();
+
+            DB::commit();
+
+            return redirect()
+                ->route('jurnal.index')
+                ->with(
+                    'success',
+                    'Jurnal berhasil dihapus'
+                );
+
+        } catch (\Throwable $th) {
+
+            DB::rollBack();
+
+            return redirect()
+                ->back()
+                ->with(
+                    'error',
+                    'Gagal menghapus jurnal'
+                );
+        }
     }
 
     /**
-     * POST / UNPOST
+     * POST JURNAL
      */
     public function post(Jurnal $jurnal)
     {
-        $jurnal->update(['posted' => true]);
+        if ($jurnal->posted) {
 
-        return back()->with('success', 'Jurnal berhasil diposting');
-    }
+            return redirect()
+                ->back()
+                ->with(
+                    'error',
+                    'Jurnal sudah diposting'
+                );
+        }
 
-    public function unpost(Jurnal $jurnal)
-    {
-        $jurnal->update(['posted' => false]);
+        $jurnal->update([
+            'posted' => true
+        ]);
 
-        return back()->with('success', 'Jurnal berhasil di-unpost');
+        return redirect()
+            ->back()
+            ->with(
+                'success',
+                'Jurnal berhasil diposting'
+            );
     }
 
     /**
-     * APPROVE
+     * UNPOST JURNAL
+     */
+    public function unpost(Jurnal $jurnal)
+    {
+        $jurnal->update([
+            'posted' => false
+        ]);
+
+        return redirect()
+            ->back()
+            ->with(
+                'success',
+                'Jurnal berhasil di-unpost'
+            );
+    }
+
+    /**
+     * APPROVE JURNAL
      */
     public function approve(Jurnal $jurnal)
     {
@@ -226,6 +473,29 @@ class JurnalController extends Controller
             'approved_at' => now(),
         ]);
 
-        return back()->with('success', 'Jurnal berhasil di-approve');
+        return redirect()
+            ->back()
+            ->with(
+                'success',
+                'Jurnal berhasil di-approve'
+            );
+    }
+
+    /**
+     * REJECT APPROVAL
+     */
+    public function reject(Jurnal $jurnal)
+    {
+        $jurnal->update([
+            'approved_by' => null,
+            'approved_at' => null,
+        ]);
+
+        return redirect()
+            ->back()
+            ->with(
+                'success',
+                'Approval jurnal berhasil dibatalkan'
+            );
     }
 }

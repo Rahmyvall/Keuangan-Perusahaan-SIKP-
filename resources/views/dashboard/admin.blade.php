@@ -31,38 +31,48 @@
                         </div>
                     </div>
                 </div>
-
-                <!-- Visitors -->
+                <!-- Transaksi Card -->
                 <div class="col-md-6 col-lg-4">
                     <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden hover-shadow">
                         <div class="card-body p-4">
                             <div class="d-flex justify-content-between">
                                 <div>
-                                    <div class="text-muted small fw-medium">Visitors</div>
-                                    <h1 class="mt-3 mb-1 fw-bold text-dark">14,212</h1>
+                                    <div class="text-muted small fw-medium">Transaksi</div>
+                                    <h1 class="mt-3 mb-1 fw-bold text-dark">
+                                        {{ number_format($total_transaksi ?? 0) }}
+                                    </h1>
                                     <div class="d-flex align-items-center gap-1">
-                                        <span class="text-success fw-semibold">↑ 5.25%</span>
+                                        <span
+                                            class="text-{{ $growth_transaksi >= 0 ? 'success' : 'danger' }} fw-semibold">
+                                            {{ $growth_transaksi >= 0 ? '↑' : '↓' }} {{ abs($growth_transaksi ?? 0) }}%
+                                        </span>
                                         <span class="text-muted small">minggu lalu</span>
                                     </div>
                                 </div>
                                 <div class="bg-primary bg-opacity-10 text-primary p-3 rounded-3">
-                                    <i data-feather="eye" class="align-middle" style="width: 42px; height: 42px;"></i>
+                                    <i data-feather="shopping-cart" class="align-middle"
+                                        style="width: 42px; height: 42px;"></i>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Earnings -->
+                <!-- Earnings Card -->
                 <div class="col-md-6 col-lg-4">
                     <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden hover-shadow">
                         <div class="card-body p-4">
                             <div class="d-flex justify-content-between">
                                 <div>
                                     <div class="text-muted small fw-medium">Earnings</div>
-                                    <h1 class="mt-3 mb-1 fw-bold text-dark">$21,300</h1>
+                                    <h1 class="mt-3 mb-1 fw-bold text-dark">
+                                        Rp {{ number_format($total_earnings ?? 0, 0, ',', '.') }}
+                                    </h1>
                                     <div class="d-flex align-items-center gap-1">
-                                        <span class="text-success fw-semibold">↑ 6.65%</span>
+                                        <span
+                                            class="text-{{ $growth_earnings >= 0 ? 'success' : 'danger' }} fw-semibold">
+                                            {{ $growth_earnings >= 0 ? '↑' : '↓' }} {{ abs($growth_earnings ?? 0) }}%
+                                        </span>
                                         <span class="text-muted small">minggu lalu</span>
                                     </div>
                                 </div>
@@ -74,7 +84,6 @@
                         </div>
                     </div>
                 </div>
-
                 <!-- Orders -->
                 <div class="col-md-6 col-lg-4">
                     <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden hover-shadow">

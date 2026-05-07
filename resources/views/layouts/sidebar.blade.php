@@ -89,7 +89,8 @@
                 <ul id="piutang" class="sidebar-dropdown list-unstyled collapse">
                     <li><a class="sidebar-link" href="{{ route('pelanggan.index') }}"><i data-feather="user"></i>
                             Pelanggan</a></li>
-                    <li><a class="sidebar-link" href="#"><i data-feather="file"></i> Faktur Penjualan</a></li>
+                    <li><a class="sidebar-link" href="{{ route('faktur-penjualan.index') }}"><i data-feather="file"></i>
+                            Faktur Penjualan</a></li>
                     <li><a class="sidebar-link" href="#"><i data-feather="download"></i> Penerimaan Piutang</a></li>
                 </ul>
             </li>
