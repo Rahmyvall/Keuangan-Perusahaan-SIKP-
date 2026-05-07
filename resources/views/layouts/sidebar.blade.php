@@ -73,9 +73,17 @@
                     <li><a class="sidebar-link" href="{{ route('jurnal.index') }}"><i data-feather="edit"></i> Jurnal
                             Umum</a></li>
                     <li>
-                        <a class="sidebar-link" href="#">
-                            <i data-feather="file-text"></i> Detail Jurnal
+                        @if(isset($jurnal))
+                        <a class="sidebar-link" href="{{ route('jurnal.detail.index', $jurnal) }}">
+                            <i data-feather="file-text"></i>
+                            <span>Detail Jurnal</span>
                         </a>
+                        @else
+                        <a class="sidebar-link" href="{{ route('jurnal.index') }}">
+                            <i data-feather="file-text"></i>
+                            <span>Detail Jurnal</span>
+                        </a>
+                        @endif
                     </li>
                 </ul>
             </li>
