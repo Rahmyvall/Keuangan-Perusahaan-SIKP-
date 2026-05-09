@@ -88,4 +88,9 @@ class Perusahaan extends Model
     {
         return $this->periodes()->where('status', 'Terbuka')->latest();
     }
+
+    public function supplier()
+    {
+        return $this->hasMany(Supplier::class, 'id_perusahaan', 'id_perusahaan');
+    }
 }

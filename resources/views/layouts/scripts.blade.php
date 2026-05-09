@@ -1,8 +1,22 @@
 <script src="{{ asset('admin/static/js/app.js') }}"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<!-- jQuery -->
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+<!-- DataTables -->
 <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+
+<!-- Bootstrap 5 DataTables -->
 <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+
+<script>
+$(document).ready(function() {
+    $('#myTable').DataTable({
+        paging: true,
+        pageLength: 10
+    });
+});
+</script>
 
 <!-- Script Tahun Otomatis -->
 <script>
@@ -47,20 +61,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
     window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
         if (localStorage.getItem('theme') === 'auto') setTheme('auto');
-    });
-});
-</script>
-<script>
-$(document).on('click', '.pagination a', function(e) {
-    e.preventDefault();
-
-    let url = $(this).attr('href');
-
-    $.ajax({
-        url: url,
-        success: function(data) {
-            $('#ajax-table').html(data);
-        }
     });
 });
 </script>

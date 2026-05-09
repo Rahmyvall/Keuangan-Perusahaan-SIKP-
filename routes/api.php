@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\PenggunaController;
 use App\Http\Controllers\Api\PelangganController;     // ← Tambahkan ini
 use App\Http\Controllers\PeriodeController;
 use App\Http\Controllers\Api\JurnalDetailController;
+use App\Http\Controllers\SupplierController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -115,4 +116,20 @@ Route::prefix('periode')->name('api.periode.')->group(function () {
 
     Route::get('/perusahaan/{id_perusahaan}', [PeriodeController::class, 'byPerusahaan']);
     Route::get('/aktif', [PeriodeController::class, 'aktif']);
+});
+
+Route::prefix('supplier')->group(function () {
+
+    // PUBLIC - Read Only
+    Route::get('/', [SupplierController::class, 'index']);
+    Route::get('/{supplier}', [SupplierController::class, 'show']);
+
+    // PROTECTED - Membutuhkan Login (Sanctum)
+    Route::middleware('auth:sanctum')->group(function () {
+
+        Route::post('/', [SupplierController::class, 'store']);
+        Route::put('/{supplier}', [SupplierController::class, 'update']);
+        Route::delete('/{supplier}', [SupplierController::class, 'destroy']);
+
+    });
 });

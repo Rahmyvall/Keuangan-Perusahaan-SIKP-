@@ -13,6 +13,8 @@ use App\Http\Controllers\LaporanController;
 use App\Http\Controllers\PelangganController;
 use App\Http\Controllers\PeriodeController;
 use App\Http\Controllers\FakturPenjualanController;
+use App\Http\Controllers\PenerimaanPiutangController;
+use App\Http\Controllers\SupplierController;
 
 /*
 |--------------------------------------------------------------------------
@@ -63,7 +65,13 @@ Route::middleware('auth')->group(function () {
         Route::resource('akun', AkunController::class);
         Route::resource('periode', PeriodeController::class);
         Route::resource('jurnal', JurnalController::class);
+        Route::resource('supplier', SupplierController::class);
+       // Route Resource
+Route::resource('penerimaan-piutang', PenerimaanPiutangController::class);
 
+// Atau secara manual (jika masih error)
+Route::get('penerimaan-piutang/{penerimaanPiutang}', [PenerimaanPiutangController::class, 'show'])
+     ->name('penerimaan-piutang.show');
         // Resource biasa (opsional)
         Route::resource('jurnal-detail', JurnalDetailController::class);
 

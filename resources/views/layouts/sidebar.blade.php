@@ -99,7 +99,8 @@
                             Pelanggan</a></li>
                     <li><a class="sidebar-link" href="{{ route('faktur-penjualan.index') }}"><i data-feather="file"></i>
                             Faktur Penjualan</a></li>
-                    <li><a class="sidebar-link" href="#"><i data-feather="download"></i> Penerimaan Piutang</a></li>
+                    <li><a class="sidebar-link" href="{{ route('penerimaan-piutang.index') }}"><i
+                                data-feather="download"></i> Penerimaan Piutang</a></li>
                 </ul>
             </li>
 
@@ -110,7 +111,8 @@
                     <span>Hutang (AP)</span>
                 </a>
                 <ul id="hutang" class="sidebar-dropdown list-unstyled collapse">
-                    <li><a class="sidebar-link" href="#"><i data-feather="truck"></i> Supplier</a></li>
+                    <li><a class="sidebar-link" href="{{ route('supplier.index') }}"><i data-feather="truck"></i>
+                            Supplier</a></li>
                     <li><a class="sidebar-link" href="#"><i data-feather="shopping-cart"></i> Faktur Pembelian</a></li>
                     <li><a class="sidebar-link" href="#"><i data-feather="send"></i> Pembayaran Hutang</a></li>
                 </ul>
