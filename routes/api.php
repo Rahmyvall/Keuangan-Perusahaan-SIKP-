@@ -1,26 +1,37 @@
 <?php
 
-use App\Http\Controllers\Api\MataUangApiController;
-use App\Http\Controllers\Api\AkunController;
-use App\Http\Controllers\Api\PerusahaanController;
-use App\Http\Controllers\Api\PenggunaController;
-use App\Http\Controllers\Api\PelangganController;     // ← Tambahkan ini
-use App\Http\Controllers\PeriodeController;
-use App\Http\Controllers\Api\JurnalDetailController;
-use App\Http\Controllers\SupplierController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
-| USER AUTH ROUTE (SANCTUM)
+| API CONTROLLERS
 |--------------------------------------------------------------------------
 */
+
+use App\Http\Controllers\Api\AkunController;
+use App\Http\Controllers\Api\MataUangApiController;
+use App\Http\Controllers\Api\PelangganController;
+use App\Http\Controllers\Api\PenggunaController;
+use App\Http\Controllers\Api\PerusahaanController;
+use App\Http\Controllers\Api\JurnalDetailController;
+use App\Http\Controllers\Api\FakturPembelianApiController;
+
+use App\Http\Controllers\PeriodeController;
+use App\Http\Controllers\SupplierController;
+
+/*
+|--------------------------------------------------------------------------
+| AUTH USER ROUTE (SANCTUM)
+|--------------------------------------------------------------------------
+*/
+
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+
     return response()->json([
         'success' => true,
         'message' => 'User authenticated',
-        'data' => $request->user()
+        'data'    => $request->user()
     ]);
 });
 
@@ -29,33 +40,101 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 | PERUSAHAAN API ROUTES
 |--------------------------------------------------------------------------
 */
+
 Route::prefix('perusahaan')->group(function () {
-    Route::get('/', [PerusahaanController::class, 'index']);
-    Route::get('/{id}', [PerusahaanController::class, 'show']);
+
+    /*
+    |--------------------------------------------------------------------------
+    | PUBLIC
+    |--------------------------------------------------------------------------
+    */
+
+    Route::get('/', [
+        PerusahaanController::class,
+        'index'
+    ]);
+
+    Route::get('/{id}', [
+        PerusahaanController::class,
+        'show'
+    ]);
+
+    /*
+    |--------------------------------------------------------------------------
+    | PROTECTED
+    |--------------------------------------------------------------------------
+    */
 
     Route::middleware('auth:sanctum')->group(function () {
-        Route::post('/', [PerusahaanController::class, 'store']);
-        Route::put('/{id}', [PerusahaanController::class, 'update']);
-        Route::delete('/{id}', [PerusahaanController::class, 'destroy']);
+
+        Route::post('/', [
+            PerusahaanController::class,
+            'store'
+        ]);
+
+        Route::put('/{id}', [
+            PerusahaanController::class,
+            'update'
+        ]);
+
+        Route::delete('/{id}', [
+            PerusahaanController::class,
+            'destroy'
+        ]);
     });
 });
 
 /*
 |--------------------------------------------------------------------------
-| PELANGGAN API ROUTES (BARU)
+| PELANGGAN API ROUTES
 |--------------------------------------------------------------------------
 */
+
 Route::prefix('pelanggan')->group(function () {
 
-    // PUBLIC - Read Only
-    Route::get('/', [PelangganController::class, 'index']);
-    Route::get('/{pelanggan}', [PelangganController::class, 'show']);
+    /*
+    |--------------------------------------------------------------------------
+    | PUBLIC
+    |--------------------------------------------------------------------------
+    */
 
-    // PROTECTED - Membutuhkan Login (Sanctum)
+    Route::get('/', [
+        PelangganController::class,
+        'index'
+    ]);
+
+    Route::get('/{pelanggan}', [
+        PelangganController::class,
+        'show'
+    ]);
+
+    /*
+    |--------------------------------------------------------------------------
+    | PROTECTED
+    |--------------------------------------------------------------------------
+    */
+
     Route::middleware('auth:sanctum')->group(function () {
-        Route::post('/', [PelangganController::class, 'store']);
-        Route::put('/{pelanggan}', [PelangganController::class, 'update']);
-        Route::delete('/{pelanggan}', [PelangganController::class, 'destroy']);
+
+        Route::post('/', [
+            PelangganController::class,
+            'store'
+        ]);
+
+        Route::put('/{pelanggan}', [
+            PelangganController::class,
+            'update'
+        ]);
+
+        Route::patch('/{pelanggan}', [
+            PelangganController::class,
+            'update'
+        ]);
+
+        Route::delete('/{pelanggan}', [
+            PelangganController::class,
+            'destroy'
+        ]);
     });
 });
 
@@ -64,8 +143,13 @@ Route::prefix('pelanggan')->group(function () {
 | PENGGUNA API ROUTES
 |--------------------------------------------------------------------------
 */
+
 Route::prefix('pengguna')->group(function () {
-    Route::get('/', [PenggunaController::class, 'index']);
+
+    Route::get('/', [
+        PenggunaController::class,
+        'index'
+    ]);
 });
 
 /*
@@ -73,30 +157,106 @@ Route::prefix('pengguna')->group(function () {
 | MATA UANG API ROUTES
 |--------------------------------------------------------------------------
 */
+
 Route::prefix('mata-uang')->group(function () {
-    Route::get('/', [MataUangApiController::class, 'index']);
-    Route::get('/{id}', [MataUangApiController::class, 'show']);
+
+    /*
+    |--------------------------------------------------------------------------
+    | PUBLIC
+    |--------------------------------------------------------------------------
+    */
+
+    Route::get('/', [
+        MataUangApiController::class,
+        'index'
+    ]);
+
+    Route::get('/{id}', [
+        MataUangApiController::class,
+        'show'
+    ]);
+
+    /*
+    |--------------------------------------------------------------------------
+    | PROTECTED
+    |--------------------------------------------------------------------------
+    */
 
     Route::middleware('auth:sanctum')->group(function () {
-        Route::post('/', [MataUangApiController::class, 'store']);
-        Route::put('/{id}', [MataUangApiController::class, 'update']);
-        Route::delete('/{id}', [MataUangApiController::class, 'destroy']);
+
+        Route::post('/', [
+            MataUangApiController::class,
+            'store'
+        ]);
+
+        Route::put('/{id}', [
+            MataUangApiController::class,
+            'update'
+        ]);
+
+        Route::patch('/{id}', [
+            MataUangApiController::class,
+            'update'
+        ]);
+
+        Route::delete('/{id}', [
+            MataUangApiController::class,
+            'destroy'
+        ]);
     });
 });
 
 /*
 |--------------------------------------------------------------------------
-| AKUN API ROUTES (COA)
+| AKUN API ROUTES
 |--------------------------------------------------------------------------
 */
+
 Route::prefix('akun')->group(function () {
-    Route::get('/', [AkunController::class, 'index']);
-    Route::get('/{id}', [AkunController::class, 'show']);
+
+    /*
+    |--------------------------------------------------------------------------
+    | PUBLIC
+    |--------------------------------------------------------------------------
+    */
+
+    Route::get('/', [
+        AkunController::class,
+        'index'
+    ]);
+
+    Route::get('/{id}', [
+        AkunController::class,
+        'show'
+    ]);
+
+    /*
+    |--------------------------------------------------------------------------
+    | PROTECTED
+    |--------------------------------------------------------------------------
+    */
 
     Route::middleware('auth:sanctum')->group(function () {
-        Route::post('/', [AkunController::class, 'store']);
-        Route::put('/{id}', [AkunController::class, 'update']);
-        Route::delete('/{id}', [AkunController::class, 'destroy']);
+
+        Route::post('/', [
+            AkunController::class,
+            'store'
+        ]);
+
+        Route::put('/{id}', [
+            AkunController::class,
+            'update'
+        ]);
+
+        Route::patch('/{id}', [
+            AkunController::class,
+            'update'
+        ]);
+
+        Route::delete('/{id}', [
+            AkunController::class,
+            'destroy'
+        ]);
     });
 });
 
@@ -105,31 +265,156 @@ Route::prefix('akun')->group(function () {
 | PERIODE API ROUTES
 |--------------------------------------------------------------------------
 */
-Route::prefix('periode')->name('api.periode.')->group(function () {
-    Route::get('/', [PeriodeController::class, 'index'])->name('index');
-    Route::post('/', [PeriodeController::class, 'store'])->name('store');
 
-    Route::get('/{periode}', [PeriodeController::class, 'show'])->name('show');
-    Route::put('/{periode}', [PeriodeController::class, 'update'])->name('update');
-    Route::patch('/{periode}', [PeriodeController::class, 'update']);
-    Route::delete('/{periode}', [PeriodeController::class, 'destroy'])->name('destroy');
+Route::prefix('periode')
+    ->name('api.periode.')
+    ->group(function () {
 
-    Route::get('/perusahaan/{id_perusahaan}', [PeriodeController::class, 'byPerusahaan']);
-    Route::get('/aktif', [PeriodeController::class, 'aktif']);
-});
+        Route::get('/', [
+            PeriodeController::class,
+            'index'
+        ])->name('index');
+
+        Route::post('/', [
+            PeriodeController::class,
+            'store'
+        ])->name('store');
+
+        Route::get('/aktif', [
+            PeriodeController::class,
+            'aktif'
+        ]);
+
+        Route::get('/perusahaan/{id_perusahaan}', [
+            PeriodeController::class,
+            'byPerusahaan'
+        ]);
+
+        Route::get('/{periode}', [
+            PeriodeController::class,
+            'show'
+        ])->name('show');
+
+        Route::put('/{periode}', [
+            PeriodeController::class,
+            'update'
+        ])->name('update');
+
+        Route::patch('/{periode}', [
+            PeriodeController::class,
+            'update'
+        ]);
+
+        Route::delete('/{periode}', [
+            PeriodeController::class,
+            'destroy'
+        ])->name('destroy');
+    });
+
+/*
+|--------------------------------------------------------------------------
+| SUPPLIER API ROUTES
+|--------------------------------------------------------------------------
+*/
 
 Route::prefix('supplier')->group(function () {
 
-    // PUBLIC - Read Only
-    Route::get('/', [SupplierController::class, 'index']);
-    Route::get('/{supplier}', [SupplierController::class, 'show']);
+    /*
+    |--------------------------------------------------------------------------
+    | PUBLIC
+    |--------------------------------------------------------------------------
+    */
 
-    // PROTECTED - Membutuhkan Login (Sanctum)
+    Route::get('/', [
+        SupplierController::class,
+        'index'
+    ]);
+
+    Route::get('/{supplier}', [
+        SupplierController::class,
+        'show'
+    ]);
+
+    /*
+    |--------------------------------------------------------------------------
+    | PROTECTED
+    |--------------------------------------------------------------------------
+    */
+
     Route::middleware('auth:sanctum')->group(function () {
 
-        Route::post('/', [SupplierController::class, 'store']);
-        Route::put('/{supplier}', [SupplierController::class, 'update']);
-        Route::delete('/{supplier}', [SupplierController::class, 'destroy']);
+        Route::post('/', [
+            SupplierController::class,
+            'store'
+        ]);
 
+        Route::put('/{supplier}', [
+            SupplierController::class,
+            'update'
+        ]);
+
+        Route::patch('/{supplier}', [
+            SupplierController::class,
+            'update'
+        ]);
+
+        Route::delete('/{supplier}', [
+            SupplierController::class,
+            'destroy'
+        ]);
+    });
+});
+
+/*
+|--------------------------------------------------------------------------
+| FAKTUR PEMBELIAN API ROUTES
+|--------------------------------------------------------------------------
+*/
+
+Route::prefix('faktur-pembelian')->group(function () {
+
+    /*
+    |--------------------------------------------------------------------------
+    | PUBLIC
+    |--------------------------------------------------------------------------
+    */
+
+    Route::get('/', [
+        FakturPembelianApiController::class,
+        'index'
+    ]);
+
+    Route::get('/{id}', [
+        FakturPembelianApiController::class,
+        'show'
+    ]);
+
+    /*
+    |--------------------------------------------------------------------------
+    | PROTECTED
+    |--------------------------------------------------------------------------
+    */
+
+    Route::middleware('auth:sanctum')->group(function () {
+
+        Route::post('/', [
+            FakturPembelianApiController::class,
+            'store'
+        ]);
+
+        Route::put('/{id}', [
+            FakturPembelianApiController::class,
+            'update'
+        ]);
+
+        Route::patch('/{id}', [
+            FakturPembelianApiController::class,
+            'update'
+        ]);
+
+        Route::delete('/{id}', [
+            FakturPembelianApiController::class,
+            'destroy'
+        ]);
     });
 });

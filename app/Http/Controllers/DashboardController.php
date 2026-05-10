@@ -3,12 +3,14 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+
 use App\Models\Perusahaan;
 use App\Models\Pengguna;
-use App\Models\MataUang;
 use App\Models\Akun;
 use App\Models\Supplier;
 use App\Models\FakturPenjualan;
+use App\Models\FakturPembelian;
 use App\Models\PenerimaanPiutang;
 
 class DashboardController extends Controller
@@ -22,13 +24,30 @@ class DashboardController extends Controller
         }
 
         $idPerusahaan = $user->id_perusahaan
-                     ?? $user->perusahaan_id
-                     ?? $user->perusahaan?->id_perusahaan
-                     ?? null;
+            ?? $user->perusahaan_id
+            ?? $user->perusahaan?->id_perusahaan
+            ?? null;
 
-        // =============================================
-        // DATA KOTA PERUSAHAAN
-        // =============================================
+        /*
+        |--------------------------------------------------------------------------
+        | DATA DEFAULT
+        |--------------------------------------------------------------------------
+        */
+
+        $chartBulan = [
+            'Jan', 'Feb', 'Mar', 'Apr',
+            'Mei', 'Jun', 'Jul', 'Agu',
+            'Sep', 'Okt', 'Nov', 'Des'
+        ];
+
+        $chartTotal = array_fill(0, 12, 0);
+
+        /*
+        |--------------------------------------------------------------------------
+        | DATA PERUSAHAAN
+        |--------------------------------------------------------------------------
+        */
+
         $kotaData = Perusahaan::selectRaw('kota, COUNT(*) as total')
             ->whereNotNull('kota')
             ->where('kota', '!=', '')
@@ -37,9 +56,14 @@ class DashboardController extends Controller
             ->limit(10)
             ->get();
 
-        // =============================================
-        // DATA PENGGUNA
-        // =============================================
+        $totalPerusahaan = Perusahaan::count();
+
+        /*
+        |--------------------------------------------------------------------------
+        | DATA PENGGUNA
+        |--------------------------------------------------------------------------
+        */
+
         $totalPengguna = Pengguna::count();
 
         $penggunaAktif = Pengguna::where('is_active', true)->count();
@@ -51,41 +75,33 @@ class DashboardController extends Controller
             ->limit(8)
             ->get();
 
-        // =============================================
-        // DATA MATA UANG
-        // =============================================
-        $totalMataUang = MataUang::count();
+        /*
+        |--------------------------------------------------------------------------
+        | DATA AKUN
+        |--------------------------------------------------------------------------
+        */
 
-        $mataUangTerbaru = MataUang::latestData()
-            ->limit(5)
-            ->get();
-
-        // =============================================
-        // DATA AKUN
-        // =============================================
         $akunData = Akun::selectRaw('tipe_akun, COUNT(*) as total')
             ->where('is_active', true)
             ->groupBy('tipe_akun')
             ->pluck('total', 'tipe_akun');
 
         $akunChart = [
-            'Aset'       => $akunData['Aset']       ?? 0,
+            'Aset'       => $akunData['Aset'] ?? 0,
             'Liabilitas' => $akunData['Liabilitas'] ?? 0,
-            'Ekuitas'    => $akunData['Ekuitas']    ?? 0,
+            'Ekuitas'    => $akunData['Ekuitas'] ?? 0,
             'Pendapatan' => $akunData['Pendapatan'] ?? 0,
-            'Beban'      => $akunData['Beban']      ?? 0,
+            'Beban'      => $akunData['Beban'] ?? 0,
         ];
 
         $totalAkun = Akun::where('is_active', true)->count();
 
-        // =============================================
-        // DATA PERUSAHAAN
-        // =============================================
-        $totalPerusahaan = Perusahaan::count();
+        /*
+        |--------------------------------------------------------------------------
+        | DATA SUPPLIER
+        |--------------------------------------------------------------------------
+        */
 
-        // =============================================
-        // DATA SUPPLIER
-        // =============================================
         $totalSupplier = Supplier::count();
 
         $supplierTerbaru = Supplier::with('perusahaan')
@@ -93,172 +109,168 @@ class DashboardController extends Controller
             ->limit(5)
             ->get();
 
-        $supplierPerusahaan = Supplier::selectRaw('id_perusahaan, COUNT(*) as total')
-            ->with('perusahaan')
-            ->groupBy('id_perusahaan')
-            ->orderByDesc('total')
-            ->limit(5)
-            ->get();
+        /*
+        |--------------------------------------------------------------------------
+        | FAKTUR PENJUALAN
+        |--------------------------------------------------------------------------
+        */
 
-        // =============================================
-        // DATA FAKTUR PENJUALAN
-        // =============================================
         $totalEarnings = 0;
         $earningsBulanIni = 0;
         $growthEarnings = 0;
-
         $totalTransaksi = 0;
         $growthTransaksi = 0;
         $transaksiPending = 0;
 
         if ($idPerusahaan) {
 
-            $fakturQuery = FakturPenjualan::where('id_perusahaan', $idPerusahaan);
+            $fakturPenjualan = FakturPenjualan::where(
+                'id_perusahaan',
+                $idPerusahaan
+            );
 
-            $totalEarnings = $fakturQuery->clone()
+            $totalEarnings = (clone $fakturPenjualan)
                 ->where('status', 'Lunas')
                 ->sum('total');
 
-            $earningsBulanIni = $fakturQuery->clone()
+            $earningsBulanIni = (clone $fakturPenjualan)
                 ->where('status', 'Lunas')
                 ->whereMonth('tanggal', now()->month)
                 ->whereYear('tanggal', now()->year)
                 ->sum('total');
 
-            $earningsMingguIni = $fakturQuery->clone()
-                ->where('status', 'Lunas')
-                ->where('tanggal', '>=', now()->subDays(7))
-                ->sum('total');
+            $totalTransaksi = (clone $fakturPenjualan)->count();
 
-            $earningsMingguLalu = $fakturQuery->clone()
-                ->where('status', 'Lunas')
-                ->whereBetween('tanggal', [
-                    now()->subDays(14),
-                    now()->subDays(7)
-                ])
-                ->sum('total');
-
-            $growthEarnings = $earningsMingguLalu > 0
-                ? round((($earningsMingguIni - $earningsMingguLalu) / $earningsMingguLalu) * 100, 2)
-                : 0;
-
-            $totalTransaksi = $fakturQuery->clone()->count();
-
-            $transaksiMingguIni = $fakturQuery->clone()
-                ->where('tanggal', '>=', now()->subDays(7))
-                ->count();
-
-            $transaksiMingguLalu = $fakturQuery->clone()
-                ->whereBetween('tanggal', [
-                    now()->subDays(14),
-                    now()->subDays(7)
-                ])
-                ->count();
-
-            $growthTransaksi = $transaksiMingguLalu > 0
-                ? round((($transaksiMingguIni - $transaksiMingguLalu) / $transaksiMingguLalu) * 100, 2)
-                : 0;
-
-            $transaksiPending = $fakturQuery->clone()
+            $transaksiPending = (clone $fakturPenjualan)
                 ->where('status', 'Belum Lunas')
                 ->count();
         }
 
-        // =============================================
-        // DATA PENERIMAAN PIUTANG
-        // =============================================
-        $totalPenerimaan = 0;
-        $penerimaanHariIni = 0;
-        $penerimaanBulanIni = 0;
-        $totalTransaksiPenerimaan = 0;
+        /*
+        |--------------------------------------------------------------------------
+        | FAKTUR PEMBELIAN
+        |--------------------------------------------------------------------------
+        */
 
-        $growthHariIni = 0;
-        $growthBulanIni = 0;
+        $totalFakturPembelian = 0;
+        $totalNominalPembelian = 0;
+        $fakturLunas = 0;
+        $fakturBelumLunas = 0;
+        $fakturDibatalkan = 0;
 
         if ($idPerusahaan) {
 
-            $penerimaanQuery = PenerimaanPiutang::where('id_perusahaan', $idPerusahaan);
+            $fakturPembelian = FakturPembelian::where(
+                'id_perusahaan',
+                $idPerusahaan
+            );
 
-            $totalPenerimaan = $penerimaanQuery->clone()->sum('jumlah');
+            $totalFakturPembelian = (clone $fakturPembelian)->count();
 
-            $totalTransaksiPenerimaan = $penerimaanQuery->clone()->count();
+            $totalNominalPembelian = (clone $fakturPembelian)
+                ->sum('total');
 
-            // Hari Ini
-            $penerimaanHariIni = $penerimaanQuery->clone()
-                ->whereDate('tanggal', now()->format('Y-m-d'))
-                ->sum('jumlah');
+            $fakturLunas = (clone $fakturPembelian)
+                ->where('status', 'Lunas')
+                ->count();
 
-            $penerimaanKemarin = $penerimaanQuery->clone()
-                ->whereDate('tanggal', now()->subDay()->format('Y-m-d'))
-                ->sum('jumlah');
+            $fakturBelumLunas = (clone $fakturPembelian)
+                ->where('status', 'Belum Lunas')
+                ->count();
 
-            $growthHariIni = $penerimaanKemarin > 0
-                ? round((($penerimaanHariIni - $penerimaanKemarin) / $penerimaanKemarin) * 100, 2)
-                : 0;
+            $fakturDibatalkan = (clone $fakturPembelian)
+                ->where('status', 'Dibatalkan')
+                ->count();
 
-            // Bulan Ini
-            $penerimaanBulanIni = $penerimaanQuery->clone()
-                ->whereMonth('tanggal', now()->month)
+            /*
+            |--------------------------------------------------------------------------
+            | GRAFIK LINE PEMBELIAN
+            |--------------------------------------------------------------------------
+            */
+
+            $chartData = (clone $fakturPembelian)
+                ->select(
+                    DB::raw('MONTH(tanggal) as bulan'),
+                    DB::raw('SUM(total) as total')
+                )
                 ->whereYear('tanggal', now()->year)
-                ->sum('jumlah');
+                ->groupBy(DB::raw('MONTH(tanggal)'))
+                ->orderBy(DB::raw('MONTH(tanggal)'))
+                ->get();
 
-            $penerimaanBulanLalu = $penerimaanQuery->clone()
-                ->whereMonth('tanggal', now()->subMonth()->month)
-                ->whereYear('tanggal', now()->subMonth()->year)
-                ->sum('jumlah');
+            foreach ($chartData as $item) {
 
-            $growthBulanIni = $penerimaanBulanLalu > 0
-                ? round((($penerimaanBulanIni - $penerimaanBulanLalu) / $penerimaanBulanLalu) * 100, 2)
-                : 0;
+                $index = $item->bulan - 1;
+
+                $chartTotal[$index] = (float) $item->total;
+            }
         }
 
-        // =============================================
-        // KIRIM DATA KE VIEW
-        // =============================================
+        /*
+        |--------------------------------------------------------------------------
+        | PENERIMAAN PIUTANG
+        |--------------------------------------------------------------------------
+        */
+
+        $totalPenerimaan = 0;
+
+        if ($idPerusahaan) {
+
+            $totalPenerimaan = PenerimaanPiutang::where(
+                'id_perusahaan',
+                $idPerusahaan
+            )->sum('jumlah');
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | KIRIM DATA
+        |--------------------------------------------------------------------------
+        */
+
         $data = [
 
             'user' => $user,
             'title' => 'Dashboard',
 
-            // Perusahaan
+            // perusahaan
             'total_perusahaan' => $totalPerusahaan,
             'kota_labels' => $kotaData->pluck('kota'),
             'kota_data' => $kotaData->pluck('total'),
 
-            // Pengguna
+            // pengguna
             'pengguna' => $pengguna,
             'total_pengguna' => $totalPengguna,
             'pengguna_aktif' => $penggunaAktif,
             'pengguna_nonaktif' => $penggunaNonAktif,
 
-            // Mata Uang
-            'total_mata_uang' => $totalMataUang,
-            'mata_uang_terbaru' => $mataUangTerbaru,
-
-            // Akun
+            // akun
             'akun_chart' => $akunChart,
             'total_akun' => $totalAkun,
 
-            // Supplier
+            // supplier
             'total_supplier' => $totalSupplier,
             'supplier_terbaru' => $supplierTerbaru,
-            'supplier_perusahaan' => $supplierPerusahaan,
 
-            // Faktur Penjualan
+            // faktur penjualan
             'total_earnings' => $totalEarnings,
             'earnings_bulan_ini' => $earningsBulanIni,
-            'growth_earnings' => $growthEarnings,
             'total_transaksi' => $totalTransaksi,
-            'growth_transaksi' => $growthTransaksi,
             'transaksi_pending' => $transaksiPending,
 
-            // Penerimaan Piutang
+            // faktur pembelian
+            'total_faktur_pembelian' => $totalFakturPembelian,
+            'total_nominal_pembelian' => $totalNominalPembelian,
+            'faktur_lunas' => $fakturLunas,
+            'faktur_belum_lunas' => $fakturBelumLunas,
+            'faktur_dibatalkan' => $fakturDibatalkan,
+
+            // chart
+            'chart_bulan' => $chartBulan,
+            'chart_total' => $chartTotal,
+
+            // piutang
             'total_penerimaan' => $totalPenerimaan,
-            'penerimaan_hari_ini' => $penerimaanHariIni,
-            'penerimaan_bulan_ini' => $penerimaanBulanIni,
-            'total_transaksi_penerimaan' => $totalTransaksiPenerimaan,
-            'growth_hari_ini' => $growthHariIni,
-            'growth_bulan_ini' => $growthBulanIni,
         ];
 
         return match ($user->role) {

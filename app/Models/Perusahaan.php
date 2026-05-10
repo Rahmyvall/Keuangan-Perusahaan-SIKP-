@@ -56,6 +56,15 @@ class Perusahaan extends Model
         return $query->orderBy('created_at', 'desc');
     }
 
+    public function fakturPembelian()
+    {
+        return $this->hasMany(
+            FakturPembelian::class,
+            'id_perusahaan',
+            'id_perusahaan'
+        );
+    }
+
     /**
      * ACCESSOR NPWP (optional aman)
      */

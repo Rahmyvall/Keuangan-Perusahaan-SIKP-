@@ -1,6 +1,6 @@
 <nav id="sidebar" class="sidebar js-sidebar">
     <div class="sidebar-content js-simplebar">
-        <a class="py-3 text-center sidebar-brand d-flex flex-column align-items-center" href="index.html">
+        <a class="py-3 text-center sidebar-brand d-flex flex-column align-items-center" href="{{ route('dashboard') }}">
 
             <!-- Logo -->
             <img src="{{ asset('admin/src/img/icons/halaman.png') }}" alt="SIKP Logo"
@@ -13,7 +13,7 @@
             </small>
 
         </a>
-        </a>
+
         <ul class="sidebar-nav">
             <li class="sidebar-header text-uppercase small fw-bold text-muted">
                 Manajemen Keuangan
@@ -21,7 +21,8 @@
 
             <li class="sidebar-item">
                 <a class="sidebar-link" href="{{ route('dashboard') }}">
-                    <i class="align-middle" data-feather="sliders"></i> <span class="align-middle">Dashboard</span>
+                    <i class="align-middle" data-feather="sliders"></i>
+                    <span class="align-middle">Dashboard</span>
                 </a>
             </li>
 
@@ -40,22 +41,12 @@
                     <span>Master Data</span>
                 </a>
                 <ul id="master" class="sidebar-dropdown list-unstyled collapse">
-                    <li>
-                        <a class="sidebar-link" href="{{ route('perusahaan.index') }}">
-                            <i data-feather="briefcase"></i>
-                            <span>Perusahaan</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a class="sidebar-link" href="{{ route('pengguna.index') }}">
-                            <i data-feather="users"></i> Pengguna
-                        </a>
-                    </li>
-                    <li>
-                        <a class="sidebar-link" href="{{ route('mata-uang.index') }}">
-                            <i data-feather="dollar-sign"></i> Mata Uang
-                        </a>
-                    </li>
+                    <li><a class="sidebar-link" href="{{ route('perusahaan.index') }}"><i data-feather="briefcase"></i>
+                            Perusahaan</a></li>
+                    <li><a class="sidebar-link" href="{{ route('pengguna.index') }}"><i data-feather="users"></i>
+                            Pengguna</a></li>
+                    <li><a class="sidebar-link" href="{{ route('mata-uang.index') }}"><i data-feather="dollar-sign"></i>
+                            Mata Uang</a></li>
                     <li><a class="sidebar-link" href="{{ route('akun.index') }}"><i data-feather="book"></i> Akun
                             Perkiraan</a></li>
                     <li><a class="sidebar-link" href="{{ route('periode.index') }}"><i data-feather="calendar"></i>
@@ -72,18 +63,13 @@
                 <ul id="transaksi" class="sidebar-dropdown list-unstyled collapse">
                     <li><a class="sidebar-link" href="{{ route('jurnal.index') }}"><i data-feather="edit"></i> Jurnal
                             Umum</a></li>
+
+                    <!-- Detail Jurnal - Diperbaiki (aman dari Array to String) -->
                     <li>
-                        @if(isset($jurnal))
-                        <a class="sidebar-link" href="{{ route('jurnal.detail.index', $jurnal) }}">
-                            <i data-feather="file-text"></i>
-                            <span>Detail Jurnal</span>
-                        </a>
-                        @else
                         <a class="sidebar-link" href="{{ route('jurnal.index') }}">
                             <i data-feather="file-text"></i>
                             <span>Detail Jurnal</span>
                         </a>
-                        @endif
                     </li>
                 </ul>
             </li>
@@ -113,7 +99,8 @@
                 <ul id="hutang" class="sidebar-dropdown list-unstyled collapse">
                     <li><a class="sidebar-link" href="{{ route('supplier.index') }}"><i data-feather="truck"></i>
                             Supplier</a></li>
-                    <li><a class="sidebar-link" href="#"><i data-feather="shopping-cart"></i> Faktur Pembelian</a></li>
+                    <li><a class="sidebar-link" href="{{ route('faktur-pembelian.index') }}"><i
+                                data-feather="shopping-cart"></i> Faktur Pembelian</a></li>
                     <li><a class="sidebar-link" href="#"><i data-feather="send"></i> Pembayaran Hutang</a></li>
                 </ul>
             </li>
@@ -145,10 +132,8 @@
 
             @endif
 
-
             {{-- ================= AKUNTAN ================= --}}
             @if($role === 'akuntan')
-
             <li class="sidebar-item">
                 <a data-bs-target="#transaksi" data-bs-toggle="collapse" class="sidebar-link collapsed">
                     <i data-feather="repeat" class="me-2"></i>
@@ -170,13 +155,10 @@
                     <li><a class="sidebar-link" href="#"><i data-feather="file"></i> Faktur</a></li>
                 </ul>
             </li>
-
             @endif
-
 
             {{-- ================= MANAJER ================= --}}
             @if($role === 'manajer')
-
             <li class="sidebar-item">
                 <a data-bs-target="#laporan" data-bs-toggle="collapse" class="sidebar-link collapsed">
                     <i data-feather="bar-chart-2" class="me-2"></i>
@@ -187,13 +169,10 @@
                     <li><a class="sidebar-link" href="#"><i data-feather="bar-chart"></i> Saldo Akun</a></li>
                 </ul>
             </li>
-
             @endif
-
 
             {{-- ================= STAFF ================= --}}
             @if($role === 'staff')
-
             <li class="sidebar-item">
                 <a data-bs-target="#transaksi" data-bs-toggle="collapse" class="sidebar-link collapsed">
                     <i data-feather="edit" class="me-2"></i>
@@ -203,7 +182,6 @@
                     <li><a class="sidebar-link" href="#"><i data-feather="edit"></i> Jurnal Umum</a></li>
                 </ul>
             </li>
-
             @endif
 
             @endauth
@@ -217,7 +195,7 @@
                     Keuangan Perusahaan
                 </div>
                 <div class="d-grid">
-                    <a href="dashboard.html" class="btn btn-primary">Dashboard</a>
+                    <a href="{{ route('dashboard') }}" class="btn btn-primary">Dashboard</a>
                 </div>
             </div>
         </div>

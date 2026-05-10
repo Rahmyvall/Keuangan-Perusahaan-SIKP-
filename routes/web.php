@@ -7,6 +7,7 @@ use App\Http\Controllers\MataUangController;
 use App\Http\Controllers\PenggunaController;
 use App\Http\Controllers\PerusahaanController;
 use App\Http\Controllers\AkunController;
+use App\Http\Controllers\FakturPembelianController;
 use App\Http\Controllers\JurnalController;
 use App\Http\Controllers\JurnalDetailController;
 use App\Http\Controllers\LaporanController;
@@ -66,15 +67,26 @@ Route::middleware('auth')->group(function () {
         Route::resource('periode', PeriodeController::class);
         Route::resource('jurnal', JurnalController::class);
         Route::resource('supplier', SupplierController::class);
-       // Route Resource
-Route::resource('penerimaan-piutang', PenerimaanPiutangController::class);
 
-// Atau secara manual (jika masih error)
-Route::get('penerimaan-piutang/{penerimaanPiutang}', [PenerimaanPiutangController::class, 'show'])
-     ->name('penerimaan-piutang.show');
-        // Resource biasa (opsional)
+        // ==================== FAKTUR PEMBELIAN ====================
+        Route::resource('faktur-pembelian', FakturPembelianController::class);
+
+        Route::patch('faktur-pembelian/{fakturPembelian}/update-status',
+            [FakturPembelianController::class, 'updateStatus'])
+            ->name('faktur-pembelian.update-status');
+
+        // ROUTE PRINT ← DITAMBAHKAN
+        Route::get('faktur-pembelian/{fakturPembelian}/print',
+            [FakturPembelianController::class, 'print'])
+            ->name('faktur-pembelian.print');
+
+        // Route lain tetap sama
+        Route::resource('penerimaan-piutang', PenerimaanPiutangController::class);
+        Route::get('penerimaan-piutang/{penerimaanPiutang}',
+            [PenerimaanPiutangController::class, 'show'])
+            ->name('penerimaan-piutang.show');
+
         Route::resource('jurnal-detail', JurnalDetailController::class);
-
         Route::resource('pelanggan', PelangganController::class);
         Route::resource('faktur-penjualan', FakturPenjualanController::class);
 
@@ -82,39 +94,22 @@ Route::get('penerimaan-piutang/{penerimaanPiutang}', [PenerimaanPiutangControlle
         Route::prefix('jurnal/{jurnal}/detail')
             ->name('jurnal.detail.')
             ->group(function () {
-
-                Route::get('/', [JurnalDetailController::class, 'index'])
-                    ->name('index');
-
-                Route::get('/create', [JurnalDetailController::class, 'create'])
-                    ->name('create');
-
-                Route::post('/', [JurnalDetailController::class, 'store'])
-                    ->name('store');
-
-                Route::get('/{detail}/edit', [JurnalDetailController::class, 'edit'])
-                    ->name('edit');
-
-                Route::put('/{detail}', [JurnalDetailController::class, 'update'])
-                    ->name('update');
-
-                Route::delete('/{detail}', [JurnalDetailController::class, 'destroy'])
-                    ->name('destroy');
-
-                Route::post('/bulk', [JurnalDetailController::class, 'bulkUpdate'])
-                    ->name('bulk');
+                Route::get('/', [JurnalDetailController::class, 'index'])->name('index');
+                Route::get('/create', [JurnalDetailController::class, 'create'])->name('create');
+                Route::post('/', [JurnalDetailController::class, 'store'])->name('store');
+                Route::get('/{detail}/edit', [JurnalDetailController::class, 'edit'])->name('edit');
+                Route::put('/{detail}', [JurnalDetailController::class, 'update'])->name('update');
+                Route::delete('/{detail}', [JurnalDetailController::class, 'destroy'])->name('destroy');
+                Route::post('/bulk', [JurnalDetailController::class, 'bulkUpdate'])->name('bulk');
             });
 
         // Tambahan route khusus Jurnal
         Route::post('jurnal/{jurnal}/post', [JurnalController::class, 'post'])
             ->name('jurnal.post');
-
         Route::post('jurnal/{jurnal}/unpost', [JurnalController::class, 'unpost'])
             ->name('jurnal.unpost');
-
         Route::post('jurnal/{jurnal}/approve', [JurnalController::class, 'approve'])
             ->name('jurnal.approve');
-
         Route::post('jurnal/{jurnal}/reject', [JurnalController::class, 'reject'])
             ->name('jurnal.reject');
 
