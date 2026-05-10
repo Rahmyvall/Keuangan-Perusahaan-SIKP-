@@ -2,115 +2,152 @@
   <img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="280" alt="Laravel Logo">
 </p>
 
-<h1 align="center">Sistem Informasi Keuangan Perusahaan (SIKP)</h1>
+<h1 align="center">💼 Sistem Informasi Keuangan Perusahaan (SIKP)</h1>
 
 <p align="center">
-  Solusi digital untuk pengelolaan keuangan perusahaan yang lebih <b>efisien, akurat, dan transparan</b>.
-</p>
-## 📸 Screenshot
-
-_(Tambahkan screenshot dashboard kamu di sini)_
-
-<p align="center">
- <a><img src="public/assets/mermaid-diagram.svg"><a>
-</p>
-<p align="center">
- <a><img src="public/assets/1.png"><a>
+  Solusi digital modern untuk pengelolaan keuangan perusahaan yang lebih
+  <b>efisien, akurat, aman, dan transparan</b>.
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/Status-Production%20Ready-success">
-  <img src="https://img.shields.io/badge/Framework-Laravel-red">
-  <img src="https://img.shields.io/badge/Database-MySQL-blue">
-  <img src="https://img.shields.io/badge/License-MIT-lightgrey">
+  <img src="https://img.shields.io/badge/Status-Production%20Ready-success?style=for-the-badge">
+  <img src="https://img.shields.io/badge/Framework-Laravel-red?style=for-the-badge&logo=laravel">
+  <img src="https://img.shields.io/badge/Database-MySQL-blue?style=for-the-badge&logo=mysql">
+  <img src="https://img.shields.io/badge/PHP-8%2B-777BB4?style=for-the-badge&logo=php">
+  <img src="https://img.shields.io/badge/License-MIT-lightgrey?style=for-the-badge">
 </p>
 
 ---
 
-## 💼 Ringkasan
+## ✨ Tentang Project
 
-**SIKP (Sistem Informasi Keuangan Perusahaan)** adalah aplikasi berbasis web yang dirancang untuk membantu perusahaan dalam mengelola seluruh aktivitas keuangan secara terintegrasi.
+**SIKP (Sistem Informasi Keuangan Perusahaan)** adalah aplikasi berbasis web yang dirancang untuk membantu perusahaan dalam mengelola aktivitas keuangan secara terintegrasi dan real-time.
 
-Sistem ini memungkinkan pencatatan transaksi, pengelolaan laporan, hingga monitoring kondisi keuangan secara real-time dalam satu platform.
+Sistem ini menyediakan fitur pencatatan transaksi, pengelolaan laporan keuangan, monitoring arus kas, hingga manajemen pengguna dalam satu platform yang modern dan mudah digunakan.
 
----
-
-## 🎯 Nilai untuk Perusahaan
-
-- ⏱️ Menghemat waktu dalam pengelolaan keuangan
-- 📉 Mengurangi kesalahan pencatatan manual
-- 📊 Menyediakan laporan yang cepat dan akurat
-- 🔍 Transparansi data untuk pengambilan keputusan
-- 🔐 Keamanan data yang terjamin
+Dengan pendekatan digitalisasi, SIKP membantu perusahaan meningkatkan efisiensi operasional, mengurangi kesalahan pencatatan, dan mendukung pengambilan keputusan berbasis data.
 
 ---
 
-## ⚙️ Fitur Utama
+# 📸 Tampilan Sistem
 
-- 💰 Manajemen pemasukan & pengeluaran
-- 📊 Laporan keuangan otomatis (harian, bulanan, tahunan)
-- 👤 Manajemen pengguna & hak akses
-- 🔐 Sistem login & autentikasi
-- 📁 Penyimpanan data terstruktur
+## 🧩 System Flow Diagram
 
----
-
-## 🧠 Keunggulan Sistem
-
-- User-friendly & mudah digunakan
-- Struktur sistem scalable (siap dikembangkan)
-- Berbasis web (akses fleksibel)
-- Dibangun dengan best practice Laravel
+<p align="center">
+  <img src="public/assets/mermaid-diagram.svg" width="900" alt="System Diagram">
+</p>
 
 ---
 
-## 🛠️ Tech Stack
+## 📊 Dashboard Utama
 
-**Backend**
+<p align="center">
+  <img src="public/assets/1.png" width="900" alt="Dashboard">
+</p>
 
-- Laravel (RESTful API, MVC Architecture)
+---
+
+## 💰 Manajemen Keuangan
+
+<p align="center">
+  <img src="public/assets/2.png" width="900" alt="Finance Management">
+</p>
+
+---
+
+# 🎯 Tujuan Sistem
+
+- Mempermudah pengelolaan transaksi keuangan perusahaan
+- Meningkatkan efisiensi proses administrasi
+- Menyediakan laporan keuangan otomatis dan akurat
+- Meminimalisir human error pada pencatatan manual
+- Mendukung monitoring kondisi keuangan secara real-time
+
+---
+
+# ⚡ Fitur Utama
+
+## 💰 Manajemen Keuangan
+
+- Pencatatan pemasukan & pengeluaran
+- Monitoring arus kas perusahaan
+- Riwayat transaksi terintegrasi
+
+## 📊 Laporan Keuangan
+
+- Laporan harian, bulanan, dan tahunan
+- Rekap data otomatis
+- Informasi keuangan real-time
+
+## 👤 User Management
+
+- Multi user & role management
+- Hak akses berdasarkan level pengguna
+- Sistem autentikasi aman
+
+## 🔐 Security System
+
+- Authentication & Authorization
+- CSRF Protection
+- Input Validation
+- Session Security
+
+## 📁 Data Management
+
+- Penyimpanan data terstruktur
+- Database relational yang optimal
+- Data integrity & consistency
+
+---
+
+# 🧠 Keunggulan Sistem
+
+✅ Interface modern dan user-friendly  
+✅ Struktur aplikasi scalable dan maintainable  
+✅ Berbasis web sehingga fleksibel diakses  
+✅ Menggunakan arsitektur Laravel MVC  
+✅ Mudah dikembangkan untuk kebutuhan perusahaan  
+✅ Mendukung digitalisasi proses bisnis perusahaan
+
+---
+
+# 🛠️ Tech Stack
+
+<table>
+<tr>
+<td valign="top" width="33%">
+
+### Backend
+
+- Laravel
 - PHP 8+
+- RESTful API
+- MVC Architecture
 
-**Frontend**
+</td>
+
+<td valign="top" width="33%">
+
+### Frontend
 
 - Blade Template Engine
-- HTML5, CSS3, JavaScript (ES6+)
+- HTML5
+- CSS3
+- JavaScript (ES6+)
 - Bootstrap / Tailwind CSS
 
-**Database**
+</td>
 
-- MySQL (Relational Database)
-- Query Optimization & Indexing
+<td valign="top" width="33%">
 
-**Tools & DevOps**
+### Database & Tools
 
-- Git & GitHub (Version Control)
-- Composer (Dependency Management)
-- Laravel Artisan CLI
-- Postman (API Testing)
+- MySQL
+- Composer
+- Git & GitHub
+- Laravel Artisan
+- Postman
 
-**Security**
-
-- Authentication & Authorization (Laravel Auth)
-- Input Validation & CSRF Protection
-
----
-
-## 🚀 Potensi Pengembangan
-
-- Integrasi dengan sistem akuntansi
-- Dashboard analitik keuangan
-- Export laporan (PDF / Excel)
-- Multi perusahaan (multi-tenant system)
-
----
-
-## 📌 Kesimpulan
-
-SIKP bukan hanya alat pencatatan, tetapi solusi digital yang membantu perusahaan dalam meningkatkan efisiensi operasional dan kualitas pengambilan keputusan berbasis data.
-
----
-
-<p align="center">
-  <b>Developed with precision for business efficiency.</b>
-</p>
+</td>
+</tr>
+</table>

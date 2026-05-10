@@ -3,150 +3,286 @@
 @section('content')
 <div class="container-fluid py-4">
 
-    {{-- HEADER --}}
-    <div class="d-flex justify-content-between align-items-center mb-4 p-4 bg-white rounded-4 shadow">
-        <div>
-            <h3 class="mb-1 fw-bold text-dark">
-                <i data-feather="download" class="me-2 text-primary"></i>
-                Penerimaan Piutang
-            </h3>
-            <p class="text-muted mb-0">Manajemen & Monitoring Penerimaan Piutang</p>
+    {{-- PAGE HEADER --}}
+    <div class="card border-0 shadow-sm rounded-4 mb-4 overflow-hidden">
+        <div class="card-body p-4 d-flex justify-content-between align-items-center flex-wrap gap-3">
+
+            <div>
+                <div class="d-flex align-items-center mb-2">
+                    <div class="bg-primary bg-opacity-10 text-primary rounded-3 p-2 me-3">
+                        <i data-feather="credit-card"></i>
+                    </div>
+
+                    <div>
+                        <h3 class="fw-bold mb-0">Penerimaan Piutang</h3>
+                        <small class="text-muted">
+                            Monitoring transaksi penerimaan pembayaran pelanggan
+                        </small>
+                    </div>
+                </div>
+            </div>
+
+            <a href="{{ route('penerimaan-piutang.create') }}" class="btn btn-primary rounded-3 px-4 py-2 shadow-sm">
+                <i data-feather="plus" class="me-2"></i>
+                Tambah Data
+            </a>
+
+        </div>
+    </div>
+
+    {{-- STATS --}}
+    <div class="row g-4 mb-4">
+
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm rounded-4 h-100">
+                <div class="card-body">
+                    <small class="text-muted">Total Transaksi</small>
+                    <h2 class="fw-bold mb-0">{{ $data->total() }}</h2>
+                </div>
+            </div>
         </div>
 
-        <a href="{{ route('penerimaan-piutang.create') }}" class="btn btn-primary btn-lg px-4 rounded-3 shadow-sm">
-            <i data-feather="plus" class="me-2"></i> Tambah Penerimaan Baru
-        </a>
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm rounded-4 h-100">
+                <div class="card-body">
+                    <small class="text-muted">Total Nominal</small>
+                    <h2 class="fw-bold text-success mb-0">
+                        Rp {{ number_format($data->sum('jumlah'),0,',','.') }}
+                    </h2>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm rounded-4 h-100">
+                <div class="card-body">
+                    <small class="text-muted">Hari Ini</small>
+                    <h2 class="fw-bold text-primary mb-0">
+                        {{ now()->format('d M Y') }}
+                    </h2>
+                </div>
+            </div>
+        </div>
+
     </div>
 
     {{-- ALERT --}}
     @if(session('success'))
-    <div class="alert alert-success alert-dismissible fade show rounded-4 shadow-sm" role="alert">
-        <i data-feather="check-circle" class="me-2"></i>
-        {{ session('success') }}
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    <div class="alert alert-success border-0 shadow-sm rounded-4">
+        <div class="d-flex align-items-center">
+            <i data-feather="check-circle" class="me-2"></i>
+            {{ session('success') }}
+        </div>
     </div>
     @endif
 
-    {{-- MAIN CARD --}}
-    <div class="card border-0 shadow rounded-4 overflow-hidden">
-        <div class="card-body p-4">
+    {{-- MAIN TABLE CARD --}}
+    <div class="card border-0 shadow-sm rounded-4">
 
-            {{-- FILTER BAR --}}
-            <div class="row g-3 mb-4 align-items-end">
-                <div class="col-md-5">
-                    <form method="GET" class="d-flex gap-2">
-                        <div class="flex-grow-1">
-                            <input type="text" name="search" value="{{ request('search') }}" class="form-control"
+        {{-- FILTER --}}
+        <div class="card-body border-bottom">
+
+            <form method="GET">
+                <div class="row g-3 align-items-center">
+
+                    <div class="col-md-4">
+                        <div class="position-relative">
+                            <i data-feather="search"
+                                class="position-absolute top-50 start-0 translate-middle-y ms-3 text-muted"></i>
+
+                            <input type="text" name="search" value="{{ request('search') }}"
+                                class="form-control ps-5 rounded-3 border-0 bg-light"
                                 placeholder="Cari nomor penerimaan...">
                         </div>
-                        <div>
-                            <input type="date" name="tanggal" value="{{ request('tanggal') }}" class="form-control">
-                        </div>
-                        <button type="submit" class="btn btn-primary">
-                            <i data-feather="search"></i>
+                    </div>
+
+                    <div class="col-md-3">
+                        <input type="date" name="tanggal" value="{{ request('tanggal') }}"
+                            class="form-control rounded-3 border-0 bg-light">
+                    </div>
+
+                    <div class="col-md-auto">
+                        <button class="btn btn-primary rounded-3 px-4">
+                            Filter
                         </button>
-                        <a href="{{ route('penerimaan-piutang.index') }}" class="btn btn-outline-secondary">
+                    </div>
+
+                    <div class="col-md-auto">
+                        <a href="{{ route('penerimaan-piutang.index') }}" class="btn btn-light rounded-3 px-4">
                             Reset
                         </a>
-                    </form>
+                    </div>
+
                 </div>
-
-                <div class="col-md-7 text-md-end">
-                    <small class="text-muted">Total Data: <strong>{{ $data->total() }}</strong></small>
-                </div>
-            </div>
-
-            {{-- TABLE --}}
-            <div class="table-responsive">
-                <table class="table table-hover align-middle mb-0" id="datatable">
-                    <thead class="table-light">
-                        <tr>
-                            <th width="50" class="text-center">#</th>
-                            <th>Nomor Penerimaan</th>
-                            <th>Tanggal</th>
-                            <th>Faktur Penjualan</th>
-                            <th>Perusahaan</th>
-                            <th class="text-end">Jumlah</th>
-                            <th width="140" class="text-center">Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @forelse($data as $i => $row)
-                        <tr class="align-middle">
-                            <td class="text-center fw-medium">{{ $data->firstItem() + $i }}</td>
-
-                            <td>
-                                <span class="fw-bold text-primary">{{ $row->nomor_penerimaan }}</span>
-                            </td>
-
-                            <td>
-                                <i data-feather="calendar" class="me-1 text-muted"></i>
-                                {{ \Carbon\Carbon::parse($row->tanggal)->format('d M Y') }}
-                            </td>
-
-                            <td>
-                                <strong>{{ $row->fakturPenjualan->nomor_faktur ?? '-' }}</strong>
-                                <small class="text-muted d-block">#{{ $row->id_faktur_penjualan }}</small>
-                            </td>
-
-                            <td class="fw-medium">
-                                {{ $row->perusahaan->nama_perusahaan ?? '—' }}
-                            </td>
-
-                            <td class="text-end fw-bold text-success fs-5">
-                                Rp {{ number_format($row->jumlah, 0, ',', '.') }}
-                            </td>
-
-                            <td class="text-center">
-                                <div class="btn-group" role="group">
-                                    <a href="{{ route('penerimaan-piutang.show', $row->id_penerimaan) }}"
-                                        class="btn btn-sm btn-light border" title="Lihat Detail">
-                                        <i data-feather="eye"></i>
-                                    </a>
-                                    <a href="{{ route('penerimaan-piutang.edit', $row->id_penerimaan) }}"
-                                        class="btn btn-sm btn-light border" title="Edit">
-                                        <i data-feather="edit-2"></i>
-                                    </a>
-                                    <form action="{{ route('penerimaan-piutang.destroy', $row->id_penerimaan) }}"
-                                        method="POST" class="d-inline">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="btn btn-sm btn-light border text-danger"
-                                            title="Hapus"
-                                            onclick="return confirm('Yakin ingin menghapus penerimaan ini?')">
-                                            <i data-feather="trash-2"></i>
-                                        </button>
-                                    </form>
-                                </div>
-                            </td>
-                        </tr>
-                        @empty
-                        <tr>
-                            <td colspan="7" class="text-center py-5">
-                                <i data-feather="inbox" style="width: 60px; height: 60px;" class="text-muted mb-3"></i>
-                                <h5 class="text-muted">Belum ada data penerimaan piutang</h5>
-                                <p class="text-muted">Silakan tambahkan data baru</p>
-                            </td>
-                        </tr>
-                        @endforelse
-                    </tbody>
-                </table>
-            </div>
-
-            {{-- PAGINATION --}}
-            <div class="d-flex justify-content-between align-items-center mt-4">
-                <div>
-                    <small class="text-muted">
-                        Menampilkan {{ $data->firstItem() }} - {{ $data->lastItem() }}
-                        dari total {{ $data->total() }} data
-                    </small>
-                </div>
-                <div>
-                    {{ $data->links('pagination::bootstrap-5') }}
-                </div>
-            </div>
+            </form>
 
         </div>
+
+        {{-- TABLE --}}
+        <div class="table-responsive">
+
+            <table class="table align-middle mb-0">
+
+                <thead class="bg-light">
+                    <tr>
+                        <th class="ps-4 py-3">No</th>
+                        <th>Nomor</th>
+                        <th>Tanggal</th>
+                        <th>Faktur</th>
+                        <th>Perusahaan</th>
+                        <th class="text-end">Jumlah</th>
+                        <th class="text-center pe-4">Aksi</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    @forelse($data as $i => $row)
+                    <tr class="table-row">
+
+                        <td class="ps-4 fw-semibold">
+                            {{ $data->firstItem() + $i }}
+                        </td>
+
+                        <td>
+                            <div class="fw-bold text-primary">
+                                {{ $row->nomor_penerimaan }}
+                            </div>
+                        </td>
+
+                        <td>
+                            {{ \Carbon\Carbon::parse($row->tanggal)->format('d M Y') }}
+                        </td>
+
+                        <td>
+                            <div class="fw-semibold">
+                                {{ $row->fakturPenjualan->nomor_faktur ?? '-' }}
+                            </div>
+
+                            <small class="text-muted">
+                                #{{ $row->id_faktur_penjualan }}
+                            </small>
+                        </td>
+
+                        <td>
+                            {{ $row->perusahaan->nama_perusahaan ?? '-' }}
+                        </td>
+
+                        <td class="text-end">
+                            <span class="fw-bold text-success fs-6">
+                                Rp {{ number_format($row->jumlah,0,',','.') }}
+                            </span>
+                        </td>
+
+                        <td class="text-center pe-4">
+
+                            <div class="d-flex justify-content-center gap-2">
+
+                                <a href="{{ route('penerimaan-piutang.show',$row->id_penerimaan) }}"
+                                    class="btn btn-light btn-sm rounded-circle shadow-sm">
+                                    <i data-feather="eye"></i>
+                                </a>
+
+                                <a href="{{ route('penerimaan-piutang.edit',$row->id_penerimaan) }}"
+                                    class="btn btn-warning btn-sm rounded-circle shadow-sm text-white">
+                                    <i data-feather="edit-2"></i>
+                                </a>
+
+                                <form action="{{ route('penerimaan-piutang.destroy',$row->id_penerimaan) }}"
+                                    method="POST" class="d-inline">
+                                    @csrf
+                                    @method('DELETE')
+
+                                    <button type="submit" onclick="return confirm('Yakin hapus data?')"
+                                        class="btn btn-danger btn-sm rounded-circle shadow-sm">
+                                        <i data-feather="trash-2"></i>
+                                    </button>
+                                </form>
+
+                            </div>
+
+                        </td>
+
+                    </tr>
+                    @empty
+
+                    <tr>
+                        <td colspan="7" class="text-center py-5">
+
+                            <div class="py-5">
+                                <i data-feather="inbox" style="width:70px;height:70px" class="text-muted mb-3"></i>
+
+                                <h5 class="fw-bold">
+                                    Belum Ada Data
+                                </h5>
+
+                                <p class="text-muted mb-0">
+                                    Data penerimaan piutang masih kosong
+                                </p>
+                            </div>
+
+                        </td>
+                    </tr>
+
+                    @endforelse
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+        {{-- FOOTER --}}
+        <div class="card-body border-top d-flex justify-content-between align-items-center flex-wrap gap-3">
+
+            <small class="text-muted">
+                Menampilkan
+                {{ $data->firstItem() }}
+                -
+                {{ $data->lastItem() }}
+                dari
+                {{ $data->total() }} data
+            </small>
+
+            {{ $data->links('pagination::bootstrap-5') }}
+
+        </div>
+
     </div>
+
 </div>
+
+<style>
+body {
+    background: #f4f7fb;
+}
+
+.table-row {
+    transition: all .2s ease;
+}
+
+.table-row:hover {
+    background: #f8fbff;
+    transform: scale(1.002);
+}
+
+.card {
+    backdrop-filter: blur(10px);
+}
+
+.btn {
+    transition: .2s ease;
+}
+
+.btn:hover {
+    transform: translateY(-1px);
+}
+
+.table th {
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+    color: #6c757d;
+}
+</style>
 @endsection
