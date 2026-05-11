@@ -9,25 +9,22 @@ use Illuminate\Support\Facades\Storage;
 
 class PerusahaanController extends Controller
 {
-    /**
-     * Ambil daftar perusahaan berdasarkan kota (untuk AJAX Chart)
-     */
     public function byKota($kota)
     {
-        $data = Perusahaan::where('kota', $kota)
-            ->orderBy('created_at', 'desc')
-            ->get();
-
-        return response()->json($data);
+        return response()->json(
+            Perusahaan::where('kota', $kota)
+                ->orderByDesc('id_perusahaan')
+                ->get()
+        );
     }
 
     public function index()
-{
-    $data = Perusahaan::orderBy('created_at', 'desc')
-        ->paginate(10);
+    {
+        $data = Perusahaan::orderByDesc('id_perusahaan')
+            ->paginate(10);
 
-    return view('perusahaan.index', compact('data'));
-}
+        return view('perusahaan.index', compact('data'));
+    }
 
     public function create()
     {
@@ -50,38 +47,31 @@ class PerusahaanController extends Controller
         $validated['status'] = $validated['status'] ?? 'aktif';
 
         if ($request->hasFile('logo')) {
-            $validated['logo'] = $request->file('logo')->store('logo_perusahaan', 'public');
+            $validated['logo'] = $request->file('logo')
+                ->store('logo_perusahaan', 'public');
         }
 
         Perusahaan::create($validated);
 
-        return redirect()->route('perusahaan.index')
+        return redirect()
+            ->route('perusahaan.index')
             ->with('success', 'Data perusahaan berhasil ditambahkan');
     }
 
-    public function show($id)
+    public function edit(Perusahaan $perusahaan)
     {
-        $perusahaan = Perusahaan::findOrFail($id);
-        return view('perusahaan.show', compact('perusahaan'));
-    }
-
-    public function edit($id)
-    {
-        $perusahaan = Perusahaan::findOrFail($id);
         return view('perusahaan.edit', compact('perusahaan'));
     }
 
-    public function update(Request $request, $id)
+    public function update(Request $request, Perusahaan $perusahaan)
     {
-        $perusahaan = Perusahaan::findOrFail($id);
-
         $validated = $request->validate([
             'nama_perusahaan' => 'required|string|max:150',
             'npwp' => [
                 'nullable',
                 'string',
                 'max:30',
-                Rule::unique('perusahaan', 'npwp')->ignore($perusahaan->id_perusahaan, 'id_perusahaan'),
+                Rule::unique('perusahaan', 'npwp')->ignore($perusahaan->getKey()),
             ],
             'alamat' => 'nullable|string',
             'kota' => 'nullable|string|max:100',
@@ -90,46 +80,38 @@ class PerusahaanController extends Controller
                 'nullable',
                 'email',
                 'max:100',
-                Rule::unique('perusahaan', 'email')->ignore($perusahaan->id_perusahaan, 'id_perusahaan'),
+                Rule::unique('perusahaan', 'email')->ignore($perusahaan->getKey()),
             ],
             'logo' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
             'status' => 'nullable|in:aktif,nonaktif',
         ]);
 
-        $validated['status'] = $validated['status'] ?? $perusahaan->status;
-
         if ($request->hasFile('logo')) {
-
-            if ($perusahaan->logo && Storage::disk('public')->exists($perusahaan->logo)) {
+            if ($perusahaan->logo) {
                 Storage::disk('public')->delete($perusahaan->logo);
             }
 
-            $validated['logo'] = $request->file('logo')->store('logo_perusahaan', 'public');
+            $validated['logo'] = $request->file('logo')
+                ->store('logo_perusahaan', 'public');
         }
 
         $perusahaan->update($validated);
 
-        return redirect()->route('perusahaan.index')
+        return redirect()
+            ->route('perusahaan.index')
             ->with('success', 'Data perusahaan berhasil diperbarui');
     }
 
-    public function destroy($id)
+    public function destroy(Perusahaan $perusahaan)
     {
-        $perusahaan = Perusahaan::findOrFail($id);
-
-        try {
-            if ($perusahaan->logo && Storage::disk('public')->exists($perusahaan->logo)) {
-                Storage::disk('public')->delete($perusahaan->logo);
-            }
-
-            $perusahaan->delete();
-
-            return redirect()->route('perusahaan.index')
-                ->with('success', 'Data perusahaan berhasil dihapus');
-        } catch (\Exception $e) {
-
-            return redirect()->route('perusahaan.index')
-                ->with('error', 'Gagal menghapus data perusahaan');
+        if ($perusahaan->logo) {
+            Storage::disk('public')->delete($perusahaan->logo);
         }
+
+        $perusahaan->delete();
+
+        return redirect()
+            ->route('perusahaan.index')
+            ->with('success', 'Data perusahaan berhasil dihapus');
     }
 }

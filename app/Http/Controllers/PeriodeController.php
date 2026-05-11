@@ -4,130 +4,204 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Periode;
+use App\Models\Perusahaan;
 
 class PeriodeController extends Controller
 {
+    /**
+     * Display listing data periode
+     */
     public function index(Request $request)
     {
-        $query = Periode::with('perusahaan'); // eager loading relasi perusahaan
+        $query = Periode::with('perusahaan');
 
-        // ====================== SEARCH ======================
+        // ================= SEARCH =================
         if ($request->filled('search')) {
+
             $search = $request->search;
-            $query->where(function($q) use ($search) {
+
+            $query->where(function ($q) use ($search) {
+
                 $q->where('tahun', 'like', "%{$search}%")
                   ->orWhere('bulan', 'like', "%{$search}%")
-                  ->orWhereRaw("CONCAT(tahun, '-', LPAD(bulan, 2, '0')) LIKE ?", ["%{$search}%"])
                   ->orWhere('status', 'like', "%{$search}%")
-                  ->orWhereHas('perusahaan', function($pq) use ($search) {
-                      $pq->where('nama_perusahaan', 'like', "%{$search}%");
+
+                  ->orWhereHas('perusahaan', function ($pq) use ($search) {
+
+                      $pq->where(
+                          'nama_perusahaan',
+                          'like',
+                          "%{$search}%"
+                      );
                   });
             });
         }
 
-        // ====================== FILTER STATUS ======================
+        // ================= FILTER STATUS =================
         if ($request->filled('status')) {
+
             $query->where('status', $request->status);
         }
 
-        // ====================== FILTER PERUSAHAAN ======================
+        // ================= FILTER PERUSAHAAN =================
         if ($request->filled('id_perusahaan')) {
-            $query->where('id_perusahaan', $request->id_perusahaan);
+
+            $query->where(
+                'id_perusahaan',
+                $request->id_perusahaan
+            );
         }
 
-        // ====================== SORTING ======================
+        // ================= SORTING =================
         $sort = $request->get('sort', 'tahun');
+
         $direction = $request->get('direction', 'desc');
 
-        // Kolom sorting yang diizinkan (security)
-        $allowedSort = ['id_periode', 'tahun', 'bulan', 'tanggal_awal', 'tanggal_akhir', 'status', 'created_at'];
+        $allowedSort = [
+            'id_periode',
+            'tahun',
+            'bulan',
+            'tanggal_awal',
+            'tanggal_akhir',
+            'status',
+            'created_at'
+        ];
+
         if (!in_array($sort, $allowedSort)) {
             $sort = 'tahun';
         }
 
-        $periode = $query->orderBy($sort, $direction)
-                         ->orderBy('bulan', 'desc')   // secondary sort
-                         ->paginate(15)
-                         ->appends($request->query());
+        if (!in_array($direction, ['asc', 'desc'])) {
+            $direction = 'desc';
+        }
 
-        return view('periode.index', compact('periode'));
+        $periode = $query
+            ->orderBy($sort, $direction)
+            ->orderBy('bulan', 'desc')
+            ->paginate(10)
+            ->appends($request->query());
+
+        return view('periode.index', [
+            'periode' => $periode
+        ]);
     }
 
-    // ====================== METHOD LAIN (bonus) ======================
-
     /**
-     * Menampilkan form create
+     * Form create
      */
     public function create()
     {
-        return view('periode.create');
+        $perusahaan = Perusahaan::all();
+
+        return view('periode.create', [
+            'perusahaan' => $perusahaan
+        ]);
     }
 
     /**
-     * Menyimpan data periode baru
+     * Store data
      */
     public function store(Request $request)
     {
         $validated = $request->validate([
+
             'id_perusahaan' => 'required|exists:perusahaan,id_perusahaan',
-            'tahun'         => 'required|integer|min:2000|max:2100',
-            'bulan'         => 'required|integer|min:1|max:12',
-            'tanggal_awal'  => 'required|date',
+
+            'tahun' => 'required|integer|min:2000|max:2100',
+
+            'bulan' => 'required|integer|min:1|max:12',
+
+            'tanggal_awal' => 'required|date',
+
             'tanggal_akhir' => 'required|date|after_or_equal:tanggal_awal',
-            'status'        => 'required|in:Terbuka,Ditutup,Dikunci',
+
+            'status' => 'required|in:Aktif,Nonaktif'
         ]);
 
         Periode::create($validated);
 
-        return redirect()->route('periode.index')
-                         ->with('success', 'Periode berhasil ditambahkan.');
+        return redirect()
+            ->route('periode.index')
+            ->with(
+                'success',
+                'Data periode berhasil ditambahkan.'
+            );
     }
 
     /**
-     * Menampilkan detail periode
+     * Detail data
      */
-    public function show(Periode $periode)
+    public function show($id)
     {
-        $periode->load('perusahaan');
-        return view('periode.show', compact('periode'));
+        $periode = Periode::with('perusahaan')
+            ->findOrFail($id);
+
+        return view('periode.show', [
+            'periode' => $periode
+        ]);
     }
 
     /**
-     * Menampilkan form edit
+     * Form edit
      */
-    public function edit(Periode $periode)
+    public function edit($id)
     {
-        $periode->load('perusahaan');
-        return view('periode.edit', compact('periode'));
+        $periode = Periode::findOrFail($id);
+
+        $perusahaan = Perusahaan::all();
+
+        return view('periode.edit', [
+            'periode' => $periode,
+            'perusahaan' => $perusahaan
+        ]);
     }
 
     /**
-     * Update periode
+     * Update data
      */
-    public function update(Request $request, Periode $periode)
+    public function update(Request $request, $id)
     {
+        $periode = Periode::findOrFail($id);
+
         $validated = $request->validate([
-            'tahun'         => 'required|integer|min:2000|max:2100',
-            'bulan'         => 'required|integer|min:1|max:12',
-            'tanggal_awal'  => 'required|date',
+
+            'id_perusahaan' => 'required|exists:perusahaan,id_perusahaan',
+
+            'tahun' => 'required|integer|min:2000|max:2100',
+
+            'bulan' => 'required|integer|min:1|max:12',
+
+            'tanggal_awal' => 'required|date',
+
             'tanggal_akhir' => 'required|date|after_or_equal:tanggal_awal',
-            'status'        => 'required|in:Terbuka,Ditutup,Dikunci',
+
+            'status' => 'required|in:Aktif,Nonaktif'
         ]);
 
         $periode->update($validated);
 
-        return redirect()->route('periode.index')
-                         ->with('success', 'Periode berhasil diperbarui.');
+        return redirect()
+            ->route('periode.index')
+            ->with(
+                'success',
+                'Data periode berhasil diperbarui.'
+            );
     }
 
     /**
-     * Hapus periode
+     * Delete data
      */
-    public function destroy(Periode $periode)
+    public function destroy($id)
     {
+        $periode = Periode::findOrFail($id);
+
         $periode->delete();
 
-        return redirect()->route('periode.index')
-                         ->with('success', 'Periode berhasil dihapus.');
+        return redirect()
+            ->route('periode.index')
+            ->with(
+                'success',
+                'Data periode berhasil dihapus.'
+            );
     }
 }

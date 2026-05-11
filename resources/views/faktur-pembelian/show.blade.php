@@ -6,321 +6,171 @@
 
 <div class="container-fluid py-4">
 
-    {{-- ========================================= --}}
-    {{-- HEADER --}}
-    {{-- ========================================= --}}
+    <!-- HEADER -->
     <div class="card border-0 shadow-sm rounded-4 overflow-hidden mb-4">
-
         <div class="bg-primary bg-gradient text-white p-4 p-lg-5">
 
             <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-4">
 
                 <div>
-
                     <div class="d-flex align-items-center mb-2">
-
                         <div class="bg-white bg-opacity-25 rounded-3 p-3 me-3">
-
                             <i class="fas fa-file-invoice fs-3"></i>
-
                         </div>
-
                         <div>
-
-                            <h2 class="fw-bold mb-1">
-                                Detail Faktur Pembelian
-                            </h2>
-
-                            <div class="opacity-75">
-
-                                {{ $fakturPembelian->nomor_faktur }}
-
-                            </div>
-
+                            <h2 class="fw-bold mb-1">Detail Faktur Pembelian</h2>
+                            <div class="opacity-75">{{ $fakturPembelian->nomor_faktur }}</div>
                         </div>
-
                     </div>
-
                 </div>
 
                 <div class="d-flex flex-wrap gap-2">
-
-                    <a href="{{ route('faktur-pembelian.print', $fakturPembelian->id_faktur_pembelian) }}"
-                        target="_blank" class="btn btn-light shadow-sm">
-
-                        <i class="fas fa-print me-2"></i>
-                        Print
-
+                    <!-- Print Button -->
+                    <a href="{{ route('admin.faktur-pembelian.print', $fakturPembelian) }}" target="_blank"
+                        class="btn btn-light shadow-sm">
+                        <i class="fas fa-print me-2"></i> Print
                     </a>
 
-                    <a href="{{ route('faktur-pembelian.edit', $fakturPembelian->id_faktur_pembelian) }}"
+                    <!-- Edit Button -->
+                    <a href="{{ route('admin.faktur-pembelian.edit', $fakturPembelian) }}"
                         class="btn btn-warning shadow-sm">
-
-                        <i class="fas fa-edit me-2"></i>
-                        Edit
-
+                        <i class="fas fa-edit me-2"></i> Edit
                     </a>
 
-                    <a href="{{ route('faktur-pembelian.index') }}" class="btn btn-outline-light">
-
-                        <i class="fas fa-arrow-left me-2"></i>
-                        Kembali
-
+                    <!-- Back Button -->
+                    <a href="{{ route('admin.faktur-pembelian.index') }}" class="btn btn-outline-light">
+                        <i class="fas fa-arrow-left me-2"></i> Kembali
                     </a>
-
                 </div>
 
             </div>
-
         </div>
-
     </div>
 
     <div class="row g-4">
 
-        {{-- ========================================= --}}
-        {{-- INFORMASI FAKTUR --}}
-        {{-- ========================================= --}}
+        <!-- INFORMASI FAKTUR -->
         <div class="col-lg-8">
-
             <div class="card border-0 shadow-sm rounded-4 h-100">
-
                 <div class="card-header bg-white border-0 py-4">
-
                     <h5 class="fw-bold mb-0">
-
                         <i class="fas fa-circle-info text-primary me-2"></i>
                         Informasi Faktur
-
                     </h5>
-
                 </div>
-
                 <div class="card-body pt-0">
-
                     <div class="row g-4">
 
-                        {{-- NOMOR FAKTUR --}}
                         <div class="col-md-6">
-
                             <div class="border rounded-4 p-4 h-100">
-
-                                <div class="text-muted small mb-2">
-                                    Nomor Faktur
-                                </div>
-
-                                <div class="fw-bold fs-5">
-
-                                    {{ $fakturPembelian->nomor_faktur }}
-
-                                </div>
-
+                                <div class="text-muted small mb-2">Nomor Faktur</div>
+                                <div class="fw-bold fs-5">{{ $fakturPembelian->nomor_faktur }}</div>
                             </div>
-
                         </div>
 
-                        {{-- TANGGAL --}}
                         <div class="col-md-6">
-
                             <div class="border rounded-4 p-4 h-100">
-
-                                <div class="text-muted small mb-2">
-                                    Tanggal
-                                </div>
-
+                                <div class="text-muted small mb-2">Tanggal</div>
                                 <div class="fw-semibold fs-5">
-
                                     {{ \Carbon\Carbon::parse($fakturPembelian->tanggal)->translatedFormat('d F Y') }}
-
                                 </div>
-
                             </div>
-
                         </div>
 
-                        {{-- SUPPLIER --}}
                         <div class="col-md-6">
-
                             <div class="border rounded-4 p-4 h-100">
-
-                                <div class="text-muted small mb-2">
-                                    Supplier
-                                </div>
-
+                                <div class="text-muted small mb-2">Supplier</div>
                                 <div class="fw-semibold fs-5">
-
                                     {{ $fakturPembelian->supplier->nama_supplier ?? '-' }}
-
                                 </div>
-
                             </div>
-
                         </div>
 
-                        {{-- PERUSAHAAN --}}
                         <div class="col-md-6">
-
                             <div class="border rounded-4 p-4 h-100">
-
-                                <div class="text-muted small mb-2">
-                                    Perusahaan
-                                </div>
-
+                                <div class="text-muted small mb-2">Perusahaan</div>
                                 <div class="fw-semibold fs-5">
-
                                     {{ $fakturPembelian->perusahaan->nama_perusahaan ?? '-' }}
-
                                 </div>
-
                             </div>
-
                         </div>
 
-                        {{-- JURNAL --}}
                         <div class="col-12">
-
                             <div class="border rounded-4 p-4">
-
-                                <div class="text-muted small mb-2">
-                                    Jurnal
-                                </div>
-
+                                <div class="text-muted small mb-2">Jurnal</div>
                                 <div class="fw-semibold">
-
                                     @if($fakturPembelian->jurnal)
-
-                                    {{ $fakturPembelian->jurnal->nomor_jurnal }}
-                                    -
+                                    {{ $fakturPembelian->jurnal->nomor_jurnal }} -
                                     {{ $fakturPembelian->jurnal->keterangan ?? '-' }}
-
                                     @else
-
                                     -
-
                                     @endif
-
                                 </div>
-
                             </div>
-
                         </div>
 
                     </div>
-
                 </div>
-
             </div>
-
         </div>
 
-        {{-- ========================================= --}}
-        {{-- RINGKASAN --}}
-        {{-- ========================================= --}}
+        <!-- RINGKASAN -->
         <div class="col-lg-4">
-
-            <div class="card border-0 shadow-sm rounded-4 sticky-top" style="top:20px;">
-
+            <div class="card border-0 shadow-sm rounded-4 sticky-top" style="top: 20px;">
                 <div class="card-header bg-white border-0 py-4">
-
                     <h5 class="fw-bold mb-0">
-
                         <i class="fas fa-wallet text-success me-2"></i>
                         Ringkasan Pembayaran
-
                     </h5>
-
                 </div>
-
                 <div class="card-body">
 
-                    {{-- SUBTOTAL --}}
                     <div class="d-flex justify-content-between align-items-center mb-4">
-
-                        <span class="text-muted">
-                            Subtotal
-                        </span>
-
-                        <strong>
-
-                            Rp {{ number_format($fakturPembelian->subtotal ?? 0, 0, ',', '.') }}
-
-                        </strong>
-
+                        <span class="text-muted">Subtotal</span>
+                        <strong>Rp {{ number_format($fakturPembelian->subtotal ?? 0, 0, ',', '.') }}</strong>
                     </div>
 
-                    {{-- PPN --}}
                     <div class="d-flex justify-content-between align-items-center mb-4">
-
-                        <span class="text-muted">
-                            PPN (11%)
-                        </span>
-
-                        <strong>
-
-                            Rp {{ number_format($fakturPembelian->ppn ?? 0, 0, ',', '.') }}
-
-                        </strong>
-
+                        <span class="text-muted">PPN</span>
+                        <strong>Rp {{ number_format($fakturPembelian->ppn ?? 0, 0, ',', '.') }}</strong>
                     </div>
 
                     <hr>
 
-                    {{-- TOTAL --}}
                     <div class="d-flex justify-content-between align-items-center mb-4">
-
-                        <h5 class="fw-bold mb-0">
-                            Total
-                        </h5>
-
+                        <h5 class="fw-bold mb-0">Total</h5>
                         <h3 class="fw-bold text-primary mb-0">
-
                             Rp {{ number_format($fakturPembelian->total ?? 0, 0, ',', '.') }}
-
                         </h3>
-
                     </div>
 
-                    {{-- STATUS --}}
+                    <!-- Status -->
+
                     <div>
-
-                        @if($fakturPembelian->status == 'Lunas')
-
+                        @switch($fakturPembelian->status)
+                        @case('Lunas')
                         <div class="alert alert-success border-0 rounded-4 mb-0">
-
                             <i class="fas fa-circle-check me-2"></i>
-                            Status :
-                            <strong>Lunas</strong>
-
+                            Status : <strong>Lunas</strong>
                         </div>
+                        @break
 
-                        @elseif($fakturPembelian->status == 'Belum Lunas')
-
+                        @case('Belum Lunas')
                         <div class="alert alert-warning border-0 rounded-4 mb-0">
-
                             <i class="fas fa-clock me-2"></i>
-                            Status :
-                            <strong>Belum Lunas</strong>
-
+                            Status : <strong>Belum Lunas</strong>
                         </div>
+                        @break
 
-                        @else
-
+                        @default
                         <div class="alert alert-danger border-0 rounded-4 mb-0">
-
                             <i class="fas fa-circle-xmark me-2"></i>
-                            Status :
-                            <strong>Dibatalkan</strong>
-
+                            Status : <strong>{{ $fakturPembelian->status ?? 'Dibatalkan' }}</strong>
                         </div>
-
-                        @endif
-
+                        @endswitch
                     </div>
-
                 </div>
-
             </div>
-
         </div>
 
     </div>

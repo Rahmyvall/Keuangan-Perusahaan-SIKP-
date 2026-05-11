@@ -9,95 +9,74 @@ class Supplier extends Model
 {
     use HasFactory;
 
-    /**
-     * Nama tabel di database
-     */
     protected $table = 'supplier';
 
-    /**
-     * Primary Key
-     */
     protected $primaryKey = 'id_supplier';
 
-    /**
-     * Tabel tidak menggunakan timestamps
-     */
     public $timestamps = false;
 
-    /**
-     * Kolom yang boleh diisi (Mass Assignment)
-     */
     protected $fillable = [
         'kode_supplier',
         'nama_supplier',
         'alamat',
         'telepon',
-        'email',           // tambahkan jika ada kolom ini
+        'email',
         'id_perusahaan',
-        'keterangan',      // tambahkan jika ada
-        'status',          // tambahkan jika ada
+        'keterangan',
+        'status',
     ];
 
-    /**
-     * Casting tipe data
-     */
     protected $casts = [
-        'id_supplier'    => 'integer',
-        'id_perusahaan'  => 'integer',
-        'status'         => 'boolean',     // jika ada kolom status aktif/tidak
+        'id_supplier'   => 'integer',
+        'id_perusahaan' => 'integer',
     ];
 
     // ========================================
     // RELASI
     // ========================================
 
-    /**
-     * Relasi ke Perusahaan
-     */
     public function perusahaan()
     {
-        return $this->belongsTo(Perusahaan::class, 'id_perusahaan', 'id_perusahaan');
-    }
-
-    /**
-     * Relasi ke Faktur Pembelian
-     * Satu Supplier bisa memiliki banyak Faktur Pembelian
-     */
-    public function fakturPembelian()
-    {
-        return $this->hasMany(
-            FakturPembelian::class, 
-            'id_supplier',      // foreign key di tabel faktur_pembelian
-            'id_supplier'       // local key di tabel supplier
+        return $this->belongsTo(
+            Perusahaan::class,
+            'id_perusahaan',
+            'id_perusahaan'
         );
     }
 
-    /**
-     * Relasi ke Jurnal (jika diperlukan)
-     */
+    public function fakturPembelian()
+    {
+        return $this->hasMany(
+            FakturPembelian::class,
+            'id_supplier',
+            'id_supplier'
+        );
+    }
+
+    // OPTIONAL (hapus kalau tidak ada kolom relasi)
     public function jurnal()
     {
-        return $this->hasMany(Jurnal::class, 'id_supplier', 'id_supplier');
+        return $this->hasMany(
+            Jurnal::class,
+            'id_supplier',
+            'id_supplier'
+        );
     }
 
     // ========================================
-    // SCOPE & HELPER
+    // SCOPE
     // ========================================
 
-    /**
-     * Scope untuk supplier aktif
-     */
     public function scopeAktif($query)
     {
-        return $query->where('status', 1);
+        return $query->where('status', 'aktif');
     }
 
-    /**
-     * Scope untuk pencarian
-     */
     public function scopeCari($query, $keyword)
     {
-        return $query->where('nama_supplier', 'like', "%{$keyword}%")
-                     ->orWhere('kode_supplier', 'like', "%{$keyword}%");
+        return $query->where(function ($q) use ($keyword) {
+            $q->where('nama_supplier', 'like', "%{$keyword}%")
+              ->orWhere('kode_supplier', 'like', "%{$keyword}%");
+        });
     }
 }

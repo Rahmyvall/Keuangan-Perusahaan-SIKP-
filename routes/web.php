@@ -1,21 +1,25 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\LoginController;
-use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\MataUangController;
-use App\Http\Controllers\PenggunaController;
-use App\Http\Controllers\PerusahaanController;
-use App\Http\Controllers\AkunController;
-use App\Http\Controllers\FakturPembelianController;
-use App\Http\Controllers\JurnalController;
-use App\Http\Controllers\JurnalDetailController;
-use App\Http\Controllers\LaporanController;
-use App\Http\Controllers\PelangganController;
-use App\Http\Controllers\PeriodeController;
-use App\Http\Controllers\FakturPenjualanController;
-use App\Http\Controllers\PenerimaanPiutangController;
-use App\Http\Controllers\SupplierController;
+
+use App\Http\Controllers\{
+    LoginController,
+    DashboardController,
+    MataUangController,
+    PenggunaController,
+    PerusahaanController,
+    AkunController,
+    FakturPembelianController,
+    JurnalController,
+    JurnalDetailController,
+    LaporanController,
+    PelangganController,
+    PeriodeController,
+    FakturPenjualanController,
+    NotificationController,
+    PenerimaanPiutangController,
+    SupplierController
+};
 
 /*
 |--------------------------------------------------------------------------
@@ -23,16 +27,9 @@ use App\Http\Controllers\SupplierController;
 |--------------------------------------------------------------------------
 */
 Route::middleware('guest')->group(function () {
-
-    Route::get('/', function () {
-        return redirect()->route('login');
-    });
-
-    Route::get('/login', [LoginController::class, 'showLoginForm'])
-        ->name('login');
-
-    Route::post('/login', [LoginController::class, 'login'])
-        ->name('login.post');
+    Route::get('/', fn () => redirect()->route('login'))->name('home');
+    Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
+    Route::post('/login', [LoginController::class, 'login'])->name('login.post');
 });
 
 /*
@@ -42,131 +39,97 @@ Route::middleware('guest')->group(function () {
 */
 Route::middleware('auth')->group(function () {
 
+    Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+
+    /*
+    |--------------------------------------------------------------------------
+    | DASHBOARD (GLOBAL)
+    |--------------------------------------------------------------------------
+    */
     Route::get('/dashboard', [DashboardController::class, 'index'])
         ->name('dashboard');
 
     /*
     |--------------------------------------------------------------------------
-    | ADMIN
+    | ADMIN (FULL ACCESS)
     |--------------------------------------------------------------------------
     */
-    Route::middleware('role:admin')->prefix('admin')->group(function () {
+    Route::middleware('role:admin')->group(function () {
 
-        Route::get('/dashboard', [DashboardController::class, 'index'])
-            ->name('admin.dashboard');
+        Route::resources([
+            'perusahaan' => PerusahaanController::class,
+            'pengguna' => PenggunaController::class,
+            'mata-uang' => MataUangController::class,
+            'akun' => AkunController::class,
+            'periode' => PeriodeController::class,
+            'supplier' => SupplierController::class,
+            'pelanggan' => PelangganController::class,
+            'faktur-pembelian' => FakturPembelianController::class,
+            'faktur-penjualan' => FakturPenjualanController::class,
+            'jurnal' => JurnalController::class,
+            'penerimaan-piutang' => PenerimaanPiutangController::class,
+        ]);
 
-        /*
-        |----------------------------
-        | MASTER DATA
-        |----------------------------
-        */
-        Route::resource('perusahaan', PerusahaanController::class);
-        Route::resource('pengguna', PenggunaController::class);
-        Route::resource('mata-uang', MataUangController::class);
-        Route::resource('akun', AkunController::class);
-        Route::resource('periode', PeriodeController::class);
-        Route::resource('jurnal', JurnalController::class);
-        Route::resource('supplier', SupplierController::class);
+        Route::prefix('admin-extra')->group(function () {
 
-        // ==================== FAKTUR PEMBELIAN ====================
-        Route::resource('faktur-pembelian', FakturPembelianController::class);
+            Route::get('perusahaan/by-kota/{kota}', [PerusahaanController::class, 'byKota'])
+                ->name('perusahaan.by-kota');
 
-        Route::patch('faktur-pembelian/{fakturPembelian}/update-status',
-            [FakturPembelianController::class, 'updateStatus'])
-            ->name('faktur-pembelian.update-status');
+            Route::get('akun/by-tipe/{tipe}', [AkunController::class, 'byTipe'])
+                ->name('akun.by-tipe');
 
-        // ROUTE PRINT ← DITAMBAHKAN
-        Route::get('faktur-pembelian/{fakturPembelian}/print',
-            [FakturPembelianController::class, 'print'])
-            ->name('faktur-pembelian.print');
+            Route::patch('faktur-pembelian/{fakturPembelian}/update-status',
+                [FakturPembelianController::class, 'updateStatus']
+            )->name('faktur-pembelian.update-status');
 
-        // Route lain tetap sama
-        Route::resource('penerimaan-piutang', PenerimaanPiutangController::class);
-        Route::get('penerimaan-piutang/{penerimaanPiutang}',
-            [PenerimaanPiutangController::class, 'show'])
-            ->name('penerimaan-piutang.show');
+            Route::get('faktur-pembelian/{fakturPembelian}/print',
+                [FakturPembelianController::class, 'print']
+            )->name('faktur-pembelian.print');
 
-        Route::resource('jurnal-detail', JurnalDetailController::class);
-        Route::resource('pelanggan', PelangganController::class);
-        Route::resource('faktur-penjualan', FakturPenjualanController::class);
+            Route::patch('faktur-penjualan/{fakturPenjualan}/status',
+                [FakturPenjualanController::class, 'updateStatus']
+            )->name('faktur-penjualan.update-status');
 
-        // ==================== JURNAL DETAIL ROUTES (NESTED) ====================
-        Route::prefix('jurnal/{jurnal}/detail')
-            ->name('jurnal.detail.')
-            ->group(function () {
-                Route::get('/', [JurnalDetailController::class, 'index'])->name('index');
-                Route::get('/create', [JurnalDetailController::class, 'create'])->name('create');
-                Route::post('/', [JurnalDetailController::class, 'store'])->name('store');
-                Route::get('/{detail}/edit', [JurnalDetailController::class, 'edit'])->name('edit');
-                Route::put('/{detail}', [JurnalDetailController::class, 'update'])->name('update');
-                Route::delete('/{detail}', [JurnalDetailController::class, 'destroy'])->name('destroy');
-                Route::post('/bulk', [JurnalDetailController::class, 'bulkUpdate'])->name('bulk');
-            });
+            Route::prefix('jurnal/{jurnal}/detail')
+                ->name('jurnal.detail.')
+                ->group(function () {
 
-        // Tambahan route khusus Jurnal
-        Route::post('jurnal/{jurnal}/post', [JurnalController::class, 'post'])
-            ->name('jurnal.post');
-        Route::post('jurnal/{jurnal}/unpost', [JurnalController::class, 'unpost'])
-            ->name('jurnal.unpost');
-        Route::post('jurnal/{jurnal}/approve', [JurnalController::class, 'approve'])
-            ->name('jurnal.approve');
-        Route::post('jurnal/{jurnal}/reject', [JurnalController::class, 'reject'])
-            ->name('jurnal.reject');
+                    Route::get('/', [JurnalDetailController::class, 'index'])->name('index');
+                    Route::get('/create', [JurnalDetailController::class, 'create'])->name('create');
+                    Route::post('/', [JurnalDetailController::class, 'store'])->name('store');
 
-        // Tambahan route khusus Faktur Penjualan
-        Route::patch('faktur-penjualan/{fakturPenjualan}/status',
-            [FakturPenjualanController::class, 'updateStatus'])
-            ->name('faktur-penjualan.update-status');
+                    Route::get('/{detail}/edit', [JurnalDetailController::class, 'edit'])->name('edit');
+                    Route::put('/{detail}', [JurnalDetailController::class, 'update'])->name('update');
+                    Route::delete('/{detail}', [JurnalDetailController::class, 'destroy'])->name('destroy');
 
-        /*
-        |----------------------------
-        | AJAX / SUPPORT DATA
-        |----------------------------
-        */
-        Route::get('/perusahaan/by-kota/{kota}', [PerusahaanController::class, 'byKota'])
-            ->name('perusahaan.by-kota');
+                    Route::post('/bulk', [JurnalDetailController::class, 'bulkUpdate'])->name('bulk');
+                });
 
-        Route::get('/akun/by-tipe/{tipe}', [AkunController::class, 'byTipe'])
-            ->name('akun.by-tipe');
+            Route::post('jurnal/{jurnal}/post', [JurnalController::class, 'post'])->name('jurnal.post');
+            Route::post('jurnal/{jurnal}/unpost', [JurnalController::class, 'unpost'])->name('jurnal.unpost');
+            Route::post('jurnal/{jurnal}/approve', [JurnalController::class, 'approve'])->name('jurnal.approve');
+            Route::post('jurnal/{jurnal}/reject', [JurnalController::class, 'reject'])->name('jurnal.reject');
 
-        /*
-        |----------------------------
-        | LAPORAN AKUNTANSI
-        |----------------------------
-        */
-        Route::get('/laporan/neraca', [LaporanController::class, 'neraca'])
-            ->name('laporan.neraca');
+            Route::get('laporan/neraca', [LaporanController::class, 'neraca'])->name('laporan.neraca');
+            Route::get('laporan/laba-rugi', [LaporanController::class, 'labaRugi'])->name('laporan.laba-rugi');
 
-        Route::get('/laporan/laba-rugi', [LaporanController::class, 'labaRugi'])
-            ->name('laporan.laba-rugi');
-    });
-
-    // Role lain (tetap sama)
-    Route::middleware('role:akuntan')->prefix('akuntan')->group(function () {
-        Route::get('/dashboard', [DashboardController::class, 'index'])
-            ->name('akuntan.dashboard');
-    });
-
-    Route::middleware('role:manajer')->prefix('manajer')->group(function () {
-        Route::get('/dashboard', [DashboardController::class, 'index'])
-            ->name('manajer.dashboard');
-    });
-
-    Route::middleware('role:auditor')->prefix('auditor')->group(function () {
-        Route::get('/dashboard', [DashboardController::class, 'index'])
-            ->name('auditor.dashboard');
-    });
-
-    Route::middleware('role:staff')->prefix('staff')->group(function () {
-        Route::get('/dashboard', [DashboardController::class, 'index'])
-            ->name('staff.dashboard');
+            Route::get('notifications/fetch', [NotificationController::class, 'fetch'])->name('notifications.fetch');
+            Route::post('notifications/mark-all-read', [NotificationController::class, 'markAllRead'])->name('notifications.mark-all-read');
+        });
     });
 
     /*
     |--------------------------------------------------------------------------
-    | LOGOUT
+    | ROLE DASHBOARD (AKUNTAN / MANAJER / AUDITOR / STAFF)
     |--------------------------------------------------------------------------
     */
-    Route::post('/logout', [LoginController::class, 'logout'])
-        ->name('logout');
+    foreach (['akuntan', 'manajer', 'auditor', 'staff'] as $role) {
+        Route::middleware("role:$role")
+            ->prefix($role)
+            ->name($role . '.')
+            ->group(function () {
+                Route::get('/dashboard', [DashboardController::class, 'index'])
+                    ->name('dashboard');
+            });
+    }
 });

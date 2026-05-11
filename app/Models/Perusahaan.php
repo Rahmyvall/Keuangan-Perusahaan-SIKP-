@@ -6,6 +6,11 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 
+use App\Models\Pengguna;
+use App\Models\FakturPembelian;
+use App\Models\Periode;
+use App\Models\Supplier;
+
 class Perusahaan extends Model
 {
     use HasFactory;
@@ -19,7 +24,7 @@ class Perusahaan extends Model
     public $timestamps = true;
 
     /**
-     * FIELD YANG BOLEH DIISI
+     * MASS ASSIGNMENT
      */
     protected $fillable = [
         'nama_perusahaan',
@@ -29,63 +34,37 @@ class Perusahaan extends Model
         'telepon',
         'email',
         'logo',
+        'status',
     ];
 
     /**
-     * CASTING DATA
+     * CASTING
      */
     protected $casts = [
         'id_perusahaan' => 'integer',
-        'created_at'    => 'datetime',
-        'updated_at'    => 'datetime',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
     ];
 
-    /**
-     * RELASI
-     */
+    /*
+    |--------------------------------------------------------------------------
+    | RELASI
+    |--------------------------------------------------------------------------
+    */
+
     public function pengguna()
     {
         return $this->hasMany(Pengguna::class, 'id_perusahaan', 'id_perusahaan');
     }
 
-    /**
-     * SCOPES
-     */
-    public function scopeTerbaru($query)
-    {
-        return $query->orderBy('created_at', 'desc');
-    }
-
     public function fakturPembelian()
     {
-        return $this->hasMany(
-            FakturPembelian::class,
-            'id_perusahaan',
-            'id_perusahaan'
-        );
+        return $this->hasMany(FakturPembelian::class, 'id_perusahaan', 'id_perusahaan');
     }
 
-    /**
-     * ACCESSOR NPWP (optional aman)
-     */
-    protected function npwp(): Attribute
+    public function supplier()
     {
-        return Attribute::make(
-            get: function ($value) {
-                $npwp = preg_replace('/[^0-9]/', '', $value);
-
-                if (strlen($npwp) == 15) {
-                    return substr($npwp, 0, 2) . '.' .
-                        substr($npwp, 2, 3) . '.' .
-                        substr($npwp, 5, 3) . '.' .
-                        substr($npwp, 8, 1) . '-' .
-                        substr($npwp, 9, 3) . '.' .
-                        substr($npwp, 12, 3);
-                }
-
-                return $value;
-            }
-        );
+        return $this->hasMany(Supplier::class, 'id_perusahaan', 'id_perusahaan');
     }
 
     public function periodes()
@@ -95,11 +74,63 @@ class Perusahaan extends Model
 
     public function periodeAktif()
     {
-        return $this->periodes()->where('status', 'Terbuka')->latest();
+        return $this->hasOne(Periode::class, 'id_perusahaan', 'id_perusahaan')
+            ->where('status', 'Terbuka')
+            ->latestOfMany();
     }
 
-    public function supplier()
+    /*
+    |--------------------------------------------------------------------------
+    | SCOPES
+    |--------------------------------------------------------------------------
+    */
+
+    public function scopeTerbaru($query)
     {
-        return $this->hasMany(Supplier::class, 'id_perusahaan', 'id_perusahaan');
+        return $query->orderByDesc('created_at');
+    }
+
+    public function scopeAktif($query)
+    {
+        return $query->where('status', 'aktif');
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | ACCESSOR
+    |--------------------------------------------------------------------------
+    */
+
+    protected function npwp(): Attribute
+    {
+        return Attribute::make(
+            get: function ($value) {
+                if (!$value) return null;
+
+                $npwp = preg_replace('/\D/', '', $value);
+
+                if (strlen($npwp) !== 15) {
+                    return $value;
+                }
+
+                return substr($npwp, 0, 2) . '.' .
+                       substr($npwp, 2, 3) . '.' .
+                       substr($npwp, 5, 3) . '.' .
+                       substr($npwp, 8, 1) . '-' .
+                       substr($npwp, 9, 3) . '.' .
+                       substr($npwp, 12, 3);
+            }
+        );
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | ROUTE MODEL BINDING (IMPORTANT FIX)
+    |--------------------------------------------------------------------------
+    */
+
+    public function getRouteKeyName()
+    {
+        return 'id_perusahaan';
     }
 }

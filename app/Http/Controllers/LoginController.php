@@ -7,69 +7,51 @@ use Illuminate\Support\Facades\Auth;
 
 class LoginController extends Controller
 {
+    /**
+     * Tampilkan halaman login
+     */
     public function showLoginForm()
     {
-        return view('welcome');
+        return view('auth.login');   // pastikan file ada di: resources/views/auth/login.blade.php
     }
 
-    /*
-    |--------------------------------------------------------------------------
-    | LOGIN
-    |--------------------------------------------------------------------------
-    */
+    /**
+     * Proses login
+     */
     public function login(Request $request)
     {
         $request->validate([
             'username' => 'required|string',
             'password' => 'required|string',
+            'role'     => 'required|in:admin,akuntan,manajer,auditor,staff',
         ]);
 
         $credentials = $request->only('username', 'password');
 
-        if (!Auth::attempt($credentials, $request->boolean('remember'))) {
-            return back()->withErrors([
-                'login' => 'Username atau password salah'
-            ])->withInput();
+        if (Auth::attempt($credentials)) {
+            $request->session()->regenerate();
+
+            // Perbaikan di sini
+            if (auth()->user()->role === $request->role) {
+                return redirect()->intended('/dashboard');
+            } else {
+                Auth::logout();
+                return back()->with('error', 'Role yang dipilih tidak sesuai dengan akun Anda.');
+            }
         }
 
-        // regenerasi session (INI WAJIB biar tidak “logout aneh”)
-        $request->session()->regenerate();
-
-        $user = Auth::user();
-
-        // mapping role ke dashboard
-        $routes = [
-            'admin'   => 'admin.dashboard',
-            'akuntan' => 'akuntan.dashboard',
-            'manajer' => 'manajer.dashboard',
-            'auditor' => 'auditor.dashboard',
-            'staff'   => 'staff.dashboard',
-        ];
-
-        if (!isset($routes[$user->role])) {
-            Auth::logout();
-            $request->session()->invalidate();
-            $request->session()->regenerateToken();
-
-            return redirect()->route('login')
-                ->withErrors(['login' => 'Role tidak dikenali']);
-        }
-
-        return redirect()->route($routes[$user->role]);
+        return back()->with('error', 'Username atau password salah.');
     }
 
-    /*
-    |--------------------------------------------------------------------------
-    | LOGOUT
-    |--------------------------------------------------------------------------
-    */
+    /**
+     * Logout
+     */
     public function logout(Request $request)
     {
         Auth::logout();
-
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect()->route('login');
+        return redirect('/login');
     }
 }

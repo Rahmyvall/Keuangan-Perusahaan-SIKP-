@@ -280,7 +280,6 @@ class DashboardController extends Controller
             'manajer' => view('dashboard.manajer', $data),
             'auditor' => view('dashboard.auditor', $data),
             'staff'   => view('dashboard.staff', $data),
-
             default   => view('dashboard.admin', $data),
         };
     }

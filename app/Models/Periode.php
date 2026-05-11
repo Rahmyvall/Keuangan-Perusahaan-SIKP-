@@ -10,19 +10,35 @@ class Periode extends Model
 {
     use HasFactory;
 
+    /**
+     * Nama tabel
+     */
     protected $table = 'periode';
+
+    /**
+     * Primary key
+     */
     protected $primaryKey = 'id_periode';
-    protected $keyType = 'int';
+
+    /**
+     * Primary key auto increment
+     */
     public $incrementing = true;
 
     /**
-     * ❗ PENTING:
-     * Ubah ini sesuai kondisi tabel kamu
-     * - false → kalau kolom created_at & updated_at TIDAK ADA
-     * - true  → kalau kolom ADA
+     * Tipe primary key
      */
-    public $timestamps = false; // ⬅️ FIX ERROR
+    protected $keyType = 'int';
 
+    /**
+     * Jika tabel tidak memiliki
+     * created_at & updated_at
+     */
+    public $timestamps = false;
+
+    /**
+     * Mass assignment
+     */
     protected $fillable = [
         'id_perusahaan',
         'tahun',
@@ -32,7 +48,11 @@ class Periode extends Model
         'status',
     ];
 
+    /**
+     * Casting data
+     */
     protected $casts = [
+        'id_perusahaan' => 'integer',
         'tahun'         => 'integer',
         'bulan'         => 'integer',
         'tanggal_awal'  => 'date',
@@ -40,75 +60,140 @@ class Periode extends Model
         'status'        => 'string',
     ];
 
+    /**
+     * Default value
+     */
     protected $attributes = [
         'status' => 'Terbuka',
     ];
 
-    // =====================================
-    // RELATIONSHIPS
-    // =====================================
+    // ==================================================
+    // RELATIONSHIP
+    // ==================================================
 
     public function perusahaan(): BelongsTo
     {
-        return $this->belongsTo(Perusahaan::class, 'id_perusahaan', 'id_perusahaan');
+        return $this->belongsTo(
+            Perusahaan::class,
+            'id_perusahaan',
+            'id_perusahaan'
+        );
     }
 
-    // =====================================
+    // ==================================================
     // SCOPES
-    // =====================================
+    // ==================================================
 
+    /**
+     * Scope status aktif / terbuka
+     */
     public function scopeAktif($query)
     {
         return $query->where('status', 'Terbuka');
     }
 
+    /**
+     * Scope filter perusahaan
+     */
     public function scopePerusahaan($query, $id_perusahaan)
     {
-        return $query->where('id_perusahaan', $id_perusahaan);
+        return $query->where(
+            'id_perusahaan',
+            $id_perusahaan
+        );
     }
 
+    /**
+     * Scope periode saat ini
+     */
     public function scopeSaatIni($query, $tanggal = null)
     {
         $tanggal = $tanggal ?? now();
 
-        return $query->whereDate('tanggal_awal', '<=', $tanggal)
-                     ->whereDate('tanggal_akhir', '>=', $tanggal);
+        return $query
+            ->whereDate('tanggal_awal', '<=', $tanggal)
+            ->whereDate('tanggal_akhir', '>=', $tanggal);
     }
 
+    /**
+     * Scope data terbaru
+     */
     public function scopeTerbaru($query)
     {
-        return $query->orderByDesc('tahun')
-                     ->orderByDesc('bulan');
+        return $query
+            ->orderBy('tahun', 'desc')
+            ->orderBy('bulan', 'desc');
     }
 
-    // =====================================
-    // ACCESSORS
-    // =====================================
+    // ==================================================
+    // ACCESSOR
+    // ==================================================
 
+    /**
+     * Nama bulan Indonesia
+     */
     public function getNamaBulanAttribute(): string
     {
         $bulan = [
-            1 => 'Januari', 2 => 'Februari', 3 => 'Maret', 4 => 'April',
-            5 => 'Mei', 6 => 'Juni', 7 => 'Juli', 8 => 'Agustus',
-            9 => 'September', 10 => 'Oktober', 11 => 'November', 12 => 'Desember'
+            1  => 'Januari',
+            2  => 'Februari',
+            3  => 'Maret',
+            4  => 'April',
+            5  => 'Mei',
+            6  => 'Juni',
+            7  => 'Juli',
+            8  => 'Agustus',
+            9  => 'September',
+            10 => 'Oktober',
+            11 => 'November',
+            12 => 'Desember',
         ];
 
-        return $bulan[$this->bulan] ?? '';
+        return $bulan[$this->bulan] ?? '-';
     }
 
+    /**
+     * Label periode
+     */
     public function getLabelAttribute(): string
     {
-        return "{$this->nama_bulan} {$this->tahun}";
+        return $this->nama_bulan . ' ' . $this->tahun;
     }
 
+    /**
+     * Badge status
+     */
     public function getStatusBadgeAttribute(): string
     {
-        return match($this->status) {
-            'Terbuka' => '<span class="badge bg-success">Terbuka</span>',
-            'Ditutup' => '<span class="badge bg-danger">Ditutup</span>',
-            'Dikunci' => '<span class="badge bg-warning">Dikunci</span>',
-            default   => '<span class="badge bg-secondary">' . $this->status . '</span>',
-        };
+        if ($this->status == 'Terbuka') {
+
+            return '<span class="badge bg-success">Terbuka</span>';
+
+        } elseif ($this->status == 'Ditutup') {
+
+            return '<span class="badge bg-danger">Ditutup</span>';
+
+        } elseif ($this->status == 'Dikunci') {
+
+            return '<span class="badge bg-warning text-dark">Dikunci</span>';
+
+        }
+
+        return '<span class="badge bg-secondary">'
+                . e($this->status) .
+               '</span>';
     }
 
+    // ==================================================
+    // HELPER
+    // ==================================================
+
+    /**
+     * Menghitung durasi hari
+     */
+    public function getDurasiHariAttribute(): int
+    {
+        return $this->tanggal_awal
+            ->diffInDays($this->tanggal_akhir) + 1;
+    }
 }

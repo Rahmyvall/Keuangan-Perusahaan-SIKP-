@@ -27,12 +27,18 @@ return Application::configure(basePath: dirname(__DIR__))
 
         /*
         |--------------------------------------------------------------------------
-        | WEB MIDDLEWARE (SESSION LOGIN NORMAL)
+        | WEB MIDDLEWARE + REDIRECT GUEST
         |--------------------------------------------------------------------------
         */
         $middleware->web(append: [
             \Illuminate\Session\Middleware\StartSession::class,
         ]);
+
+        // 🔥 Tambahan ini yang penting untuk mengatasi "Route [login] not defined"
+        $middleware->redirectGuestsTo(fn () => route('login'));
+
+        // Alternatif kalau mau pakai URL langsung:
+        // $middleware->redirectGuestsTo('/login');
 
         /*
         |--------------------------------------------------------------------------
