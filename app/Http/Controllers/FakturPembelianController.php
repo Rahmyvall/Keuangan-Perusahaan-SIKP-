@@ -38,7 +38,7 @@ class FakturPembelianController extends Controller
             $search = trim($request->search);
             $query->where(function ($q) use ($search) {
                 $q->where('nomor_faktur', 'like', "%{$search}%")
-                  ->orWhereHas('supplier', fn($supplier) => 
+                  ->orWhereHas('supplier', fn($supplier) =>
                       $supplier->where('nama_supplier', 'like', "%{$search}%")
                   );
             });
@@ -61,19 +61,19 @@ class FakturPembelianController extends Controller
      */
     public function create()
 {
-    $suppliers = Supplier::select('id_supplier', 'nama_supplier')
+    $supplier = Supplier::select('id_supplier', 'nama_supplier')
         ->orderBy('nama_supplier')
         ->get();
 
-    $perusahaans = Perusahaan::select('id_perusahaan', 'nama_perusahaan')
+    $perusahaan = Perusahaan::select('id_perusahaan', 'nama_perusahaan')
         ->orderBy('nama_perusahaan')
         ->get();
 
     $jurnal = $this->getFormattedJurnal();
 
     return view('faktur-pembelian.create', compact(
-        'suppliers', 
-        'perusahaans', 
+        'supplier',
+        'perusahaan',
         'jurnal'
     ));
 }
@@ -104,8 +104,8 @@ class FakturPembelianController extends Controller
             ->latest('id_faktur_pembelian')
             ->first();
 
-        $nomorUrut = $lastFaktur 
-            ? (int) substr($lastFaktur->nomor_faktur, -4) + 1 
+        $nomorUrut = $lastFaktur
+            ? (int) substr($lastFaktur->nomor_faktur, -4) + 1
             : 1;
 
         $validated['nomor_faktur'] = $prefix . '-' . str_pad($nomorUrut, 4, '0', STR_PAD_LEFT);
@@ -117,7 +117,7 @@ class FakturPembelianController extends Controller
             DB::commit();
 
             return redirect()
-                ->route('admin.faktur-pembelian.index')
+                ->route('faktur-pembelian.index')
                 ->with('success', 'Faktur berhasil dibuat: ' . $fakturPembelian->nomor_faktur);
         } catch (\Throwable $th) {
             DB::rollBack();
@@ -158,35 +158,50 @@ class FakturPembelianController extends Controller
      * Update the specified resource in storage.
      */
     public function update(Request $request, FakturPembelian $fakturPembelian)
-    {
-        $validated = $request->validate([
-            'tanggal'       => 'required|date',
-            'id_supplier'   => 'required|exists:supplier,id_supplier',
-            'id_jurnal'     => 'nullable|exists:jurnal,id_jurnal',
-            'id_perusahaan' => 'required|exists:perusahaan,id_perusahaan',
-            'subtotal'      => 'required|numeric|min:0',
-            'ppn'           => 'nullable|numeric|min:0',
-            'status'        => 'required|in:Belum Lunas,Lunas,Dibatalkan',
+{
+    $validated = $request->validate([
+        'tanggal'       => 'required|date',
+        'id_supplier'   => 'required|exists:supplier,id_supplier',
+        'id_jurnal'     => 'nullable|exists:jurnal,id_jurnal',
+        'id_perusahaan' => 'required|exists:perusahaan,id_perusahaan',
+        'subtotal'      => 'required|numeric|min:0',
+        'ppn'           => 'nullable|numeric|min:0',
+        'status'        => 'required|in:Belum Lunas,Lunas,Dibatalkan',
+    ]);
+
+    $validated['ppn'] = $validated['ppn'] ?? 0;
+    $validated['total'] = $validated['subtotal'] + $validated['ppn'];
+
+    DB::beginTransaction();
+
+    try {
+
+        $fakturPembelian->update([
+            'tanggal'       => $validated['tanggal'],
+            'id_supplier'   => $validated['id_supplier'],
+            'id_jurnal'     => $validated['id_jurnal'],
+            'id_perusahaan' => $validated['id_perusahaan'],
+            'subtotal'      => $validated['subtotal'],
+            'ppn'           => $validated['ppn'],
+            'total'         => $validated['total'],
+            'status'        => $validated['status'],
         ]);
 
-        $validated['ppn']   = $validated['ppn'] ?? 0;
-        $validated['total'] = $validated['subtotal'] + $validated['ppn'];
+        DB::commit();
 
-        DB::beginTransaction();
-        try {
-            $fakturPembelian->update($validated);
-            DB::commit();
+        return redirect()
+            ->route('faktur-pembelian.index')
+            ->with('success', 'Faktur berhasil diperbarui');
 
-            return redirect()
-                ->route('admin.faktur-pembelian.index')
-                ->with('success', 'Faktur berhasil diperbarui');
-        } catch (\Throwable $th) {
-            DB::rollBack();
-            return back()
-                ->withInput()
-                ->with('error', 'Gagal memperbarui faktur: ' . $th->getMessage());
-        }
+    } catch (\Throwable $th) {
+
+        DB::rollBack();
+
+        return back()
+            ->withInput()
+            ->with('error', 'Gagal memperbarui faktur: ' . $th->getMessage());
     }
+}
 
     /**
      * Remove the specified resource from storage.
@@ -199,7 +214,7 @@ class FakturPembelianController extends Controller
             DB::commit();
 
             return redirect()
-                ->route('admin.faktur-pembelian.index')
+                ->route('faktur-pembelian.index')
                 ->with('success', 'Faktur berhasil dihapus');
         } catch (\Throwable $th) {
             DB::rollBack();

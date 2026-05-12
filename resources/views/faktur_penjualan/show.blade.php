@@ -164,6 +164,17 @@ function printFaktur() {
 <style>
 @media print {
 
+    @page {
+        size: A4 portrait;
+        margin: 10mm;
+    }
+
+    body {
+        background: #fff !important;
+        font-size: 12px;
+        color: #000;
+    }
+
     .navbar,
     .sidebar,
     .btn-group,
@@ -173,12 +184,70 @@ function printFaktur() {
     }
 
     .container-fluid {
-        padding: 20px !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+
+    .row {
+        display: block !important;
+    }
+
+    .col-lg-8,
+    .col-lg-4,
+    .col-md-6 {
+        width: 100% !important;
+        max-width: 100% !important;
+        flex: 0 0 100% !important;
     }
 
     .card {
-        border: 1px solid #ddd !important;
+        border: 1px solid #000 !important;
         box-shadow: none !important;
+        margin-bottom: 15px !important;
+        page-break-inside: avoid;
+    }
+
+    .card-header {
+        background: #fff !important;
+        border-bottom: 1px solid #000 !important;
+    }
+
+    table {
+        width: 100% !important;
+        font-size: 12px;
+    }
+
+    th,
+    td {
+        padding: 4px 6px !important;
+        vertical-align: top;
+    }
+
+    .badge {
+        border: 1px solid #000 !important;
+        color: #000 !important;
+        background: #fff !important;
+    }
+
+    .text-primary,
+    .text-success,
+    .text-warning,
+    .text-danger,
+    .text-muted {
+        color: #000 !important;
+    }
+
+    i {
+        display: none !important;
+    }
+
+    h2,
+    h3,
+    h4,
+    h5 {
+        margin-bottom: 10px !important;
     }
 }
 </style>

@@ -6,10 +6,8 @@
 
 <div class="container-fluid py-4">
 
-    {{-- ========================================= --}}
     {{-- HEADER --}}
-    {{-- ========================================= --}}
-    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4">
 
         <div>
             <h2 class="fw-bold mb-1">
@@ -22,7 +20,7 @@
             </p>
         </div>
 
-        <a href="{{ route('faktur-pembelian.index') }}" class="btn btn-light border shadow-sm">
+        <a href="{{ route('faktur-pembelian.index') }}" class="btn btn-light border shadow-sm mt-3 mt-md-0">
 
             <i class="fas fa-arrow-left me-2"></i>
             Kembali
@@ -31,9 +29,7 @@
 
     </div>
 
-    {{-- ========================================= --}}
     {{-- ERROR --}}
-    {{-- ========================================= --}}
     @if ($errors->any())
 
     <div class="alert alert-danger border-0 shadow-sm">
@@ -44,280 +40,274 @@
         </div>
 
         <ul class="mb-0 ps-3">
+
             @foreach ($errors->all() as $error)
             <li>{{ $error }}</li>
             @endforeach
+
         </ul>
 
     </div>
 
     @endif
 
-    {{-- ========================================= --}}
     {{-- FORM --}}
-    {{-- ========================================= --}}
     <form action="{{ route('faktur-pembelian.store') }}" method="POST" id="formFaktur">
 
         @csrf
 
-        <div class="row g-4">
+        <div class="card border-0 shadow-sm">
 
-            {{-- ========================================= --}}
-            {{-- LEFT CONTENT --}}
-            {{-- ========================================= --}}
-            <div class="col-lg-8">
+            <div class="card-header bg-white border-0 py-3">
 
-                <div class="card border-0 shadow-sm">
+                <h5 class="fw-semibold mb-0">
+                    Informasi Faktur
+                </h5>
 
-                    <div class="card-header bg-white border-0 py-3">
+            </div>
 
-                        <h5 class="fw-semibold mb-0">
-                            Informasi Faktur
-                        </h5>
+            <div class="card-body">
+
+                <div class="row g-4">
+
+                    {{-- TANGGAL --}}
+                    <div class="col-md-6">
+
+                        <label class="form-label fw-semibold">
+                            Tanggal
+                            <span class="text-danger">*</span>
+                        </label>
+
+                        <input type="date" name="tanggal" class="form-control @error('tanggal') is-invalid @enderror"
+                            value="{{ old('tanggal', date('Y-m-d')) }}" required>
+
+                        @error('tanggal')
+                        <div class="invalid-feedback">
+                            {{ $message }}
+                        </div>
+                        @enderror
 
                     </div>
 
-                    <div class="card-body">
+                    {{-- SUPPLIER --}}
+                    <div class="col-md-6">
 
-                        <div class="row g-4">
+                        <label class="form-label fw-semibold">
+                            Supplier
+                            <span class="text-danger">*</span>
+                        </label>
 
-                            {{-- TANGGAL --}}
-                            <div class="col-md-6">
+                        <select name="id_supplier" class="form-select @error('id_supplier') is-invalid @enderror"
+                            required>
 
-                                <label class="form-label fw-semibold">
-                                    Tanggal
-                                    <span class="text-danger">*</span>
-                                </label>
+                            <option value="">
+                                -- Pilih Supplier --
+                            </option>
 
-                                <input type="date" name="tanggal"
-                                    class="form-control @error('tanggal') is-invalid @enderror"
-                                    value="{{ old('tanggal', date('Y-m-d')) }}" required>
+                            @forelse($supplier ?? [] as $item)
 
-                                @error('tanggal')
-                                <div class="invalid-feedback">
-                                    {{ $message }}
-                                </div>
-                                @enderror
+                            <option value="{{ $item->id_supplier }}"
+                                {{ old('id_supplier') == $item->id_supplier ? 'selected' : '' }}>
 
-                            </div>
+                                {{ $item->nama_supplier }}
 
-                            {{-- SUPPLIER --}}
-                            <div class="col-md-6">
+                            </option>
 
-                                <label class="form-label fw-semibold">
-                                    Supplier
-                                    <span class="text-danger">*</span>
-                                </label>
+                            @empty
 
-                                <select name="id_supplier"
-                                    class="form-select @error('id_supplier') is-invalid @enderror" required>
+                            <option value="">
+                                Data supplier tidak tersedia
+                            </option>
 
-                                    <option value="">
-                                        -- Pilih Supplier --
-                                    </option>
+                            @endforelse
 
-                                    @foreach($supplier as $item)
+                        </select>
 
-                                    <option value="{{ $item->id_supplier }}"
-                                        {{ old('id_supplier') == $item->id_supplier ? 'selected' : '' }}>
+                        @error('id_supplier')
+                        <div class="invalid-feedback">
+                            {{ $message }}
+                        </div>
+                        @enderror
 
-                                        {{ $item->nama_supplier }}
+                    </div>
 
-                                    </option>
+                    {{-- JURNAL --}}
+                    <div class="col-md-6">
 
-                                    @endforeach
+                        <label class="form-label fw-semibold">
+                            Jurnal
+                        </label>
 
-                                </select>
+                        <select name="id_jurnal" class="form-select @error('id_jurnal') is-invalid @enderror">
 
-                                @error('id_supplier')
-                                <div class="invalid-feedback">
-                                    {{ $message }}
-                                </div>
-                                @enderror
+                            <option value="">
+                                -- Pilih Jurnal --
+                            </option>
 
-                            </div>
+                            @forelse($jurnal ?? [] as $item)
 
-                            {{-- JURNAL --}}
-                            <div class="col-md-6">
+                            <option value="{{ $item['id'] }}" {{ old('id_jurnal') == $item['id'] ? 'selected' : '' }}>
 
-                                <label class="form-label fw-semibold">
-                                    Jurnal
-                                </label>
+                                {{ $item['text'] }}
 
-                                <select name="id_jurnal" class="form-select @error('id_jurnal') is-invalid @enderror">
+                            </option>
 
-                                    <option value="">
-                                        -- Pilih Jurnal --
-                                    </option>
+                            @empty
 
-                                    @foreach($jurnal as $item)
+                            <option value="">
+                                Data jurnal tidak tersedia
+                            </option>
 
-                                    <option value="{{ $item['id'] }}"
-                                        {{ old('id_jurnal') == $item['id'] ? 'selected' : '' }}>
+                            @endforelse
 
-                                        {{ $item['text'] }}
+                        </select>
 
-                                    </option>
+                        @error('id_jurnal')
+                        <div class="invalid-feedback">
+                            {{ $message }}
+                        </div>
+                        @enderror
 
-                                    @endforeach
+                    </div>
 
-                                </select>
+                    {{-- PERUSAHAAN --}}
+                    <div class="col-md-6">
 
-                                @error('id_jurnal')
-                                <div class="invalid-feedback">
-                                    {{ $message }}
-                                </div>
-                                @enderror
+                        <label class="form-label fw-semibold">
+                            Perusahaan
+                            <span class="text-danger">*</span>
+                        </label>
 
-                            </div>
+                        <select name="id_perusahaan" class="form-select @error('id_perusahaan') is-invalid @enderror"
+                            required>
 
-                            {{-- PERUSAHAAN --}}
-                            <div class="col-md-6">
+                            <option value="">
+                                -- Pilih Perusahaan --
+                            </option>
 
-                                <label class="form-label fw-semibold">
-                                    Perusahaan
-                                    <span class="text-danger">*</span>
-                                </label>
+                            @forelse($perusahaan ?? [] as $item)
 
-                                <select name="id_perusahaan"
-                                    class="form-select @error('id_perusahaan') is-invalid @enderror" required>
+                            <option value="{{ $item->id_perusahaan }}"
+                                {{ old('id_perusahaan') == $item->id_perusahaan ? 'selected' : '' }}>
 
-                                    <option value="">
-                                        -- Pilih Perusahaan --
-                                    </option>
+                                {{ $item->nama_perusahaan }}
 
-                                    @foreach($perusahaan as $item)
+                            </option>
 
-                                    <option value="{{ $item->id_perusahaan }}"
-                                        {{ old('id_perusahaan') == $item->id_perusahaan ? 'selected' : '' }}>
+                            @empty
 
-                                        {{ $item->nama_perusahaan }}
+                            <option value="">
+                                Data perusahaan tidak tersedia
+                            </option>
 
-                                    </option>
+                            @endforelse
 
-                                    @endforeach
+                        </select>
 
-                                </select>
+                        @error('id_perusahaan')
+                        <div class="invalid-feedback">
+                            {{ $message }}
+                        </div>
+                        @enderror
 
-                                @error('id_perusahaan')
-                                <div class="invalid-feedback">
-                                    {{ $message }}
-                                </div>
-                                @enderror
+                    </div>
 
-                            </div>
+                    {{-- SUBTOTAL --}}
+                    <div class="col-md-4">
 
-                            {{-- SUBTOTAL --}}
-                            <div class="col-md-4">
+                        <label class="form-label fw-semibold">
+                            Subtotal
+                            <span class="text-danger">*</span>
+                        </label>
 
-                                <label class="form-label fw-semibold">
-                                    Subtotal
-                                    <span class="text-danger">*</span>
-                                </label>
+                        <div class="input-group">
 
-                                <div class="input-group">
+                            <span class="input-group-text">
+                                Rp
+                            </span>
 
-                                    <span class="input-group-text">
-                                        Rp
-                                    </span>
-
-                                    <input type="number" step="0.01" min="0" name="subtotal" id="subtotal"
-                                        class="form-control @error('subtotal') is-invalid @enderror"
-                                        value="{{ old('subtotal', 0) }}" required>
-
-                                </div>
-
-                                @error('subtotal')
-                                <div class="invalid-feedback d-block">
-                                    {{ $message }}
-                                </div>
-                                @enderror
-
-                            </div>
-
-                            {{-- PPN --}}
-                            <div class="col-md-4">
-
-                                <label class="form-label fw-semibold">
-                                    PPN (11%)
-                                </label>
-
-                                <div class="input-group">
-
-                                    <span class="input-group-text">
-                                        Rp
-                                    </span>
-
-                                    <input type="number" step="0.01" min="0" name="ppn" id="ppn"
-                                        class="form-control bg-light @error('ppn') is-invalid @enderror"
-                                        value="{{ old('ppn', 0) }}" readonly>
-
-                                </div>
-
-                                <small class="text-muted">
-                                    Otomatis 11% dari subtotal
-                                </small>
-
-                                @error('ppn')
-                                <div class="invalid-feedback d-block">
-                                    {{ $message }}
-                                </div>
-                                @enderror
-
-                            </div>
-
-                            {{-- TOTAL --}}
-                            <div class="col-md-4">
-
-                                <label class="form-label fw-semibold">
-                                    Total
-                                </label>
-
-                                <div class="input-group">
-
-                                    <span class="input-group-text bg-light">
-                                        Rp
-                                    </span>
-
-                                    <input type="text" id="total" class="form-control bg-light fw-bold" readonly>
-
-                                </div>
-
-                            </div>
-
-                            {{-- STATUS --}}
-                            <div class="col-md-6">
-
-                                <label class="form-label fw-semibold">
-                                    Status
-                                </label>
-
-                                <select name="status" class="form-select @error('status') is-invalid @enderror">
-
-                                    <option value="Belum Lunas"
-                                        {{ old('status', 'Belum Lunas') == 'Belum Lunas' ? 'selected' : '' }}>
-
-                                        Belum Lunas
-
-                                    </option>
-
-                                    <option value="Lunas" {{ old('status') == 'Lunas' ? 'selected' : '' }}>
-
-                                        Lunas
-
-                                    </option>
-
-                                    <option value="Dibatalkan" {{ old('status') == 'Dibatalkan' ? 'selected' : '' }}>
-
-                                        Dibatalkan
-
-                                    </option>
-
-                                </select>
-
-                            </div>
+                            <input type="number" step="0.01" min="0" name="subtotal" id="subtotal"
+                                class="form-control @error('subtotal') is-invalid @enderror"
+                                value="{{ old('subtotal', 0) }}" required>
 
                         </div>
+
+                        @error('subtotal')
+                        <div class="invalid-feedback d-block">
+                            {{ $message }}
+                        </div>
+                        @enderror
+
+                    </div>
+
+                    {{-- PPN --}}
+                    <div class="col-md-4">
+
+                        <label class="form-label fw-semibold">
+                            PPN (11%)
+                        </label>
+
+                        <div class="input-group">
+
+                            <span class="input-group-text">
+                                Rp
+                            </span>
+
+                            <input type="number" step="0.01" min="0" name="ppn" id="ppn" class="form-control bg-light"
+                                value="{{ old('ppn', 0) }}" readonly>
+
+                        </div>
+
+                    </div>
+
+                    {{-- TOTAL --}}
+                    <div class="col-md-4">
+
+                        <label class="form-label fw-semibold">
+                            Total
+                        </label>
+
+                        <div class="input-group">
+
+                            <span class="input-group-text bg-light">
+                                Rp
+                            </span>
+
+                            <input type="text" id="total" class="form-control bg-light fw-bold" readonly>
+
+                        </div>
+
+                    </div>
+
+                    {{-- STATUS --}}
+                    <div class="col-md-6">
+
+                        <label class="form-label fw-semibold">
+                            Status
+                        </label>
+
+                        <select name="status" class="form-select @error('status') is-invalid @enderror">
+
+                            <option value="Belum Lunas"
+                                {{ old('status', 'Belum Lunas') == 'Belum Lunas' ? 'selected' : '' }}>
+
+                                Belum Lunas
+
+                            </option>
+
+                            <option value="Lunas" {{ old('status') == 'Lunas' ? 'selected' : '' }}>
+
+                                Lunas
+
+                            </option>
+
+                            <option value="Dibatalkan" {{ old('status') == 'Dibatalkan' ? 'selected' : '' }}>
+
+                                Dibatalkan
+
+                            </option>
+
+                        </select>
 
                     </div>
 
@@ -325,71 +315,24 @@
 
             </div>
 
-            {{-- ========================================= --}}
-            {{-- SIDEBAR --}}
-            {{-- ========================================= --}}
-            <div class="col-lg-4">
+            {{-- FOOTER BUTTON --}}
+            <div class="card-footer bg-white border-0 py-3">
 
-                <div class="card border-0 shadow-sm sticky-top" style="top:20px;">
+                <div class="d-flex justify-content-end gap-2">
 
-                    <div class="card-body">
+                    <a href="{{ route('faktur-pembelian.index') }}" class="btn btn-light border px-4">
 
-                        <h5 class="fw-semibold mb-4">
-                            Ringkasan Faktur
-                        </h5>
+                        <i class="fas fa-arrow-left me-2"></i>
+                        Kembali
 
-                        <div class="bg-light rounded-4 p-4">
+                    </a>
 
-                            <div class="d-flex justify-content-between mb-3">
+                    <button type="submit" class="btn btn-primary px-4">
 
-                                <span class="text-muted">
-                                    Subtotal
-                                </span>
+                        <i class="fas fa-save me-2"></i>
+                        Simpan Faktur
 
-                                <strong id="subtotalPreview">
-                                    Rp 0
-                                </strong>
-
-                            </div>
-
-                            <div class="d-flex justify-content-between mb-3">
-
-                                <span class="text-muted">
-                                    PPN
-                                </span>
-
-                                <strong id="ppnPreview">
-                                    Rp 0
-                                </strong>
-
-                            </div>
-
-                            <hr>
-
-                            <div class="d-flex justify-content-between align-items-center">
-
-                                <h5 class="mb-0 fw-bold">
-                                    Total
-                                </h5>
-
-                                <h4 class="text-primary fw-bold mb-0" id="totalPreview">
-
-                                    Rp 0
-
-                                </h4>
-
-                            </div>
-
-                        </div>
-
-                        <button type="submit" class="btn btn-primary w-100 mt-4 py-3 shadow-sm">
-
-                            <i class="fas fa-save me-2"></i>
-                            Simpan Faktur
-
-                        </button>
-
-                    </div>
+                    </button>
 
                 </div>
 
@@ -401,9 +344,7 @@
 
 </div>
 
-{{-- ========================================= --}}
 {{-- SCRIPT --}}
-{{-- ========================================= --}}
 <script>
 const PPN_PERCENT = 11;
 
@@ -412,35 +353,23 @@ function formatRupiah(angka) {
 }
 
 function hitungTotal() {
+
     let subtotal =
         parseFloat(
             document.getElementById('subtotal').value
         ) || 0;
 
-    // HITUNG PPN
     let ppn =
         subtotal * (PPN_PERCENT / 100);
 
-    // TOTAL
     let total =
         subtotal + ppn;
 
-    // INPUT
     document.getElementById('ppn').value =
         ppn.toFixed(2);
 
     document.getElementById('total').value =
         total.toLocaleString('id-ID');
-
-    // PREVIEW
-    document.getElementById('subtotalPreview').innerText =
-        formatRupiah(subtotal);
-
-    document.getElementById('ppnPreview').innerText =
-        formatRupiah(ppn);
-
-    document.getElementById('totalPreview').innerText =
-        formatRupiah(total);
 }
 
 document

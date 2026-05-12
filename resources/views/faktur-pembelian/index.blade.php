@@ -18,7 +18,7 @@
             </p>
         </div>
 
-        <a href="{{ route('admin.faktur-pembelian.create') }}"
+        <a href="{{ route('faktur-pembelian.create') }}"
             class="btn btn-primary btn-lg px-4 shadow-sm d-flex align-items-center gap-2">
             <i class="fas fa-plus"></i>
             <span>Tambah Faktur Baru</span>
@@ -161,19 +161,19 @@
                             </td>
                             <td class="text-center">
                                 <div class="btn-group">
-                                    <a href="{{ route('admin.faktur-pembelian.show', $item) }}"
-                                        class="btn btn-light border" title="Detail">
+                                    <a href="{{ route('faktur-pembelian.show', $item) }}" class="btn btn-light border"
+                                        title="Detail">
                                         <i class="fas fa-eye"></i>
                                     </a>
-                                    <a href="{{ route('admin.faktur-pembelian.edit', $item) }}"
-                                        class="btn btn-light border" title="Edit">
+                                    <a href="{{ route('faktur-pembelian.edit', $item) }}" class="btn btn-light border"
+                                        title="Edit">
                                         <i class="fas fa-edit"></i>
                                     </a>
-                                    <a href="{{ route('admin.faktur-pembelian.print', $item) }}"
-                                        class="btn btn-light border" title="Cetak" target="_blank">
+                                    <a href="{{ route('faktur-pembelian.print', $item) }}" class="btn btn-light border"
+                                        title="Cetak" target="_blank">
                                         <i class="fas fa-print"></i>
                                     </a>
-                                    <form action="{{ route('admin.faktur-pembelian.destroy', $item) }}" method="POST"
+                                    <form action="{{ route('faktur-pembelian.destroy', $item) }}" method="POST"
                                         class="d-inline">
                                         @csrf
                                         @method('DELETE')

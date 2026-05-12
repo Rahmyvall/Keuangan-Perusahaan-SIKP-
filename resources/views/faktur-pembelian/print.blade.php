@@ -168,34 +168,6 @@
             </tr>
         </table>
 
-        <!-- Daftar Barang -->
-        <table>
-            <thead>
-                <tr>
-                    <th width="40">No</th>
-                    <th>Nama Barang</th>
-                    <th class="text-center" width="100">Qty</th>
-                    <th class="text-end">Harga Satuan</th>
-                    <th class="text-end">Subtotal</th>
-                </tr>
-            </thead>
-            <tbody>
-                @forelse($fakturPembelian->detail ?? [] as $item)
-                <tr>
-                    <td class="text-center">{{ $loop->iteration }}</td>
-                    <td>{{ $item->barang->nama_barang ?? $item->nama_barang ?? '-' }}</td>
-                    <td class="text-center">{{ $item->qty ?? 0 }} {{ $item->satuan ?? 'pcs' }}</td>
-                    <td class="text-end">Rp {{ number_format($item->harga_satuan ?? 0, 0, ',', '.') }}</td>
-                    <td class="text-end">Rp {{ number_format($item->subtotal ?? 0, 0, ',', '.') }}</td>
-                </tr>
-                @empty
-                <tr>
-                    <td colspan="5" class="text-center py-4">Tidak ada data barang</td>
-                </tr>
-                @endforelse
-            </tbody>
-        </table>
-
         <!-- Ringkasan -->
         <table class="summary-table">
             <tr>

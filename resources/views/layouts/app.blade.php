@@ -36,10 +36,11 @@
 
     {{-- FEATHER ICON INIT --}}
     <script>
-        if (typeof feather !== 'undefined') {
-            feather.replace();
-        }
+    if (typeof feather !== 'undefined') {
+        feather.replace();
+    }
     </script>
 
 </body>
+
 </html>

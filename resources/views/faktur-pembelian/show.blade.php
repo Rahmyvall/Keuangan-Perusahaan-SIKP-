@@ -26,19 +26,18 @@
 
                 <div class="d-flex flex-wrap gap-2">
                     <!-- Print Button -->
-                    <a href="{{ route('admin.faktur-pembelian.print', $fakturPembelian) }}" target="_blank"
+                    <a href="{{ route('faktur-pembelian.print', $fakturPembelian) }}" target="_blank"
                         class="btn btn-light shadow-sm">
                         <i class="fas fa-print me-2"></i> Print
                     </a>
 
                     <!-- Edit Button -->
-                    <a href="{{ route('admin.faktur-pembelian.edit', $fakturPembelian) }}"
-                        class="btn btn-warning shadow-sm">
+                    <a href="{{ route('faktur-pembelian.edit', $fakturPembelian) }}" class="btn btn-warning shadow-sm">
                         <i class="fas fa-edit me-2"></i> Edit
                     </a>
 
                     <!-- Back Button -->
-                    <a href="{{ route('admin.faktur-pembelian.index') }}" class="btn btn-outline-light">
+                    <a href="{{ route('faktur-pembelian.index') }}" class="btn btn-outline-light">
                         <i class="fas fa-arrow-left me-2"></i> Kembali
                     </a>
                 </div>
