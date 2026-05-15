@@ -18,6 +18,7 @@ use App\Http\Controllers\{
     FakturPenjualanController,
     NotificationController,
     PenerimaanPiutangController,
+    PembayaranHutangController,
     SupplierController
 };
 
@@ -68,6 +69,8 @@ Route::middleware('auth')->group(function () {
             'faktur-penjualan' => FakturPenjualanController::class,
             'jurnal' => JurnalController::class,
             'penerimaan-piutang' => PenerimaanPiutangController::class,
+            'pembayaran-hutang' => PembayaranHutangController::class,
+
         ]);
 
         Route::prefix('admin-extra')->group(function () {

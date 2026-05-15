@@ -1,488 +1,612 @@
 @extends('layouts.app')
+
 @section('content')
-<h1 class="mb-3 h3">{{ $title ?? 'Dashboard' }}</h1>
-<div class="row">
-						<div class="col-xl-6 col-xxl-5 d-flex">
-							<div class="w-100">
-								<div class="row">
-									<div class="col-sm-6">
-										<div class="card">
-											<div class="card-body">
-												<div class="row">
-													<div class="mt-0 col">
-														<h5 class="card-title">Sales</h5>
-													</div>
+<div class="container-fluid py-4">
 
-													<div class="col-auto">
-														<div class="stat text-primary">
-															<i class="align-middle" data-feather="truck"></i>
-														</div>
-													</div>
-												</div>
-												<h1 class="mt-1 mb-3">2.382</h1>
-												<div class="mb-0">
-													<span class="text-danger">-3.65%</span>
-													<span class="text-muted">Since last week</span>
-												</div>
-											</div>
-										</div>
-										<div class="card">
-											<div class="card-body">
-												<div class="row">
-													<div class="mt-0 col">
-														<h5 class="card-title">Visitors</h5>
-													</div>
+    <h1 class="mb-5 fw-bold text-dark">{{ $title ?? 'Dashboard' }}</h1>
 
-													<div class="col-auto">
-														<div class="stat text-primary">
-															<i class="align-middle" data-feather="users"></i>
-														</div>
-													</div>
-												</div>
-												<h1 class="mt-1 mb-3">14.212</h1>
-												<div class="mb-0">
-													<span class="text-success">5.25%</span>
-													<span class="text-muted">Since last week</span>
-												</div>
-											</div>
-										</div>
-									</div>
-									<div class="col-sm-6">
-										<div class="card">
-											<div class="card-body">
-												<div class="row">
-													<div class="mt-0 col">
-														<h5 class="card-title">Earnings</h5>
-													</div>
+    <div class="row g-4">
 
-													<div class="col-auto">
-														<div class="stat text-primary">
-															<i class="align-middle" data-feather="dollar-sign"></i>
-														</div>
-													</div>
-												</div>
-												<h1 class="mt-1 mb-3">$21.300</h1>
-												<div class="mb-0">
-													<span class="text-success">6.65%</span>
-													<span class="text-muted">Since last week</span>
-												</div>
-											</div>
-										</div>
-										<div class="card">
-											<div class="card-body">
-												<div class="row">
-													<div class="mt-0 col">
-														<h5 class="card-title">Orders</h5>
-													</div>
+        <!-- ==================== STATISTIK UTAMA ==================== -->
+        <div class="col-12">
+            <div class="row g-4">
 
-													<div class="col-auto">
-														<div class="stat text-primary">
-															<i class="align-middle" data-feather="shopping-cart"></i>
-														</div>
-													</div>
-												</div>
-												<h1 class="mt-1 mb-3">64</h1>
-												<div class="mb-0">
-													<span class="text-danger">-2.25%</span>
-													<span class="text-muted">Since last week</span>
-												</div>
-											</div>
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
+                <!-- Total Pengguna -->
+                <div class="col-md-6 col-lg-3">
+                    <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden hover-shadow transition-all">
+                        <div class="card-body p-4">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div>
+                                    <div class="text-muted small fw-medium">Total Pengguna</div>
+                                    <h2 class="mt-3 mb-1 fw-bold text-dark">{{ $total_pengguna ?? 0 }}</h2>
+                                    <div class="small">
+                                        <span class="text-success fw-semibold">{{ $pengguna_aktif ?? 0 }} aktif</span>
+                                        <span class="text-muted"> / {{ $pengguna_nonaktif ?? 0 }} nonaktif</span>
+                                    </div>
+                                </div>
+                                <div class="bg-primary bg-opacity-10 text-primary p-3 rounded-3">
+                                    <i data-feather="users" style="width: 42px; height: 42px;"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-						<div class="col-xl-6 col-xxl-7">
-							<div class="card flex-fill w-100">
-								<div class="card-header">
+                <!-- Transaksi -->
+                <div class="col-md-6 col-lg-3">
+                    <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden hover-shadow transition-all">
 
-									<h5 class="mb-0 card-title">Recent Movement</h5>
-								</div>
-								<div class="py-3 card-body">
-									<div class="chart chart-sm">
-										<canvas id="chartjs-dashboard-line"></canvas>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
+                        <div class="card-body p-4">
 
-					<div class="row">
-						<div class="order-2 col-12 col-md-6 col-xxl-3 d-flex order-xxl-3">
-							<div class="card flex-fill w-100">
-								<div class="card-header">
+                            <div class="d-flex justify-content-between align-items-start">
 
-									<h5 class="mb-0 card-title">Browser Usage</h5>
-								</div>
-								<div class="card-body d-flex">
-									<div class="align-self-center w-100">
-										<div class="py-3">
-											<div class="chart chart-xs">
-												<canvas id="chartjs-dashboard-pie"></canvas>
-											</div>
-										</div>
+                                <!-- INFO -->
+                                <div>
 
-										<table class="table mb-0">
-											<tbody>
-												<tr>
-													<td>Chrome</td>
-													<td class="text-end">4306</td>
-												</tr>
-												<tr>
-													<td>Firefox</td>
-													<td class="text-end">3801</td>
-												</tr>
-												<tr>
-													<td>IE</td>
-													<td class="text-end">1689</td>
-												</tr>
-											</tbody>
-										</table>
-									</div>
-								</div>
-							</div>
-						</div>
-						<div class="order-3 col-12 col-md-12 col-xxl-6 d-flex order-xxl-2">
-							<div class="card flex-fill w-100">
-								<div class="card-header">
+                                    <div class="text-muted small fw-medium">
+                                        Total Transaksi
+                                    </div>
 
-									<h5 class="mb-0 card-title">Real-Time</h5>
-								</div>
-								<div class="px-4 card-body">
-									<div id="world_map" style="height:350px;"></div>
-								</div>
-							</div>
-						</div>
-						<div class="order-1 col-12 col-md-6 col-xxl-3 d-flex order-xxl-1">
-							<div class="card flex-fill">
-								<div class="card-header">
+                                    <h2 class="mt-3 mb-1 fw-bold text-dark">
+                                        {{ number_format($total_transaksi ?? 0) }}
+                                    </h2>
 
-									<h5 class="mb-0 card-title">Calendar</h5>
-								</div>
-								<div class="card-body d-flex">
-									<div class="align-self-center w-100">
-										<div class="chart">
-											<div id="datetimepicker-dashboard"></div>
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
+                                    @php
+                                    $growth = $growth_transaksi ?? 0;
+                                    @endphp
 
-					<div class="row">
-						<div class="col-12 col-lg-8 col-xxl-9 d-flex">
-							<div class="card flex-fill">
-								<div class="card-header">
+                                    <div class="d-flex align-items-center gap-1">
 
-									<h5 class="mb-0 card-title">Latest Projects</h5>
-								</div>
-								<table class="table my-0 table-hover">
-									<thead>
-										<tr>
-											<th>Name</th>
-											<th class="d-none d-xl-table-cell">Start Date</th>
-											<th class="d-none d-xl-table-cell">End Date</th>
-											<th>Status</th>
-											<th class="d-none d-md-table-cell">Assignee</th>
-										</tr>
-									</thead>
-									<tbody>
-										<tr>
-											<td>Project Apollo</td>
-											<td class="d-none d-xl-table-cell">01/01/2023</td>
-											<td class="d-none d-xl-table-cell">31/06/2023</td>
-											<td><span class="badge bg-success">Done</span></td>
-											<td class="d-none d-md-table-cell">Vanessa Tucker</td>
-										</tr>
-										<tr>
-											<td>Project Fireball</td>
-											<td class="d-none d-xl-table-cell">01/01/2023</td>
-											<td class="d-none d-xl-table-cell">31/06/2023</td>
-											<td><span class="badge bg-danger">Cancelled</span></td>
-											<td class="d-none d-md-table-cell">William Harris</td>
-										</tr>
-										<tr>
-											<td>Project Hades</td>
-											<td class="d-none d-xl-table-cell">01/01/2023</td>
-											<td class="d-none d-xl-table-cell">31/06/2023</td>
-											<td><span class="badge bg-success">Done</span></td>
-											<td class="d-none d-md-table-cell">Sharon Lessman</td>
-										</tr>
-										<tr>
-											<td>Project Nitro</td>
-											<td class="d-none d-xl-table-cell">01/01/2023</td>
-											<td class="d-none d-xl-table-cell">31/06/2023</td>
-											<td><span class="badge bg-warning">In progress</span></td>
-											<td class="d-none d-md-table-cell">Vanessa Tucker</td>
-										</tr>
-										<tr>
-											<td>Project Phoenix</td>
-											<td class="d-none d-xl-table-cell">01/01/2023</td>
-											<td class="d-none d-xl-table-cell">31/06/2023</td>
-											<td><span class="badge bg-success">Done</span></td>
-											<td class="d-none d-md-table-cell">William Harris</td>
-										</tr>
-										<tr>
-											<td>Project X</td>
-											<td class="d-none d-xl-table-cell">01/01/2023</td>
-											<td class="d-none d-xl-table-cell">31/06/2023</td>
-											<td><span class="badge bg-success">Done</span></td>
-											<td class="d-none d-md-table-cell">Sharon Lessman</td>
-										</tr>
-										<tr>
-											<td>Project Romeo</td>
-											<td class="d-none d-xl-table-cell">01/01/2023</td>
-											<td class="d-none d-xl-table-cell">31/06/2023</td>
-											<td><span class="badge bg-success">Done</span></td>
-											<td class="d-none d-md-table-cell">Christina Mason</td>
-										</tr>
-										<tr>
-											<td>Project Wombat</td>
-											<td class="d-none d-xl-table-cell">01/01/2023</td>
-											<td class="d-none d-xl-table-cell">31/06/2023</td>
-											<td><span class="badge bg-warning">In progress</span></td>
-											<td class="d-none d-md-table-cell">William Harris</td>
-										</tr>
-									</tbody>
-								</table>
-							</div>
-						</div>
-						<div class="col-12 col-lg-4 col-xxl-3 d-flex">
-							<div class="card flex-fill w-100">
-								<div class="card-header">
+                                        <span class="{{ $growth >= 0 ? 'text-success' : 'text-danger' }} fw-semibold">
 
-									<h5 class="mb-0 card-title">Monthly Sales</h5>
-								</div>
-								<div class="card-body d-flex w-100">
-									<div class="align-self-center chart chart-lg">
-										<canvas id="chartjs-dashboard-bar"></canvas>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
+                                            {{ $growth >= 0 ? '↑' : '↓' }}
 
+                                            {{ number_format(abs($growth), 2) }}%
+
+                                        </span>
+
+                                        <span class="text-muted small">
+                                            dibanding minggu lalu
+                                        </span>
+
+                                    </div>
+
+                                </div>
+
+                                <!-- ICON -->
+                                <div class="bg-primary bg-opacity-10 text-primary p-3 rounded-3">
+                                    <i data-feather="shopping-cart" style="width: 42px; height: 42px;"></i>
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Earnings -->
+                <div class="col-md-6 col-lg-3">
+                    <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden hover-shadow transition-all">
+
+                        <div class="card-body p-4">
+
+                            <div class="d-flex justify-content-between align-items-start">
+
+                                <!-- INFO -->
+                                <div>
+
+                                    <div class="text-muted small fw-medium">
+                                        Total Earnings
+                                    </div>
+
+                                    <h2 class="mt-3 mb-1 fw-bold text-dark">
+                                        Rp {{ number_format($total_earnings ?? 0) }}
+                                    </h2>
+
+                                    @php
+                                    $growth = $growth_earnings ?? 0;
+                                    @endphp
+
+                                    <div class="d-flex align-items-center gap-1">
+
+                                        <span class="{{ $growth >= 0 ? 'text-success' : 'text-danger' }} fw-semibold">
+
+                                            {{ $growth >= 0 ? '↑' : '↓' }}
+
+                                            {{ number_format(abs($growth), 2) }}%
+
+                                        </span>
+
+                                        <span class="text-muted small">
+                                            dibanding minggu lalu
+                                        </span>
+
+                                    </div>
+
+                                </div>
+
+                                <!-- ICON -->
+                                <div class="bg-success bg-opacity-10 text-success p-3 rounded-3">
+                                    <i data-feather="dollar-sign" style="width: 42px; height: 42px;"></i>
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Orders -->
+                <div class="col-md-6 col-lg-3">
+
+                    <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden hover-shadow transition-all">
+
+                        <div class="card-body p-4">
+
+                            <div class="d-flex justify-content-between align-items-start">
+
+                                <div>
+
+                                    <div class="text-muted small fw-medium">
+                                        Total Supplier
+                                    </div>
+
+                                    <h2 class="mt-3 mb-1 fw-bold text-dark">
+                                        {{ $total_supplier ?? 0 }}
+                                    </h2>
+
+                                    <div class="d-flex align-items-center gap-1">
+
+                                        <span class="text-success fw-semibold">
+                                            Supplier Terdaftar
+                                        </span>
+
+                                        <span class="text-muted small">
+                                            aktif di sistem
+                                        </span>
+
+                                    </div>
+
+                                </div>
+
+                                <div class="bg-primary bg-opacity-10 text-primary p-3 rounded-4">
+
+                                    <i data-feather="truck" style="width:42px;height:42px;"></i>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+
+        <!-- ==================== PENERIMAAN ==================== -->
+        <div class="row g-4 mb-5">
+
+            <!-- Card 1: Penerimaan Hari Ini -->
+            <div class="col-md-6 col-lg-4">
+                <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden hover-shadow">
+                    <div class="card-body p-4">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <div class="text-muted small fw-medium">Hari Ini</div>
+                                <h1 class="mt-3 mb-1 fw-bold text-success">
+                                    Rp {{ number_format($penerimaan_hari_ini ?? 0, 0, ',', '.') }}
+                                </h1>
+                                <div class="d-flex align-items-center gap-1">
+                                    <span
+                                        class="{{ ($growth_hari_ini ?? 0) >= 0 ? 'text-success' : 'text-danger' }} fw-semibold">
+                                        {{ ($growth_hari_ini ?? 0) >= 0 ? '↑' : '↓' }} {{ abs($growth_hari_ini ?? 0) }}%
+                                    </span>
+                                    <span class="text-muted small">dari kemarin</span>
+                                </div>
+                            </div>
+                            <div class="bg-success bg-opacity-10 text-success p-3 rounded-3">
+                                <i data-feather="calendar" class="align-middle" style="width: 42px; height: 42px;"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 2: Penerimaan Bulan Ini -->
+            <div class="col-md-6 col-lg-4">
+                <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden hover-shadow">
+                    <div class="card-body p-4">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <div class="text-muted small fw-medium">Bulan Ini</div>
+                                <h1 class="mt-3 mb-1 fw-bold text-primary">
+                                    Rp {{ number_format($penerimaan_bulan_ini ?? 0, 0, ',', '.') }}
+                                </h1>
+                                <div class="d-flex align-items-center gap-1">
+                                    <span
+                                        class="{{ ($growth_bulan_ini ?? 0) >= 0 ? 'text-primary' : 'text-danger' }} fw-semibold">
+                                        {{ ($growth_bulan_ini ?? 0) >= 0 ? '↑' : '↓' }}
+                                        {{ abs($growth_bulan_ini ?? 0) }}%
+                                    </span>
+                                    <span class="text-muted small">dari bulan lalu</span>
+                                </div>
+                            </div>
+                            <div class="bg-primary bg-opacity-10 text-primary p-3 rounded-3">
+                                <i data-feather="dollar-sign" class="align-middle"
+                                    style="width: 42px; height: 42px;"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 3: Total Penerimaan Keseluruhan -->
+            <div class="col-md-6 col-lg-4">
+                <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden hover-shadow">
+                    <div class="card-body p-4">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <div class="text-muted small fw-medium">Total Penerimaan</div>
+                                <h1 class="mt-3 mb-1 fw-bold text-dark">
+                                    Rp {{ number_format($total_penerimaan ?? 0, 0, ',', '.') }}
+                                </h1>
+                                <div class="d-flex align-items-center gap-1">
+                                    <span class="badge bg-info">{{ $total_transaksi_penerimaan ?? 0 }} Transaksi</span>
+                                </div>
+                            </div>
+                            <div class="bg-info bg-opacity-10 text-info p-3 rounded-3">
+                                <i data-feather="trending-up" class="align-middle"
+                                    style="width: 42px; height: 42px;"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- ==================== CHARTS ==================== -->
+        <div class="col-xl-7">
+            <div class="card border-0 shadow-sm rounded-4 h-100">
+                <div class="card-header bg-white border-0 pt-4 pb-3">
+                    <h5 class="mb-0 fw-bold">Distribusi Akun (COA) per Tipe</h5>
+                    <small class="text-muted">Jumlah akun berdasarkan kategori</small>
+                </div>
+                <div class="card-body">
+                    <div style="height: 320px;">
+                        <canvas id="coaChart"></canvas>
+                    </div>
+                </div>
+                @if(isset($akun_chart))
+                <div class="card-footer bg-white border-0">
+                    <div class="row text-center g-3">
+                        @foreach($akun_chart as $tipe => $jumlah)
+                        <div class="col-6 col-sm-4 col-md-3">
+                            <small class="text-muted d-block">{{ $tipe }}</small>
+                            <strong class="text-primary fs-5">{{ number_format($jumlah) }}</strong>
+                        </div>
+                        @endforeach
+                    </div>
+                </div>
+                @endif
+            </div>
+        </div>
+
+        <div class="col-xl-5">
+
+            <div class="card border-0 shadow-sm rounded-4 h-100">
+
+                <div class="card-header bg-white border-0 pt-4">
+
+                    <div class="d-flex justify-content-between align-items-center">
+
+                        <div>
+                            <h5 class="mb-1 fw-bold">
+                                Grafik Faktur Pembelian
+                            </h5>
+
+                            <small class="text-muted">
+                                Statistik total transaksi pembelian
+                            </small>
+                        </div>
+
+                        <div class="bg-primary-subtle p-3 rounded-4">
+                            <i data-feather="shopping-cart" class="text-primary" style="width:32px;height:32px;">
+                            </i>
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="card-body px-4 pb-4">
+
+                    <div class="row mb-4">
+
+                        <div class="col-6">
+
+                            <small class="text-muted">
+                                Total Faktur
+                            </small>
+
+                            <h2 class="fw-bold mb-0 text-dark">
+                                {{ $total_faktur_pembelian ?? 0 }}
+                            </h2>
+
+                        </div>
+
+                        <div class="col-6 text-end">
+
+                            <small class="text-muted">
+                                Total Pembelian
+                            </small>
+
+                            <h5 class="fw-bold text-primary mb-0">
+                                Rp {{ number_format($total_nominal_pembelian ?? 0,0,',','.') }}
+                            </h5>
+
+                        </div>
+
+                    </div>
+
+                    <!-- Chart -->
+                    <div class="bg-light rounded-4 p-3">
+
+                        <canvas id="fakturPembelianChart" height="180">
+                        </canvas>
+
+                    </div>
+
+                    <!-- Statistik bawah -->
+                    <div class="row text-center mt-4 g-3">
+
+                        <div class="col-4">
+
+                            <div class="bg-success-subtle rounded-4 p-3">
+
+                                <div class="fw-bold text-success fs-5">
+                                    {{ $faktur_lunas ?? 0 }}
+                                </div>
+
+                                <small class="text-muted">
+                                    Lunas
+                                </small>
+
+                            </div>
+
+                        </div>
+
+                        <div class="col-4">
+
+                            <div class="bg-warning-subtle rounded-4 p-3">
+
+                                <div class="fw-bold text-warning fs-5">
+                                    {{ $faktur_belum_lunas ?? 0 }}
+                                </div>
+
+                                <small class="text-muted">
+                                    Belum Lunas
+                                </small>
+
+                            </div>
+
+                        </div>
+
+                        <div class="col-4">
+
+                            <div class="bg-danger-subtle rounded-4 p-3">
+
+                                <div class="fw-bold text-danger fs-5">
+                                    {{ $faktur_dibatalkan ?? 0 }}
+                                </div>
+
+                                <small class="text-muted">
+                                    Dibatalkan
+                                </small>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- Grafik Perusahaan per Kota -->
+        <div class="col-12">
+            <div class="card border-0 shadow-sm rounded-4 h-100">
+                <div class="card-header bg-white border-0 pt-4">
+                    <h5 class="mb-0 fw-bold">Jumlah Perusahaan per Kota</h5>
+                    <small class="text-muted">Grafik total perusahaan berdasarkan kota</small>
+                </div>
+                <div class="card-body p-4">
+                    <div style="height: 420px;">
+                        <canvas id="perusahaanKotaChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
 @endsection
+
+@push('scripts')
 <script>
-		document.addEventListener("DOMContentLoaded", function() {
-			var ctx = document.getElementById("chartjs-dashboard-line").getContext("2d");
-			var gradient = ctx.createLinearGradient(0, 0, 0, 225);
-			gradient.addColorStop(0, "rgba(215, 227, 244, 1)");
-			gradient.addColorStop(1, "rgba(215, 227, 244, 0)");
-			// Line chart
-			new Chart(document.getElementById("chartjs-dashboard-line"), {
-				type: "line",
-				data: {
-					labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
-					datasets: [{
-						label: "Sales ($)",
-						fill: true,
-						backgroundColor: gradient,
-						borderColor: window.theme.primary,
-						data: [
-							2115,
-							1562,
-							1584,
-							1892,
-							1587,
-							1923,
-							2566,
-							2448,
-							2805,
-							3438,
-							2917,
-							3327
-						]
-					}]
-				},
-				options: {
-					maintainAspectRatio: false,
-					legend: {
-						display: false
-					},
-					tooltips: {
-						intersect: false
-					},
-					hover: {
-						intersect: true
-					},
-					plugins: {
-						filler: {
-							propagate: false
-						}
-					},
-					scales: {
-						xAxes: [{
-							reverse: true,
-							gridLines: {
-								color: "rgba(0,0,0,0.0)"
-							}
-						}],
-						yAxes: [{
-							ticks: {
-								stepSize: 1000
-							},
-							display: true,
-							borderDash: [3, 3],
-							gridLines: {
-								color: "rgba(0,0,0,0.0)"
-							}
-						}]
-					}
-				}
-			});
-		});
-	</script>
-	<script>
-		document.addEventListener("DOMContentLoaded", function() {
-			// Pie chart
-			new Chart(document.getElementById("chartjs-dashboard-pie"), {
-				type: "pie",
-				data: {
-					labels: ["Chrome", "Firefox", "IE"],
-					datasets: [{
-						data: [4306, 3801, 1689],
-						backgroundColor: [
-							window.theme.primary,
-							window.theme.warning,
-							window.theme.danger
-						],
-						borderWidth: 5
-					}]
-				},
-				options: {
-					responsive: !window.MSInputMethodContext,
-					maintainAspectRatio: false,
-					legend: {
-						display: false
-					},
-					cutoutPercentage: 75
-				}
-			});
-		});
-	</script>
-	<script>
-		document.addEventListener("DOMContentLoaded", function() {
-			// Bar chart
-			new Chart(document.getElementById("chartjs-dashboard-bar"), {
-				type: "bar",
-				data: {
-					labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
-					datasets: [{
-						label: "This year",
-						backgroundColor: window.theme.primary,
-						borderColor: window.theme.primary,
-						hoverBackgroundColor: window.theme.primary,
-						hoverBorderColor: window.theme.primary,
-						data: [54, 67, 41, 55, 62, 45, 55, 73, 60, 76, 48, 79],
-						barPercentage: .75,
-						categoryPercentage: .5
-					}]
-				},
-				options: {
-					maintainAspectRatio: false,
-					legend: {
-						display: false
-					},
-					scales: {
-						yAxes: [{
-							gridLines: {
-								display: false
-							},
-							stacked: false,
-							ticks: {
-								stepSize: 20
-							}
-						}],
-						xAxes: [{
-							stacked: false,
-							gridLines: {
-								color: "transparent"
-							}
-						}]
-					}
-				}
-			});
-		});
-	</script>
-	<script>
-		document.addEventListener("DOMContentLoaded", function() {
-			var markers = [{
-					coords: [31.230391, 121.473701],
-					name: "Shanghai"
-				},
-				{
-					coords: [28.704060, 77.102493],
-					name: "Delhi"
-				},
-				{
-					coords: [6.524379, 3.379206],
-					name: "Lagos"
-				},
-				{
-					coords: [35.689487, 139.691711],
-					name: "Tokyo"
-				},
-				{
-					coords: [23.129110, 113.264381],
-					name: "Guangzhou"
-				},
-				{
-					coords: [40.7127837, -74.0059413],
-					name: "New York"
-				},
-				{
-					coords: [34.052235, -118.243683],
-					name: "Los Angeles"
-				},
-				{
-					coords: [41.878113, -87.629799],
-					name: "Chicago"
-				},
-				{
-					coords: [51.507351, -0.127758],
-					name: "London"
-				},
-				{
-					coords: [40.416775, -3.703790],
-					name: "Madrid "
-				}
-			];
-			var map = new jsVectorMap({
-				map: "world",
-				selector: "#world_map",
-				zoomButtons: true,
-				markers: markers,
-				markerStyle: {
-					initial: {
-						r: 9,
-						strokeWidth: 7,
-						stokeOpacity: .4,
-						fill: window.theme.primary
-					},
-					hover: {
-						fill: window.theme.primary,
-						stroke: window.theme.primary
-					}
-				},
-				zoomOnScroll: false
-			});
-			window.addEventListener("resize", () => {
-				map.updateSize();
-			});
-		});
-	</script>
-	<script>
-		document.addEventListener("DOMContentLoaded", function() {
-			var date = new Date(Date.now() - 5 * 24 * 60 * 60 * 1000);
-			var defaultDate = date.getUTCFullYear() + "-" + (date.getUTCMonth() + 1) + "-" + date.getUTCDate();
-			document.getElementById("datetimepicker-dashboard").flatpickr({
-				inline: true,
-				prevArrow: "<span title=\"Previous month\">&laquo;</span>",
-				nextArrow: "<span title=\"Next month\">&raquo;</span>",
-				defaultDate: defaultDate
-			});
-		});
-	</script>
+document.addEventListener('DOMContentLoaded', function() {
+
+    // COA Doughnut Chart
+    new Chart(document.getElementById('coaChart'), {
+        type: 'doughnut',
+        data: {
+            labels: ['Aset', 'Liabilitas', 'Ekuitas', 'Pendapatan', 'Beban'],
+            datasets: [{
+                data: [
+                    <?= $akun_chart['Aset'] ?? 0 ?>,
+                    <?= $akun_chart['Liabilitas'] ?? 0 ?>,
+                    <?= $akun_chart['Ekuitas'] ?? 0 ?>,
+                    <?= $akun_chart['Pendapatan'] ?? 0 ?>,
+                    <?= $akun_chart['Beban'] ?? 0 ?>
+                ],
+                backgroundColor: ['#4e73df', '#1cc88a', '#36b9cc', '#f6c23e', '#e74a3b'],
+                borderWidth: 0,
+                hoverOffset: 20
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: {
+                        padding: 20,
+                        usePointStyle: true,
+                        font: {
+                            size: 13
+                        }
+                    }
+                }
+            }
+        }
+    });
+
+    // Perusahaan per Kota Bar Chart
+    const ctx = document.getElementById('perusahaanKotaChart');
+    if (ctx) {
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: @json($kota_labels ?? []),
+                datasets: [{
+                    label: 'Jumlah Perusahaan',
+                    data: @json($kota_data ?? []),
+                    backgroundColor: '#0d6efd',
+                    borderColor: '#0b5ed7',
+                    borderWidth: 2,
+                    borderRadius: 8,
+                    hoverBackgroundColor: '#0b5ed7'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: {
+                            color: 'rgba(0,0,0,0.05)'
+                        }
+                    },
+                    x: {
+                        grid: {
+                            display: false
+                        }
+                    }
+                }
+            }
+        });
+    }
+});
+</script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+
+    const ctx = document.getElementById(
+        'fakturPembelianChart'
+    );
+
+    if (!ctx) {
+        console.log('Canvas tidak ditemukan');
+        return;
+    }
+
+    const chartBulan = @json($chart_bulan ?? []);
+
+    const chartTotal = @json($chart_total ?? []);
+
+    console.log(chartBulan);
+    console.log(chartTotal);
+
+    new Chart(ctx, {
+
+        type: 'line',
+
+        data: {
+
+            labels: chartBulan,
+
+            datasets: [{
+
+                label: 'Total Pembelian',
+
+                data: chartTotal,
+
+                borderColor: '#0d6efd',
+
+                backgroundColor: 'rgba(13,110,253,0.15)',
+
+                borderWidth: 3,
+
+                fill: true,
+
+                tension: 0.4,
+
+                pointRadius: 5,
+
+                pointHoverRadius: 7
+
+            }]
+        },
+
+        options: {
+
+            responsive: true,
+
+            maintainAspectRatio: false,
+
+            plugins: {
+
+                legend: {
+                    display: true
+                }
+            },
+
+            scales: {
+
+                y: {
+
+                    beginAtZero: true,
+
+                    ticks: {
+
+                        callback: function(value) {
+
+                            return 'Rp ' +
+                                value.toLocaleString('id-ID');
+                        }
+                    }
+                }
+            }
+        }
+    });
+
+});
+</script>
+@endpush

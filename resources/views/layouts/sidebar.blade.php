@@ -101,7 +101,9 @@
                             Supplier</a></li>
                     <li><a class="sidebar-link" href="{{ route('faktur-pembelian.index') }}"><i
                                 data-feather="shopping-cart"></i> Faktur Pembelian</a></li>
-                    <li><a class="sidebar-link" href="#"><i data-feather="send"></i> Pembayaran Hutang</a></li>
+                    <li><a class="sidebar-link" href="{{ route('pembayaran-hutang.index') }}"><i
+                                data-feather="send"></i>
+                            Pembayaran Hutang</a></li>
                 </ul>
             </li>
 
