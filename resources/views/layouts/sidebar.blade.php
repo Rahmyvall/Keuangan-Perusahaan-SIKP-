@@ -101,8 +101,7 @@
                             Supplier</a></li>
                     <li><a class="sidebar-link" href="{{ route('faktur-pembelian.index') }}"><i
                                 data-feather="shopping-cart"></i> Faktur Pembelian</a></li>
-                    <li><a class="sidebar-link" href="{{ route('pembayaran-hutang.index') }}"><i
-                                data-feather="send"></i>
+                    <li><a class="sidebar-link" href="#"><i data-feather="send"></i>
                             Pembayaran Hutang</a></li>
                 </ul>
             </li>
@@ -114,7 +113,8 @@
                     <span>Aset & Kas/Bank</span>
                 </a>
                 <ul id="aset" class="sidebar-dropdown list-unstyled collapse">
-                    <li><a class="sidebar-link" href="#"><i data-feather="box"></i> Aset Tetap</a></li>
+                    <li><a class="sidebar-link" href="{{ route('aset-tetap.index') }}"><i data-feather="box"></i> Aset
+                            Tetap</a></li>
                     <li><a class="sidebar-link" href="#"><i data-feather="trending-down"></i> Depresiasi</a></li>
                     <li><a class="sidebar-link" href="#"><i data-feather="home"></i> Rekening Bank</a></li>
                 </ul>

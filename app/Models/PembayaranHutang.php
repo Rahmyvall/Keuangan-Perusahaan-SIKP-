@@ -2,15 +2,58 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class PembayaranHutang extends Model
 {
+    use HasFactory;
+
+    /*
+    |--------------------------------------------------------------------------
+    | TABLE
+    |--------------------------------------------------------------------------
+    */
+
     protected $table = 'pembayaran_hutang';
+
+    /*
+    |--------------------------------------------------------------------------
+    | PRIMARY KEY
+    |--------------------------------------------------------------------------
+    */
 
     protected $primaryKey = 'id_pembayaran';
 
+    /*
+    |--------------------------------------------------------------------------
+    | AUTO INCREMENT
+    |--------------------------------------------------------------------------
+    */
+
+    public $incrementing = true;
+
+    /*
+    |--------------------------------------------------------------------------
+    | KEY TYPE
+    |--------------------------------------------------------------------------
+    */
+
+    protected $keyType = 'int';
+
+    /*
+    |--------------------------------------------------------------------------
+    | TIMESTAMPS
+    |--------------------------------------------------------------------------
+    */
+
     public $timestamps = false;
+
+    /*
+    |--------------------------------------------------------------------------
+    | MASS ASSIGNMENT
+    |--------------------------------------------------------------------------
+    */
 
     protected $fillable = [
         'nomor_pembayaran',
@@ -21,10 +64,34 @@ class PembayaranHutang extends Model
         'id_perusahaan',
     ];
 
+    /*
+    |--------------------------------------------------------------------------
+    | HIDDEN
+    |--------------------------------------------------------------------------
+    */
+
+    protected $hidden = [];
+
+    /*
+    |--------------------------------------------------------------------------
+    | CASTS
+    |--------------------------------------------------------------------------
+    */
+
     protected $casts = [
-        'tanggal' => 'date',
-        'jumlah' => 'decimal:2',
+        'id_pembayaran'        => 'integer',
+        'tanggal'              => 'date:Y-m-d',
+        'id_faktur_pembelian'  => 'integer',
+        'id_jurnal'            => 'integer',
+        'jumlah'               => 'decimal:2',
+        'id_perusahaan'        => 'integer',
     ];
+
+    /*
+    |--------------------------------------------------------------------------
+    | RELATION : FAKTUR PEMBELIAN
+    |--------------------------------------------------------------------------
+    */
 
     public function fakturPembelian()
     {
@@ -35,6 +102,12 @@ class PembayaranHutang extends Model
         );
     }
 
+    /*
+    |--------------------------------------------------------------------------
+    | RELATION : JURNAL
+    |--------------------------------------------------------------------------
+    */
+
     public function jurnal()
     {
         return $this->belongsTo(
@@ -44,6 +117,12 @@ class PembayaranHutang extends Model
         );
     }
 
+    /*
+    |--------------------------------------------------------------------------
+    | RELATION : PERUSAHAAN
+    |--------------------------------------------------------------------------
+    */
+
     public function perusahaan()
     {
         return $this->belongsTo(
@@ -51,5 +130,32 @@ class PembayaranHutang extends Model
             'id_perusahaan',
             'id_perusahaan'
         );
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | ACCESSOR
+    |--------------------------------------------------------------------------
+    */
+
+    public function getJumlahFormatAttribute()
+    {
+        return number_format($this->jumlah, 2, ',', '.');
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | SCOPE
+    |--------------------------------------------------------------------------
+    */
+
+    public function scopeByPerusahaan($query, $idPerusahaan)
+    {
+        return $query->where('id_perusahaan', $idPerusahaan);
+    }
+
+    public function scopeByTanggal($query, $tanggal)
+    {
+        return $query->whereDate('tanggal', $tanggal);
     }
 }

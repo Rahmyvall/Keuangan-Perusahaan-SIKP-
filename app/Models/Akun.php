@@ -10,8 +10,10 @@ class Akun extends Model
     use HasFactory;
 
     protected $table = 'akun';
+
     protected $primaryKey = 'id_akun';
-    public $timestamps = false; // karena pakai created_at manual
+
+    public $timestamps = false;
 
     protected $fillable = [
         'kode_akun',
@@ -37,19 +39,19 @@ class Akun extends Model
     |--------------------------------------------------------------------------
     */
 
-    // Relasi ke parent akun (self join)
+    // Parent akun
     public function parent()
     {
         return $this->belongsTo(Akun::class, 'parent_id', 'id_akun');
     }
 
-    // Relasi ke anak akun
+    // Child akun
     public function children()
     {
         return $this->hasMany(Akun::class, 'parent_id', 'id_akun');
     }
 
-    // Relasi ke mata uang
+    // Mata uang
     public function mataUang()
     {
         return $this->belongsTo(MataUang::class, 'id_mata_uang', 'id_mata_uang');
@@ -57,7 +59,7 @@ class Akun extends Model
 
     /*
     |--------------------------------------------------------------------------
-    | SCOPES (opsional tapi berguna)
+    | SCOPES
     |--------------------------------------------------------------------------
     */
 
@@ -71,7 +73,6 @@ class Akun extends Model
         return $query->where('tipe_akun', $tipe);
     }
 
-        // Override latest() - FIX UTAMA
     public function scopeLatest($query)
     {
         return $query->orderBy('id_mata_uang', 'desc');

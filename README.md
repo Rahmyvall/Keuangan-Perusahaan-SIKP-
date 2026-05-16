@@ -53,13 +53,18 @@ Dengan pendekatan digitalisasi, SIKP membantu perusahaan meningkatkan efisiensi 
 <p align="center">
   <img src="public/assets/3.png" width="900" alt="Dashboard">
 </p>
-
+<p align="center">
+  <img src="public/assets/5.png" width="900" alt="Dashboard">
+</p>
 ---
 
 ## 💰 Manajemen Keuangan
 
 <p align="center">
   <img src="public/assets/4.png" width="900" alt="Dashboard">
+</p>
+<p align="center">
+  <img src="public/assets/6.png" width="900" alt="Dashboard">
 </p>
 
 ---

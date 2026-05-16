@@ -10,15 +10,18 @@ use App\Models\Pengguna;
 use App\Models\FakturPembelian;
 use App\Models\Periode;
 use App\Models\Supplier;
+use App\Models\AsetTetap;
 
 class Perusahaan extends Model
 {
     use HasFactory;
 
     protected $table = 'perusahaan';
+
     protected $primaryKey = 'id_perusahaan';
 
     public $incrementing = true;
+
     protected $keyType = 'int';
 
     public $timestamps = true;
@@ -105,7 +108,10 @@ class Perusahaan extends Model
     {
         return Attribute::make(
             get: function ($value) {
-                if (!$value) return null;
+
+                if (!$value) {
+                    return null;
+                }
 
                 $npwp = preg_replace('/\D/', '', $value);
 
@@ -125,7 +131,7 @@ class Perusahaan extends Model
 
     /*
     |--------------------------------------------------------------------------
-    | ROUTE MODEL BINDING (IMPORTANT FIX)
+    | ROUTE MODEL BINDING
     |--------------------------------------------------------------------------
     */
 
