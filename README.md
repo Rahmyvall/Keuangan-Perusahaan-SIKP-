@@ -54,7 +54,7 @@ Dengan pendekatan digitalisasi, SIKP membantu perusahaan meningkatkan efisiensi 
   <img src="public/assets/3.png" width="900" alt="Dashboard">
 </p>
 <p align="center">
-  <img src="public/assets/5.png" width="900" alt="Dashboard">
+  <img src="public/assets/5.jpg" width="900" alt="Dashboard">
 </p>
 ---
 
@@ -64,7 +64,7 @@ Dengan pendekatan digitalisasi, SIKP membantu perusahaan meningkatkan efisiensi 
   <img src="public/assets/4.png" width="900" alt="Dashboard">
 </p>
 <p align="center">
-  <img src="public/assets/6.png" width="900" alt="Dashboard">
+  <img src="public/assets/6.jpg" width="900" alt="Dashboard">
 </p>
 
 ---
