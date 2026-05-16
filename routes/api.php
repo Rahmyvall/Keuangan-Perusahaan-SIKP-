@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\AkunController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -9,14 +10,12 @@ use Illuminate\Support\Facades\Route;
 |--------------------------------------------------------------------------
 */
 
-use App\Http\Controllers\Api\AkunController;
 use App\Http\Controllers\Api\MataUangApiController;
+use App\Http\Controllers\Api\FakturPembelianApiController;
 use App\Http\Controllers\Api\PelangganController;
+use App\Http\Controllers\Api\PembayaranHutangController;
 use App\Http\Controllers\Api\PenggunaController;
 use App\Http\Controllers\Api\PerusahaanController;
-use App\Http\Controllers\Api\JurnalDetailController;
-use App\Http\Controllers\Api\FakturPembelianApiController;
-
 use App\Http\Controllers\PeriodeController;
 use App\Http\Controllers\SupplierController;
 
@@ -417,4 +416,57 @@ Route::prefix('faktur-pembelian')->group(function () {
             'destroy'
         ]);
     });
+    /*
+|--------------------------------------------------------------------------
+| PEMBAYARAN HUTANG API ROUTES
+|--------------------------------------------------------------------------
+*/
+
+Route::prefix('pembayaran-hutang')->group(function () {
+
+    /*
+    |--------------------------------------------------------------------------
+    | PUBLIC
+    |--------------------------------------------------------------------------
+    */
+
+    Route::get('/', [
+        PembayaranHutangControllee::class,
+        'index'
+    ]);
+
+    Route::get('/{id}', [
+        PembayaranHutangController::class,
+        'show'
+    ]);
+
+    /*
+    |--------------------------------------------------------------------------
+    | PROTECTED
+    |--------------------------------------------------------------------------
+    */
+
+    Route::middleware('auth:sanctum')->group(function () {
+
+        Route::post('/', [
+            PembayaranHutangController::class,
+            'store'
+        ]);
+
+        Route::put('/{id}', [
+            PembayaranHutangController::class,
+            'update'
+        ]);
+
+        Route::patch('/{id}', [
+            PembayaranHutangController::class,
+            'update'
+        ]);
+
+        Route::delete('/{id}', [
+            PembayaranHutangController::class,
+            'destroy'
+        ]);
+    });
+});
 });
