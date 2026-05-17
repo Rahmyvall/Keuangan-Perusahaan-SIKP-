@@ -19,7 +19,8 @@ use App\Http\Controllers\{
     FakturPenjualanController,
     NotificationController,
     PenerimaanPiutangController,
-    SupplierController
+    SupplierController,
+    DepresiasiController
 };
 
 /*
@@ -44,7 +45,7 @@ Route::middleware('auth')->group(function () {
 
     /*
     |--------------------------------------------------------------------------
-    | DASHBOARD (GLOBAL)
+    | DASHBOARD
     |--------------------------------------------------------------------------
     */
     Route::get('/dashboard', [DashboardController::class, 'index'])
@@ -52,7 +53,7 @@ Route::middleware('auth')->group(function () {
 
     /*
     |--------------------------------------------------------------------------
-    | ADMIN (FULL ACCESS)
+    | ADMIN
     |--------------------------------------------------------------------------
     */
     Route::middleware('role:admin')->group(function () {
@@ -70,9 +71,24 @@ Route::middleware('auth')->group(function () {
             'jurnal' => JurnalController::class,
             'penerimaan-piutang' => PenerimaanPiutangController::class,
             'aset-tetap' => AsetTetapController::class,
-
+            'depresiasi' => DepresiasiController::class,
         ]);
 
+        /*
+        |--------------------------------------------------------------------------
+        | DEPRESIASI CUSTOM ROUTE
+        |--------------------------------------------------------------------------
+        */
+        Route::prefix('depresiasi')->name('depresiasi.')->group(function () {
+            Route::post('/generate', [DepresiasiController::class, 'generate'])
+                ->name('generate');
+        });
+
+        /*
+        |--------------------------------------------------------------------------
+        | ADMIN EXTRA
+        |--------------------------------------------------------------------------
+        */
         Route::prefix('admin-extra')->group(function () {
 
             Route::get('perusahaan/by-kota/{kota}', [PerusahaanController::class, 'byKota'])
@@ -123,7 +139,7 @@ Route::middleware('auth')->group(function () {
 
     /*
     |--------------------------------------------------------------------------
-    | ROLE DASHBOARD (AKUNTAN / MANAJER / AUDITOR / STAFF)
+    | ROLE DASHBOARD
     |--------------------------------------------------------------------------
     */
     foreach (['akuntan', 'manajer', 'auditor', 'staff'] as $role) {

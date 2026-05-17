@@ -13,6 +13,7 @@ use App\Http\Controllers\Api\PerusahaanController;
 use App\Http\Controllers\Api\AsetTetapController;
 use App\Http\Controllers\Api\PeriodeController;
 use App\Http\Controllers\Api\SupplierController;
+use App\Http\Controllers\Api\DepresiasiApiController;
 
 /*
 |--------------------------------------------------------------------------
@@ -217,5 +218,54 @@ Route::prefix('aset-tetap')->group(function () {
         Route::put('/{asetTetap}', [AsetTetapController::class, 'update']);
         Route::patch('/{asetTetap}', [AsetTetapController::class, 'update']);
         Route::delete('/{asetTetap}', [AsetTetapController::class, 'destroy']);
+    });
+});
+
+/*
+|--------------------------------------------------------------------------
+| DEPRESIASI API
+|--------------------------------------------------------------------------
+*/
+
+Route::prefix('depresiasi')->group(function () {
+
+    /*
+    |--------------------------------------------------------------------------
+    | PUBLIC ROUTE
+    |--------------------------------------------------------------------------
+    */
+
+    Route::get('/', [DepresiasiApiController::class, 'index']);
+    Route::get('/{id}', [DepresiasiApiController::class, 'show']);
+
+    /*
+    |--------------------------------------------------------------------------
+    | AUTH ROUTE
+    |--------------------------------------------------------------------------
+    */
+
+    Route::middleware('auth:sanctum')->group(function () {
+
+        Route::post('/', [DepresiasiApiController::class, 'store']);
+
+        Route::post('/generate', [
+            DepresiasiApiController::class,
+            'generate'
+        ]);
+
+        Route::put('/{id}', [
+            DepresiasiApiController::class,
+            'update'
+        ]);
+
+        Route::patch('/{id}', [
+            DepresiasiApiController::class,
+            'update'
+        ]);
+
+        Route::delete('/{id}', [
+            DepresiasiApiController::class,
+            'destroy'
+        ]);
     });
 });
