@@ -147,8 +147,10 @@
                     <span>Transaksi</span>
                 </a>
                 <ul id="transaksi" class="sidebar-dropdown list-unstyled collapse">
-                    <li><a class="sidebar-link" href="#"><i data-feather="edit"></i> Jurnal Umum</a></li>
-                    <li><a class="sidebar-link" href="#"><i data-feather="file-text"></i> Detail Jurnal</a></li>
+                    <li><a class="sidebar-link" href="{{ route('jurnal-umum.index') }}"><i data-feather="edit"></i>
+                            Jurnal Umum</a></li>
+                    <li><a class="sidebar-link" href="{{ route('detail-jurnal.index') }}"><i
+                                data-feather="file-text"></i> Detail Jurnal</a></li>
                 </ul>
             </li>
 
@@ -158,8 +160,10 @@
                     <span>Piutang</span>
                 </a>
                 <ul id="piutang" class="sidebar-dropdown list-unstyled collapse">
-                    <li><a class="sidebar-link" href="#"><i data-feather="user"></i> Pelanggan</a></li>
-                    <li><a class="sidebar-link" href="#"><i data-feather="file"></i> Faktur</a></li>
+                    <li><a class="sidebar-link" href="{{ route('pelanggan.index') }}"><i data-feather="user"></i>
+                            Pelanggan</a></li>
+                    <li><a class="sidebar-link" href="{{ route('faktur.index') }}"><i data-feather="file"></i>
+                            Faktur</a></li>
                 </ul>
             </li>
             @endif
@@ -172,21 +176,29 @@
                     <span>Monitoring</span>
                 </a>
                 <ul id="laporan" class="sidebar-dropdown list-unstyled collapse">
-                    <li><a class="sidebar-link" href="#"><i data-feather="file-text"></i> Detail Jurnal</a></li>
-                    <li><a class="sidebar-link" href="#"><i data-feather="bar-chart"></i> Saldo Akun</a></li>
+                    <li><a class="sidebar-link" href="{{ route('detail-jurnal.index') }}"><i
+                                data-feather="file-text"></i> Detail Jurnal</a></li>
+                    <li><a class="sidebar-link" href="{{ route('saldo-awal.index') }}"><i data-feather="bar-chart"></i>
+                            Saldo Akun</a></li>
                 </ul>
             </li>
             @endif
 
             {{-- ================= STAFF ================= --}}
-            @if($role === 'staff')
+            @if(isset($role) && $role === 'staff')
             <li class="sidebar-item">
                 <a data-bs-target="#transaksi" data-bs-toggle="collapse" class="sidebar-link collapsed">
                     <i data-feather="edit" class="me-2"></i>
                     <span>Input Data</span>
                 </a>
+
                 <ul id="transaksi" class="sidebar-dropdown list-unstyled collapse">
-                    <li><a class="sidebar-link" href="#"><i data-feather="edit"></i> Jurnal Umum</a></li>
+                    <li>
+                        <a class="sidebar-link" href="{{ route('staff.jurnal.index') }}">
+                            <i data-feather="edit" class="me-2"></i>
+                            Jurnal Umum
+                        </a>
+                    </li>
                 </ul>
             </li>
             @endif

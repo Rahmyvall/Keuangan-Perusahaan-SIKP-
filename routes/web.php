@@ -80,21 +80,11 @@ Route::middleware('auth')->group(function () {
             'saldo-awal' => SaldoAwalController::class,
         ]);
 
-        /*
-        |--------------------------------------------------------------------------
-        | DEPRESIASI CUSTOM ROUTE
-        |--------------------------------------------------------------------------
-        */
         Route::prefix('depresiasi')->name('depresiasi.')->group(function () {
             Route::post('/generate', [DepresiasiController::class, 'generate'])
                 ->name('generate');
         });
 
-        /*
-        |--------------------------------------------------------------------------
-        | ADMIN EXTRA
-        |--------------------------------------------------------------------------
-        */
         Route::prefix('admin-extra')->group(function () {
 
             Route::get('perusahaan/by-kota/{kota}', [PerusahaanController::class, 'byKota'])
@@ -148,13 +138,66 @@ Route::middleware('auth')->group(function () {
     | ROLE DASHBOARD
     |--------------------------------------------------------------------------
     */
-    foreach (['akuntan', 'manajer', 'auditor', 'staff'] as $role) {
-        Route::middleware("role:$role")
-            ->prefix($role)
-            ->name($role . '.')
-            ->group(function () {
-                Route::get('/dashboard', [DashboardController::class, 'index'])
-                    ->name('dashboard');
-            });
-    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | AKUNTAN
+    |--------------------------------------------------------------------------
+    */
+    Route::middleware('role:akuntan')
+        ->prefix('akuntan')
+        ->name('akuntan.')
+        ->group(function () {
+
+            Route::get('/dashboard', [DashboardController::class, 'index'])
+                ->name('dashboard');
+        });
+
+    /*
+    |--------------------------------------------------------------------------
+    | MANAJER
+    |--------------------------------------------------------------------------
+    */
+    Route::middleware('role:manajer')
+        ->prefix('manajer')
+        ->name('manajer.')
+        ->group(function () {
+
+            Route::get('/dashboard', [DashboardController::class, 'index'])
+                ->name('dashboard');
+        });
+
+    /*
+    |--------------------------------------------------------------------------
+    | AUDITOR
+    |--------------------------------------------------------------------------
+    */
+    Route::middleware('role:auditor')
+        ->prefix('auditor')
+        ->name('auditor.')
+        ->group(function () {
+
+            Route::get('/dashboard', [DashboardController::class, 'index'])
+                ->name('dashboard');
+        });
+
+    /*
+    |--------------------------------------------------------------------------
+    | STAFF
+    |--------------------------------------------------------------------------
+    */
+   Route::middleware('role:staff')
+    ->prefix('staff')
+    ->name('staff.')
+    ->group(function () {
+
+        Route::get('/dashboard', [DashboardController::class, 'index'])
+            ->name('dashboard');
+
+        Route::get('/jurnal', [JurnalController::class, 'index'])
+            ->name('jurnal.index');
+
+        Route::get('/jurnal/{jurnal}', [JurnalController::class, 'show'])
+            ->name('jurnal.show');
+    });
 });
