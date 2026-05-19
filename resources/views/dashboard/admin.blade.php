@@ -11,7 +11,7 @@
         <div class="row g-4">
 
             <!-- ================= KPI UTAMA ================= -->
-            <div class="col-md-6 col-lg-3">
+            <div class="col-md-6 col-lg-4">
                 <div class="card h-100 border-0 shadow-sm rounded-4">
                     <div class="card-body p-4 d-flex justify-content-between align-items-start">
 
@@ -34,7 +34,7 @@
             </div>
 
             <!-- Transaksi -->
-            <div class="col-md-6 col-lg-3">
+            <div class="col-md-6 col-lg-4">
                 <div class="card h-100 border-0 shadow-sm rounded-4">
                     <div class="card-body p-4 d-flex justify-content-between align-items-start">
 
@@ -63,7 +63,7 @@
             </div>
 
             <!-- Earnings -->
-            <div class="col-md-6 col-lg-3">
+            <div class="col-md-6 col-lg-4">
                 <div class="card h-100 border-0 shadow-sm rounded-4">
                     <div class="card-body p-4 d-flex justify-content-between align-items-start">
 
@@ -92,7 +92,7 @@
             </div>
 
             <!-- Supplier -->
-            <div class="col-md-6 col-lg-3">
+            <div class="col-md-6 col-lg-4">
                 <div class="card h-100 border-0 shadow-sm rounded-4">
                     <div class="card-body p-4 d-flex justify-content-between align-items-start">
 
@@ -194,7 +194,36 @@
                     </div>
                 </div>
             </div>
+            <!-- ================= SALDO AWAL ================= -->
+            <div class="col-md-6 col-lg-4">
+                <div class="card h-100 border-0 shadow-sm rounded-4">
+                    <div class="card-body p-4 d-flex justify-content-between align-items-start">
 
+                        <div>
+                            <div class="text-muted small">Saldo Awal</div>
+
+                            <h3 class="fw-bold mt-2 mb-1">
+                                Rp {{ number_format($saldo_awal_total ?? 0) }}
+                            </h3>
+
+                            <div class="small text-muted">
+                                <span class="text-success fw-semibold">
+                                    Debit: {{ number_format($saldo_awal_debit ?? 0) }}
+                                </span>
+                                /
+                                <span class="text-danger">
+                                    Kredit: {{ number_format($saldo_awal_kredit ?? 0) }}
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="bg-warning bg-opacity-10 text-warning p-3 rounded-3">
+                            <i data-feather="layers" style="width:38px;height:38px;"></i>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
             <!-- Total Penerimaan -->
             <div class="col-md-6 col-lg-4">
                 <div class="card h-100 border-0 shadow-sm rounded-4">
@@ -220,6 +249,7 @@
             </div>
 
         </div>
+
 
         <!-- ==================== CHARTS ==================== -->
         <div class="col-xl-7">

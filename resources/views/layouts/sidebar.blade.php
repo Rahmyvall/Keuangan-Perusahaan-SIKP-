@@ -101,7 +101,8 @@
                             Supplier</a></li>
                     <li><a class="sidebar-link" href="{{ route('faktur-pembelian.index') }}"><i
                                 data-feather="shopping-cart"></i> Faktur Pembelian</a></li>
-                    <li><a class="sidebar-link" href="#"><i data-feather="send"></i>
+                    <li><a class="sidebar-link" href="{{ route('pembayaran-hutang.index') }}"><i
+                                data-feather="send"></i>
                             Pembayaran Hutang</a></li>
                 </ul>
             </li>
@@ -129,8 +130,10 @@
                     <span>Saldo Awal</span>
                 </a>
                 <ul id="saldo" class="sidebar-dropdown list-unstyled collapse">
-                    <li><a class="sidebar-link" href="#"><i data-feather="edit-3"></i> Input Saldo Awal</a></li>
-                    <li><a class="sidebar-link" href="#"><i data-feather="bar-chart-2"></i> View Saldo Akun</a></li>
+                    <li><a class="sidebar-link" href="{{ route('saldo-awal.create') }}"><i data-feather="edit-3"></i>
+                            Input Saldo Awal</a></li>
+                    <li><a class="sidebar-link" href="{{ route('saldo-awal.index') }}"><i
+                                data-feather="bar-chart-2"></i> View Saldo Akun</a></li>
                 </ul>
             </li>
 

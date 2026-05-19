@@ -16,6 +16,7 @@ use App\Http\Controllers\Api\SupplierController;
 use App\Http\Controllers\Api\DepresiasiApiController;
 use App\Http\Controllers\Api\RekeningBankController;
 use App\Http\Controllers\Api\MutasiRekeningBankController;
+use App\Http\Controllers\Api\SaldoAwalController;
 
 /*
 |--------------------------------------------------------------------------
@@ -308,5 +309,30 @@ Route::prefix('mutasi-rekening')->group(function () {
         Route::post('/', [MutasiRekeningBankController::class, 'store']);
         Route::delete('/{id}', [MutasiRekeningBankController::class, 'destroy']);
     });
+});
+Route::prefix('saldo-awal')->group(function () {
+
+    /*
+    |--------------------------
+    | PUBLIC ROUTE
+    |--------------------------
+    */
+    Route::get('/', [SaldoAwalController::class, 'index']);
+    Route::get('/{id}', [SaldoAwalController::class, 'show']);
+
+    /*
+    |--------------------------
+    | PROTECTED ROUTE
+    |--------------------------
+    */
+    Route::middleware('auth:sanctum')->group(function () {
+
+        Route::post('/', [SaldoAwalController::class, 'store']);
+        Route::put('/{id}', [SaldoAwalController::class, 'update']);
+        Route::patch('/{id}', [SaldoAwalController::class, 'update']);
+        Route::delete('/{id}', [SaldoAwalController::class, 'destroy']);
+
+    });
+
 });
 });

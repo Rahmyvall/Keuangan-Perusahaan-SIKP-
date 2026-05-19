@@ -14,6 +14,7 @@ use App\Models\FakturPembelian;
 use App\Models\PenerimaanPiutang;
 use App\Models\Depresiasi;
 use App\Models\RekeningBank;
+use App\Models\SaldoAwal;
 
 class DashboardController extends Controller
 {
@@ -230,6 +231,16 @@ class DashboardController extends Controller
                 ->limit(5)
                 ->get();
         }
+        // ================= SALDO AWAL =================
+$saldoAwal = SaldoAwal::query()
+    ->whereHas('periode', function ($q) {
+        $q->whereYear('created_at', now()->year);
+    });
+
+$saldoAwalDebit = (clone $saldoAwal)->sum('debit');
+$saldoAwalKredit = (clone $saldoAwal)->sum('kredit');
+
+$saldoAwalTotal = $saldoAwalDebit - $saldoAwalKredit;
 
         /*
         |------------------------------------------------------------------
@@ -282,6 +293,10 @@ class DashboardController extends Controller
             'rekening_aktif' => $rekeningBankAktif,
             'rekening_nonaktif' => $rekeningBankNonAktif,
             'rekening_bank' => $rekeningBank,
+            // ================= SALDO AWAL =================
+'saldo_awal_debit' => $saldoAwalDebit,
+'saldo_awal_kredit' => $saldoAwalKredit,
+'saldo_awal_total' => $saldoAwalTotal,
         ];
 
         return match ($user->role) {

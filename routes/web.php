@@ -21,7 +21,9 @@ use App\Http\Controllers\{
     PenerimaanPiutangController,
     SupplierController,
     DepresiasiController,
-    RekeningBankController
+    PembayaranHutangController,
+    RekeningBankController,
+    SaldoAwalController
 };
 
 /*
@@ -73,7 +75,9 @@ Route::middleware('auth')->group(function () {
             'penerimaan-piutang' => PenerimaanPiutangController::class,
             'aset-tetap' => AsetTetapController::class,
             'depresiasi' => DepresiasiController::class,
-            'rekening-bank' => RekeningBankController::class
+            'rekening-bank' => RekeningBankController::class,
+            'pembayaran-hutang' => PembayaranHutangController::class,
+            'saldo-awal' => SaldoAwalController::class,
         ]);
 
         /*
