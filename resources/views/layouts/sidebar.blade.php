@@ -115,8 +115,10 @@
                 <ul id="aset" class="sidebar-dropdown list-unstyled collapse">
                     <li><a class="sidebar-link" href="{{ route('aset-tetap.index') }}"><i data-feather="box"></i> Aset
                             Tetap</a></li>
-                    <li><a class="sidebar-link" href="{{ route('depresiasi.index') }}"><i data-feather="trending-down"></i> Depresiasi</a></li>
-                    <li><a class="sidebar-link" href="#"><i data-feather="home"></i> Rekening Bank</a></li>
+                    <li><a class="sidebar-link" href="{{ route('depresiasi.index') }}"><i
+                                data-feather="trending-down"></i> Depresiasi</a></li>
+                    <li><a class="sidebar-link" href="{{ route('rekening-bank.index') }}"><i data-feather="home"></i>
+                            Rekening Bank</a></li>
                 </ul>
             </li>
 

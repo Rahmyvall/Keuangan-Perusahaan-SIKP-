@@ -57,6 +57,11 @@ class Akun extends Model
         return $this->belongsTo(MataUang::class, 'id_mata_uang', 'id_mata_uang');
     }
 
+    public function rekeningBank()
+    {
+        return $this->hasMany(RekeningBank::class, 'id_akun_kas', 'id_akun');
+    }
+
     /*
     |--------------------------------------------------------------------------
     | SCOPES

@@ -20,7 +20,8 @@ use App\Http\Controllers\{
     NotificationController,
     PenerimaanPiutangController,
     SupplierController,
-    DepresiasiController
+    DepresiasiController,
+    RekeningBankController
 };
 
 /*
@@ -72,6 +73,7 @@ Route::middleware('auth')->group(function () {
             'penerimaan-piutang' => PenerimaanPiutangController::class,
             'aset-tetap' => AsetTetapController::class,
             'depresiasi' => DepresiasiController::class,
+            'rekening-bank' => RekeningBankController::class
         ]);
 
         /*

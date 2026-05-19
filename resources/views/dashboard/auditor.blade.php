@@ -8,262 +8,213 @@
     <div class="row g-4">
 
         <!-- ==================== STATISTIK UTAMA ==================== -->
-        <div class="col-12">
-            <div class="row g-4">
+        <div class="row g-4">
 
-                <!-- Total Pengguna -->
-                <div class="col-md-6 col-lg-3">
-                    <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden hover-shadow transition-all">
-                        <div class="card-body p-4">
-                            <div class="d-flex justify-content-between align-items-start">
-                                <div>
-                                    <div class="text-muted small fw-medium">Total Pengguna</div>
-                                    <h2 class="mt-3 mb-1 fw-bold text-dark">{{ $total_pengguna ?? 0 }}</h2>
-                                    <div class="small">
-                                        <span class="text-success fw-semibold">{{ $pengguna_aktif ?? 0 }} aktif</span>
-                                        <span class="text-muted"> / {{ $pengguna_nonaktif ?? 0 }} nonaktif</span>
-                                    </div>
-                                </div>
-                                <div class="bg-primary bg-opacity-10 text-primary p-3 rounded-3">
-                                    <i data-feather="users" style="width: 42px; height: 42px;"></i>
-                                </div>
+            <!-- ================= KPI UTAMA ================= -->
+            <div class="col-md-6 col-lg-3">
+                <div class="card h-100 border-0 shadow-sm rounded-4">
+                    <div class="card-body p-4 d-flex justify-content-between align-items-start">
+
+                        <div>
+                            <div class="text-muted small">Total Pengguna</div>
+                            <h3 class="fw-bold mt-2 mb-1">{{ $total_pengguna ?? 0 }}</h3>
+                            <div class="small text-muted">
+                                <span class="text-success fw-semibold">{{ $pengguna_aktif ?? 0 }}</span> aktif
+                                /
+                                <span>{{ $pengguna_nonaktif ?? 0 }}</span> nonaktif
                             </div>
                         </div>
-                    </div>
-                </div>
 
-                <!-- Transaksi -->
-                <div class="col-md-6 col-lg-3">
-                    <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden hover-shadow transition-all">
-
-                        <div class="card-body p-4">
-
-                            <div class="d-flex justify-content-between align-items-start">
-
-                                <!-- INFO -->
-                                <div>
-
-                                    <div class="text-muted small fw-medium">
-                                        Total Transaksi
-                                    </div>
-
-                                    <h2 class="mt-3 mb-1 fw-bold text-dark">
-                                        {{ number_format($total_transaksi ?? 0) }}
-                                    </h2>
-
-                                    @php
-                                    $growth = $growth_transaksi ?? 0;
-                                    @endphp
-
-                                    <div class="d-flex align-items-center gap-1">
-
-                                        <span class="{{ $growth >= 0 ? 'text-success' : 'text-danger' }} fw-semibold">
-
-                                            {{ $growth >= 0 ? '↑' : '↓' }}
-
-                                            {{ number_format(abs($growth), 2) }}%
-
-                                        </span>
-
-                                        <span class="text-muted small">
-                                            dibanding minggu lalu
-                                        </span>
-
-                                    </div>
-
-                                </div>
-
-                                <!-- ICON -->
-                                <div class="bg-primary bg-opacity-10 text-primary p-3 rounded-3">
-                                    <i data-feather="shopping-cart" style="width: 42px; height: 42px;"></i>
-                                </div>
-
-                            </div>
-
+                        <div class="bg-primary bg-opacity-10 text-primary p-3 rounded-3">
+                            <i data-feather="users" style="width:38px;height:38px;"></i>
                         </div>
 
-                    </div>
-                </div>
-
-                <!-- Earnings -->
-                <div class="col-md-6 col-lg-3">
-                    <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden hover-shadow transition-all">
-
-                        <div class="card-body p-4">
-
-                            <div class="d-flex justify-content-between align-items-start">
-
-                                <!-- INFO -->
-                                <div>
-
-                                    <div class="text-muted small fw-medium">
-                                        Total Earnings
-                                    </div>
-
-                                    <h2 class="mt-3 mb-1 fw-bold text-dark">
-                                        Rp {{ number_format($total_earnings ?? 0) }}
-                                    </h2>
-
-                                    @php
-                                    $growth = $growth_earnings ?? 0;
-                                    @endphp
-
-                                    <div class="d-flex align-items-center gap-1">
-
-                                        <span class="{{ $growth >= 0 ? 'text-success' : 'text-danger' }} fw-semibold">
-
-                                            {{ $growth >= 0 ? '↑' : '↓' }}
-
-                                            {{ number_format(abs($growth), 2) }}%
-
-                                        </span>
-
-                                        <span class="text-muted small">
-                                            dibanding minggu lalu
-                                        </span>
-
-                                    </div>
-
-                                </div>
-
-                                <!-- ICON -->
-                                <div class="bg-success bg-opacity-10 text-success p-3 rounded-3">
-                                    <i data-feather="dollar-sign" style="width: 42px; height: 42px;"></i>
-                                </div>
-
-                            </div>
-
-                        </div>
-
-                    </div>
-                </div>
-
-                <!-- Orders -->
-                <div class="col-md-6 col-lg-3">
-
-                    <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden hover-shadow transition-all">
-
-                        <div class="card-body p-4">
-
-                            <div class="d-flex justify-content-between align-items-start">
-
-                                <div>
-
-                                    <div class="text-muted small fw-medium">
-                                        Total Supplier
-                                    </div>
-
-                                    <h2 class="mt-3 mb-1 fw-bold text-dark">
-                                        {{ $total_supplier ?? 0 }}
-                                    </h2>
-
-                                    <div class="d-flex align-items-center gap-1">
-
-                                        <span class="text-success fw-semibold">
-                                            Supplier Terdaftar
-                                        </span>
-
-                                        <span class="text-muted small">
-                                            aktif di sistem
-                                        </span>
-
-                                    </div>
-
-                                </div>
-
-                                <div class="bg-primary bg-opacity-10 text-primary p-3 rounded-4">
-
-                                    <i data-feather="truck" style="width:42px;height:42px;"></i>
-
-                                </div>
-
-                            </div>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-            </div>
-        </div>
-
-        <!-- ==================== PENERIMAAN ==================== -->
-        <div class="row g-4 mb-5">
-
-            <!-- Card 1: Penerimaan Hari Ini -->
-            <div class="col-md-6 col-lg-4">
-                <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden hover-shadow">
-                    <div class="card-body p-4">
-                        <div class="d-flex justify-content-between">
-                            <div>
-                                <div class="text-muted small fw-medium">Hari Ini</div>
-                                <h1 class="mt-3 mb-1 fw-bold text-success">
-                                    Rp {{ number_format($penerimaan_hari_ini ?? 0, 0, ',', '.') }}
-                                </h1>
-                                <div class="d-flex align-items-center gap-1">
-                                    <span
-                                        class="{{ ($growth_hari_ini ?? 0) >= 0 ? 'text-success' : 'text-danger' }} fw-semibold">
-                                        {{ ($growth_hari_ini ?? 0) >= 0 ? '↑' : '↓' }} {{ abs($growth_hari_ini ?? 0) }}%
-                                    </span>
-                                    <span class="text-muted small">dari kemarin</span>
-                                </div>
-                            </div>
-                            <div class="bg-success bg-opacity-10 text-success p-3 rounded-3">
-                                <i data-feather="calendar" class="align-middle" style="width: 42px; height: 42px;"></i>
-                            </div>
-                        </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Card 2: Penerimaan Bulan Ini -->
-            <div class="col-md-6 col-lg-4">
-                <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden hover-shadow">
-                    <div class="card-body p-4">
-                        <div class="d-flex justify-content-between">
-                            <div>
-                                <div class="text-muted small fw-medium">Bulan Ini</div>
-                                <h1 class="mt-3 mb-1 fw-bold text-primary">
-                                    Rp {{ number_format($penerimaan_bulan_ini ?? 0, 0, ',', '.') }}
-                                </h1>
-                                <div class="d-flex align-items-center gap-1">
-                                    <span
-                                        class="{{ ($growth_bulan_ini ?? 0) >= 0 ? 'text-primary' : 'text-danger' }} fw-semibold">
-                                        {{ ($growth_bulan_ini ?? 0) >= 0 ? '↑' : '↓' }}
-                                        {{ abs($growth_bulan_ini ?? 0) }}%
-                                    </span>
-                                    <span class="text-muted small">dari bulan lalu</span>
-                                </div>
-                            </div>
-                            <div class="bg-primary bg-opacity-10 text-primary p-3 rounded-3">
-                                <i data-feather="dollar-sign" class="align-middle"
-                                    style="width: 42px; height: 42px;"></i>
+            <!-- Transaksi -->
+            <div class="col-md-6 col-lg-3">
+                <div class="card h-100 border-0 shadow-sm rounded-4">
+                    <div class="card-body p-4 d-flex justify-content-between align-items-start">
+
+                        <div>
+                            <div class="text-muted small">Total Transaksi</div>
+                            <h3 class="fw-bold mt-2 mb-1">
+                                {{ number_format($total_transaksi ?? 0) }}
+                            </h3>
+
+                            @php $growth = $growth_transaksi ?? 0; @endphp
+
+                            <div class="small">
+                                <span class="{{ $growth >= 0 ? 'text-success' : 'text-danger' }} fw-semibold">
+                                    {{ $growth >= 0 ? '↑' : '↓' }} {{ number_format(abs($growth), 2) }}%
+                                </span>
+                                <span class="text-muted"> vs minggu lalu</span>
                             </div>
                         </div>
+
+                        <div class="bg-primary bg-opacity-10 text-primary p-3 rounded-3">
+                            <i data-feather="shopping-cart" style="width:38px;height:38px;"></i>
+                        </div>
+
                     </div>
                 </div>
             </div>
 
-            <!-- Card 3: Total Penerimaan Keseluruhan -->
-            <div class="col-md-6 col-lg-4">
-                <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden hover-shadow">
-                    <div class="card-body p-4">
-                        <div class="d-flex justify-content-between">
-                            <div>
-                                <div class="text-muted small fw-medium">Total Penerimaan</div>
-                                <h1 class="mt-3 mb-1 fw-bold text-dark">
-                                    Rp {{ number_format($total_penerimaan ?? 0, 0, ',', '.') }}
-                                </h1>
-                                <div class="d-flex align-items-center gap-1">
-                                    <span class="badge bg-info">{{ $total_transaksi_penerimaan ?? 0 }} Transaksi</span>
-                                </div>
-                            </div>
-                            <div class="bg-info bg-opacity-10 text-info p-3 rounded-3">
-                                <i data-feather="trending-up" class="align-middle"
-                                    style="width: 42px; height: 42px;"></i>
+            <!-- Earnings -->
+            <div class="col-md-6 col-lg-3">
+                <div class="card h-100 border-0 shadow-sm rounded-4">
+                    <div class="card-body p-4 d-flex justify-content-between align-items-start">
+
+                        <div>
+                            <div class="text-muted small">Total Earnings</div>
+                            <h3 class="fw-bold mt-2 mb-1">
+                                Rp {{ number_format($total_earnings ?? 0) }}
+                            </h3>
+
+                            @php $growth = $growth_earnings ?? 0; @endphp
+
+                            <div class="small">
+                                <span class="{{ $growth >= 0 ? 'text-success' : 'text-danger' }} fw-semibold">
+                                    {{ $growth >= 0 ? '↑' : '↓' }} {{ number_format(abs($growth), 2) }}%
+                                </span>
+                                <span class="text-muted"> vs minggu lalu</span>
                             </div>
                         </div>
+
+                        <div class="bg-success bg-opacity-10 text-success p-3 rounded-3">
+                            <i data-feather="dollar-sign" style="width:38px;height:38px;"></i>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <!-- Supplier -->
+            <div class="col-md-6 col-lg-3">
+                <div class="card h-100 border-0 shadow-sm rounded-4">
+                    <div class="card-body p-4 d-flex justify-content-between align-items-start">
+
+                        <div>
+                            <div class="text-muted small">Total Supplier</div>
+                            <h3 class="fw-bold mt-2 mb-1">
+                                {{ $total_supplier ?? 0 }}
+                            </h3>
+                            <div class="small text-muted">
+                                Supplier terdaftar di sistem
+                            </div>
+                        </div>
+
+                        <div class="bg-primary bg-opacity-10 text-primary p-3 rounded-3">
+                            <i data-feather="truck" style="width:38px;height:38px;"></i>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <!-- ================= PENERIMAAN ================= -->
+
+            <!-- Hari Ini -->
+            <div class="col-md-6 col-lg-4">
+                <div class="card h-100 border-0 shadow-sm rounded-4">
+                    <div class="card-body p-4 d-flex justify-content-between align-items-start">
+
+                        <div>
+                            <div class="text-muted small">Hari Ini</div>
+                            <h4 class="fw-bold text-success mt-2">
+                                Rp {{ number_format($penerimaan_hari_ini ?? 0, 0, ',', '.') }}
+                            </h4>
+
+                            <div class="small">
+                                <span class="{{ ($growth_hari_ini ?? 0) >= 0 ? 'text-success' : 'text-danger' }}">
+                                    {{ ($growth_hari_ini ?? 0) >= 0 ? '↑' : '↓' }}
+                                    {{ abs($growth_hari_ini ?? 0) }}%
+                                </span>
+                                <span class="text-muted"> vs kemarin</span>
+                            </div>
+                        </div>
+
+                        <div class="bg-success bg-opacity-10 text-success p-3 rounded-3">
+                            <i data-feather="calendar" style="width:38px;height:38px;"></i>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <!-- Rekening Bank -->
+            <div class="col-md-6 col-lg-4">
+                <div class="card h-100 border-0 shadow-sm rounded-4">
+                    <div class="card-body p-4 d-flex justify-content-between align-items-start">
+
+                        <div>
+                            <div class="text-muted small">Rekening Bank</div>
+                            <h3 class="fw-bold mt-2 mb-1">
+                                {{ $total_rekening_bank ?? 0 }}
+                            </h3>
+                            <div class="small text-muted">
+                                Total rekening terdaftar
+                            </div>
+                        </div>
+
+                        <div class="bg-primary bg-opacity-10 text-primary p-3 rounded-3">
+                            <i data-feather="credit-card" style="width:38px;height:38px;"></i>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bulan Ini -->
+            <div class="col-md-6 col-lg-4">
+                <div class="card h-100 border-0 shadow-sm rounded-4">
+                    <div class="card-body p-4 d-flex justify-content-between align-items-start">
+
+                        <div>
+                            <div class="text-muted small">Bulan Ini</div>
+                            <h4 class="fw-bold text-primary mt-2">
+                                Rp {{ number_format($penerimaan_bulan_ini ?? 0, 0, ',', '.') }}
+                            </h4>
+
+                            <div class="small">
+                                <span class="{{ ($growth_bulan_ini ?? 0) >= 0 ? 'text-primary' : 'text-danger' }}">
+                                    {{ ($growth_bulan_ini ?? 0) >= 0 ? '↑' : '↓' }}
+                                    {{ abs($growth_bulan_ini ?? 0) }}%
+                                </span>
+                                <span class="text-muted"> vs bulan lalu</span>
+                            </div>
+                        </div>
+
+                        <div class="bg-primary bg-opacity-10 text-primary p-3 rounded-3">
+                            <i data-feather="dollar-sign" style="width:38px;height:38px;"></i>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <!-- Total Penerimaan -->
+            <div class="col-md-6 col-lg-4">
+                <div class="card h-100 border-0 shadow-sm rounded-4">
+                    <div class="card-body p-4 d-flex justify-content-between align-items-start">
+
+                        <div>
+                            <div class="text-muted small">Total Penerimaan</div>
+                            <h4 class="fw-bold mt-2">
+                                Rp {{ number_format($total_penerimaan ?? 0, 0, ',', '.') }}
+                            </h4>
+
+                            <span class="badge bg-info mt-2">
+                                {{ $total_transaksi_penerimaan ?? 0 }} transaksi
+                            </span>
+                        </div>
+
+                        <div class="bg-info bg-opacity-10 text-info p-3 rounded-3">
+                            <i data-feather="trending-up" style="width:38px;height:38px;"></i>
+                        </div>
+
                     </div>
                 </div>
             </div>
@@ -435,12 +386,126 @@
                 </div>
             </div>
         </div>
+        <!-- ==================== GRAFIK DEPRESIASI ==================== -->
+        <div class="col-12">
 
+            <div class="card border-0 shadow-sm rounded-4">
+
+                <div class="card-header bg-white border-0 pt-4">
+
+                    <div class="d-flex justify-content-between align-items-center">
+
+                        <div>
+
+                            <h5 class="fw-bold mb-1">
+                                Grafik Depresiasi Aset
+                            </h5>
+
+                            <small class="text-muted">
+                                Statistik penyusutan aset per bulan
+                            </small>
+
+                        </div>
+
+                        <div class="bg-danger-subtle p-3 rounded-4">
+
+                            <i data-feather="bar-chart-2" class="text-danger" style="width:32px;height:32px;"></i>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="card-body">
+
+                    <canvas id="depresiasiChart" height="120"></canvas>
+
+                </div>
+
+            </div>
+
+        </div>
     </div>
 </div>
 @endsection
 
 @push('scripts')
+<script>
+/*
+|--------------------------------------------------------------------------
+| DEPRESIASI CHART
+|--------------------------------------------------------------------------
+*/
+
+const depresiasiCtx = document.getElementById('depresiasiChart');
+
+if (depresiasiCtx) {
+
+    new Chart(depresiasiCtx, {
+
+        type: 'line',
+
+        data: {
+
+            labels: @json($depresiasi_bulan ?? []),
+
+            datasets: [{
+
+                label: 'Nilai Depresiasi',
+
+                data: @json($depresiasi_total ?? []),
+
+                borderColor: '#dc3545',
+
+                backgroundColor: 'rgba(220,53,69,0.15)',
+
+                borderWidth: 3,
+
+                fill: true,
+
+                tension: 0.4,
+
+                pointRadius: 5,
+
+                pointHoverRadius: 7,
+
+                pointBackgroundColor: '#dc3545'
+            }]
+        },
+
+        options: {
+
+            responsive: true,
+
+            maintainAspectRatio: false,
+
+            plugins: {
+
+                legend: {
+                    display: true
+                }
+            },
+
+            scales: {
+
+                y: {
+
+                    beginAtZero: true,
+
+                    ticks: {
+
+                        callback: function(value) {
+
+                            return 'Rp ' + value.toLocaleString('id-ID');
+                        }
+                    }
+                }
+            }
+        }
+    });
+}
+</script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
 

@@ -14,6 +14,8 @@ use App\Http\Controllers\Api\AsetTetapController;
 use App\Http\Controllers\Api\PeriodeController;
 use App\Http\Controllers\Api\SupplierController;
 use App\Http\Controllers\Api\DepresiasiApiController;
+use App\Http\Controllers\Api\RekeningBankController;
+use App\Http\Controllers\Api\MutasiRekeningBankController;
 
 /*
 |--------------------------------------------------------------------------
@@ -268,4 +270,43 @@ Route::prefix('depresiasi')->group(function () {
             'destroy'
         ]);
     });
+
+    Route::prefix('rekening-bank')->group(function () {
+
+    /*
+    |--------------------------------------------------------------------------
+    | PUBLIC ROUTE
+    |--------------------------------------------------------------------------
+    */
+
+    Route::get('/', [RekeningBankController::class, 'index']);
+    Route::get('/{id}', [RekeningBankController::class, 'show']);
+
+    /*
+    |--------------------------------------------------------------------------
+    | AUTH ROUTE
+    |--------------------------------------------------------------------------
+    */
+
+    Route::middleware('auth:sanctum')->group(function () {
+
+        Route::post('/', [RekeningBankController::class, 'store']);
+
+        Route::put('/{id}', [RekeningBankController::class, 'update']);
+        Route::patch('/{id}', [RekeningBankController::class, 'update']);
+
+        Route::delete('/{id}', [RekeningBankController::class, 'destroy']);
+    });
+});
+Route::prefix('mutasi-rekening')->group(function () {
+
+    Route::get('/', [MutasiRekeningBankController::class, 'index']);
+    Route::get('/{id}', [MutasiRekeningBankController::class, 'show']);
+
+    Route::middleware('auth:sanctum')->group(function () {
+
+        Route::post('/', [MutasiRekeningBankController::class, 'store']);
+        Route::delete('/{id}', [MutasiRekeningBankController::class, 'destroy']);
+    });
+});
 });

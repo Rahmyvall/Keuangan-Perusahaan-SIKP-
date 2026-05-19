@@ -139,4 +139,9 @@ class Perusahaan extends Model
     {
         return 'id_perusahaan';
     }
+
+    public function rekeningBank()
+    {
+        return $this->hasMany(RekeningBank::class, 'id_akun_kas', 'id_akun');
+    }
 }
