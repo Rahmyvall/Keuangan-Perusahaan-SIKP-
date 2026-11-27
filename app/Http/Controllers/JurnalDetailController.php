@@ -15,13 +15,13 @@ class JurnalDetailController extends Controller
      * Menampilkan daftar detail jurnal (untuk satu jurnal tertentu)
      */
     public function index(Request $request, Jurnal $jurnal)
-{
-    $details = JurnalDetail::where('id_jurnal', $jurnal->id_jurnal)
-                ->with(['akun'])
-                ->get();
+    {
+        $details = JurnalDetail::where('id_jurnal', $jurnal->id_jurnal)
+            ->with(['akun'])
+            ->get();
 
-    return view('jurnal.detail.index', compact('jurnal', 'details'));
-}
+        return view('jurnal.detail.index', compact('jurnal', 'details'));
+    }
 
     /**
      * Form Tambah Detail Baru
@@ -35,8 +35,8 @@ class JurnalDetailController extends Controller
         }
 
         $akuns = Akun::where('is_active', true)
-                ->orderBy('kode_akun')
-                ->get();
+            ->orderBy('kode_akun')
+            ->get();
 
         $mataUangs = MataUang::orderBy('kode_mata_uang')->get();
 
@@ -80,7 +80,6 @@ class JurnalDetailController extends Controller
             return redirect()
                 ->route('jurnal.detail.index', $jurnal)
                 ->with('success', 'Detail jurnal berhasil ditambahkan');
-
         } catch (\Throwable $th) {
             DB::rollBack();
             return redirect()
@@ -208,7 +207,6 @@ class JurnalDetailController extends Controller
             return redirect()
                 ->route('jurnal.detail.index', $jurnal)
                 ->with('success', 'Semua detail jurnal berhasil diperbarui');
-
         } catch (\Throwable $th) {
             DB::rollBack();
             return redirect()

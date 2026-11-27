@@ -31,8 +31,9 @@ use App\Http\Controllers\{
 | GUEST
 |--------------------------------------------------------------------------
 */
+
 Route::middleware('guest')->group(function () {
-    Route::get('/', fn () => redirect()->route('login'))->name('home');
+    Route::get('/', fn() => redirect()->route('login'))->name('home');
     Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
     Route::post('/login', [LoginController::class, 'login'])->name('login.post');
 });
@@ -93,15 +94,18 @@ Route::middleware('auth')->group(function () {
             Route::get('akun/by-tipe/{tipe}', [AkunController::class, 'byTipe'])
                 ->name('akun.by-tipe');
 
-            Route::patch('faktur-pembelian/{fakturPembelian}/update-status',
+            Route::patch(
+                'faktur-pembelian/{fakturPembelian}/update-status',
                 [FakturPembelianController::class, 'updateStatus']
             )->name('faktur-pembelian.update-status');
 
-            Route::get('faktur-pembelian/{fakturPembelian}/print',
+            Route::get(
+                'faktur-pembelian/{fakturPembelian}/print',
                 [FakturPembelianController::class, 'print']
             )->name('faktur-pembelian.print');
 
-            Route::patch('faktur-penjualan/{fakturPenjualan}/status',
+            Route::patch(
+                'faktur-penjualan/{fakturPenjualan}/status',
                 [FakturPenjualanController::class, 'updateStatus']
             )->name('faktur-penjualan.update-status');
 
@@ -109,15 +113,26 @@ Route::middleware('auth')->group(function () {
                 ->name('jurnal.detail.')
                 ->group(function () {
 
-                    Route::get('/', [JurnalDetailController::class, 'index'])->name('index');
-                    Route::get('/create', [JurnalDetailController::class, 'create'])->name('create');
-                    Route::post('/', [JurnalDetailController::class, 'store'])->name('store');
+                    Route::get('/', [JurnalDetailController::class, 'index'])
+                        ->name('index');
 
-                    Route::get('/{detail}/edit', [JurnalDetailController::class, 'edit'])->name('edit');
-                    Route::put('/{detail}', [JurnalDetailController::class, 'update'])->name('update');
-                    Route::delete('/{detail}', [JurnalDetailController::class, 'destroy'])->name('destroy');
+                    Route::get('/create', [JurnalDetailController::class, 'create'])
+                        ->name('create');
 
-                    Route::post('/bulk', [JurnalDetailController::class, 'bulkUpdate'])->name('bulk');
+                    Route::post('/', [JurnalDetailController::class, 'store'])
+                        ->name('store');
+
+                    Route::get('/{detail}/edit', [JurnalDetailController::class, 'edit'])
+                        ->name('edit');
+
+                    Route::put('/{detail}', [JurnalDetailController::class, 'update'])
+                        ->name('update');
+
+                    Route::delete('/{detail}', [JurnalDetailController::class, 'destroy'])
+                        ->name('destroy');
+
+                    Route::post('/bulk', [JurnalDetailController::class, 'bulkUpdate'])
+                        ->name('bulk');
                 });
 
             Route::post('jurnal/{jurnal}/post', [JurnalController::class, 'post'])->name('jurnal.post');
@@ -186,18 +201,18 @@ Route::middleware('auth')->group(function () {
     | STAFF
     |--------------------------------------------------------------------------
     */
-   Route::middleware('role:staff')
-    ->prefix('staff')
-    ->name('staff.')
-    ->group(function () {
+    Route::middleware('role:staff')
+        ->prefix('staff')
+        ->name('staff.')
+        ->group(function () {
 
-        Route::get('/dashboard', [DashboardController::class, 'index'])
-            ->name('dashboard');
+            Route::get('/dashboard', [DashboardController::class, 'index'])
+                ->name('dashboard');
 
-        Route::get('/jurnal', [JurnalController::class, 'index'])
-            ->name('jurnal.index');
+            Route::get('/jurnal', [JurnalController::class, 'index'])
+                ->name('jurnal.index');
 
-        Route::get('/jurnal/{jurnal}', [JurnalController::class, 'show'])
-            ->name('jurnal.show');
-    });
+            Route::get('/jurnal/{jurnal}', [JurnalController::class, 'show'])
+                ->name('jurnal.show');
+        });
 });
